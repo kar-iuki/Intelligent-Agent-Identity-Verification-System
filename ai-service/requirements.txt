@@ -1,0 +1,9 @@
+flask
+flask-cors
+opencv-python
+easyocr
+insightface
+scikit-learn
+numpy
+pillow
+python-dotenv

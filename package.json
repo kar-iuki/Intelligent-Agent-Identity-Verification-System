@@ -1,0 +1,25 @@
+{
+  "name": "intelligent-agent-identity-verification-system",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Intelligent Agent Identity Verification System — root scripts for frontend, backend, and AI service",
+  "scripts": {
+    "install:all": "npm install && npm install --prefix frontend && npm install --prefix backend && npm run install:ai",
+    "install:frontend": "npm install --prefix frontend",
+    "install:backend": "npm install --prefix backend",
+    "install:ai": "python -m pip install -r ai-service/requirements.txt",
+    "dev": "concurrently -n backend,frontend,ai -c blue,green,magenta \"npm run dev:backend\" \"npm run dev:frontend\" \"npm run dev:ai\"",
+    "dev:web": "concurrently -n backend,frontend -c blue,green \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "npm run dev --prefix backend",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "dev:ai": "python ai-service/app.py",
+    "start": "concurrently -n backend,frontend,ai -c blue,green,magenta \"npm run start:backend\" \"npm run start:frontend\" \"npm run start:ai\"",
+    "start:backend": "npm run start --prefix backend",
+    "start:frontend": "npm run preview --prefix frontend",
+    "start:ai": "python ai-service/app.py",
+    "build": "npm run build --prefix frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
