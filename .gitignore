@@ -24,3 +24,7 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Large / local AI caches
+ai-service/silent_face/.git/
+**/.insightface/

@@ -2,9 +2,12 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { getAuthToken } from '../utils/authToken.js'
 import LoginPage from '../views/LoginPage.vue'
 import RegisterPage from '../views/RegisterPage.vue'
+import CheckEmailPage from '../views/CheckEmailPage.vue'
 import PendingVerificationPage from '../views/PendingVerificationPage.vue'
 import CompleteProfilePage from '../views/CompleteProfilePage.vue'
 import AgentDashboard from '../views/AgentDashboard.vue'
+import AgentAuditLog from '../views/AgentAuditLog.vue'
+import AgentPlatformPage from '../views/AgentPlatformPage.vue'
 import AdminDashboard from '../views/AdminDashboard.vue'
 
 const routes = [
@@ -25,6 +28,16 @@ const routes = [
     meta: { guest: true },
   },
   {
+    path: '/check-email',
+    name: 'check-email',
+    component: CheckEmailPage,
+    meta: { guest: true },
+  },
+  {
+    path: '/verify-email',
+    redirect: '/check-email',
+  },
+  {
     path: '/pending',
     name: 'pending',
     component: PendingVerificationPage,
@@ -40,6 +53,18 @@ const routes = [
     path: '/agent/dashboard',
     name: 'agent-dashboard',
     component: AgentDashboard,
+    meta: { requiresAuth: true, role: 'agent' },
+  },
+  {
+    path: '/agent/audit',
+    name: 'agent-audit',
+    component: AgentAuditLog,
+    meta: { requiresAuth: true, role: 'agent' },
+  },
+  {
+    path: '/agent/platform',
+    name: 'agent-platform',
+    component: AgentPlatformPage,
     meta: { requiresAuth: true, role: 'agent' },
   },
   {

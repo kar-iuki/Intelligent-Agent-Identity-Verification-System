@@ -2,7 +2,7 @@
   <div class="auth-page">
     <div class="auth-card">
       <h1>Agent Registration</h1>
-      <p class="subtitle">Create your account to begin identity verification</p>
+      <p class="subtitle">Create your account. We will email you a confirmation link.</p>
 
       <form @submit.prevent="handleRegister">
         <div class="form-group">
@@ -42,27 +42,15 @@
         </div>
 
         <div class="form-group">
-          <label for="phoneNumber">Phone Number</label>
+          <label for="confirmPassword">Confirm password</label>
           <input
-            id="phoneNumber"
-            v-model="form.phoneNumber"
-            type="tel"
-            placeholder="+1234567890"
+            id="confirmPassword"
+            v-model="form.confirmPassword"
+            type="password"
+            placeholder="Re-enter your password"
             required
           />
-          <span v-if="errors.phoneNumber" class="field-error">{{ errors.phoneNumber }}</span>
-        </div>
-
-        <div class="form-group">
-          <label for="nationalID">National ID</label>
-          <input
-            id="nationalID"
-            v-model="form.nationalID"
-            type="text"
-            placeholder="Your national ID number"
-            required
-          />
-          <span v-if="errors.nationalID" class="field-error">{{ errors.nationalID }}</span>
+          <span v-if="errors.confirmPassword" class="field-error">{{ errors.confirmPassword }}</span>
         </div>
 
         <p v-if="errors.general" class="error">{{ errors.general }}</p>
@@ -84,6 +72,7 @@
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore.js'
+import { messageFromGuardrailError } from '../utils/deviceFingerprint.js'
 
 const router = useRouter()
 const { register } = useAuthStore()
@@ -92,16 +81,14 @@ const form = reactive({
   fullName: '',
   email: '',
   password: '',
-  phoneNumber: '',
-  nationalID: '',
+  confirmPassword: '',
 })
 
 const errors = reactive({
   fullName: '',
   email: '',
   password: '',
-  phoneNumber: '',
-  nationalID: '',
+  confirmPassword: '',
   general: '',
 })
 
@@ -132,13 +119,11 @@ function validate() {
     valid = false
   }
 
-  if (!form.phoneNumber.trim()) {
-    errors.phoneNumber = 'Phone number is required'
+  if (!form.confirmPassword) {
+    errors.confirmPassword = 'Please re-enter your password'
     valid = false
-  }
-
-  if (!form.nationalID.trim()) {
-    errors.nationalID = 'National ID is required'
+  } else if (form.confirmPassword !== form.password) {
+    errors.confirmPassword = 'Passwords do not match'
     valid = false
   }
 
@@ -152,10 +137,23 @@ async function handleRegister() {
   errors.general = ''
 
   try {
-    await register(form)
-    router.push('/pending')
+    const data = await register(form)
+    const email = data.email || form.email.trim().toLowerCase()
+    sessionStorage.setItem('pending_verify_email', email)
+
+    if (data.requiresEmailVerification) {
+      router.push({ name: 'check-email', query: { email } })
+      return
+    }
+
+    if (data.needsProfile) {
+      router.push('/complete-profile')
+      return
+    }
+
+    router.push('/login')
   } catch (err) {
-    errors.general = err.response?.data?.error || 'Registration failed. Please try again.'
+    errors.general = messageFromGuardrailError(err)
   } finally {
     loading.value = false
   }

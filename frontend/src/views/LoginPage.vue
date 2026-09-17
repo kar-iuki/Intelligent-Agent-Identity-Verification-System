@@ -27,7 +27,7 @@
           />
         </div>
 
-        <p v-if="error" class="error">{{ error }}</p>
+        <p v-if="error || oauthError" class="error">{{ error || oauthError }}</p>
 
         <button type="submit" class="btn btn-primary" :disabled="loading">
           {{ loading ? 'Signing in...' : 'Sign In' }}
@@ -53,17 +53,19 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore.js'
 
 const router = useRouter()
-const { login, loginWithOAuth, handleOAuthCallback, getDashboardRoute } = useAuthStore()
+const { state, login, loginWithOAuth, handleOAuthCallback, getDashboardRoute } = useAuthStore()
 
 const email = ref('')
 const password = ref('')
 const error = ref('')
 const loading = ref(false)
+
+const oauthError = computed(() => state.error)
 
 async function handleLogin() {
   error.value = ''
@@ -71,6 +73,10 @@ async function handleLogin() {
 
   try {
     const data = await login(email.value, password.value)
+    if (data.needsProfile) {
+      router.push('/complete-profile')
+      return
+    }
     router.push(getDashboardRoute(data.role))
   } catch (err) {
     error.value = err.response?.data?.error || 'Invalid email or password'
@@ -91,16 +97,24 @@ async function handleGoogleLogin() {
 }
 
 onMounted(async () => {
-  const userData = await handleOAuthCallback()
-  if (!userData) return
+  loading.value = true
+  try {
+    const userData = await handleOAuthCallback()
+    if (!userData) return
 
-  if (userData.needsProfile) {
-    router.push('/complete-profile')
-    return
-  }
+    if (userData.needsProfile) {
+      if (userData.suggestedFullName) {
+        localStorage.setItem('suggested_full_name', userData.suggestedFullName)
+      }
+      router.push('/complete-profile')
+      return
+    }
 
-  if (userData.role) {
-    router.push(getDashboardRoute(userData.role))
+    if (userData.role) {
+      router.push(getDashboardRoute(userData.role))
+    }
+  } finally {
+    loading.value = false
   }
 })
 </script>
