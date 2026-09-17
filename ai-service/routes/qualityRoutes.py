@@ -34,8 +34,9 @@ def assess_quality():
         if document_image is None or selfie_image is None:
             return jsonify({'error': 'Invalid image file'}), 400
 
-        document_result = assess_image_quality(document_image)
-        selfie_result = assess_image_quality(selfie_image)
+        # Documents stay stricter for OCR; selfies use laptop-webcam-friendly limits
+        document_result = assess_image_quality(document_image, purpose='document')
+        selfie_result = assess_image_quality(selfie_image, purpose='selfie')
 
         overall_passed = document_result['passed'] and selfie_result['passed']
 
@@ -43,6 +44,37 @@ def assess_quality():
             'document': document_result,
             'selfie': selfie_result,
             'overallPassed': overall_passed,
+        }), 200
+
+    except Exception as exc:
+        return jsonify({'error': str(exc)}), 500
+
+
+@quality_bp.route('/assess-single', methods=['POST'])
+def assess_single_quality():
+    """Assess one image (document side or selfie) before advancing the capture wizard."""
+    try:
+        image_file = request.files.get('image') or request.files.get('documentImage')
+        if not image_file:
+            return jsonify({'error': 'image file is required'}), 400
+
+        image = _decode_image(image_file)
+        if image is None:
+            return jsonify({'error': 'Invalid image file'}), 400
+
+        purpose = (request.form.get('purpose') or 'document').strip().lower()
+        if purpose not in ('document', 'selfie'):
+            purpose = 'document'
+
+        result = assess_image_quality(image, purpose=purpose)
+
+        return jsonify({
+            'passed': result['passed'],
+            'failures': result['failures'],
+            'blurScore': result['blurScore'],
+            'brightnessScore': result['brightnessScore'],
+            'contrastScore': result['contrastScore'],
+            'purpose': purpose,
         }), 200
 
     except Exception as exc:
