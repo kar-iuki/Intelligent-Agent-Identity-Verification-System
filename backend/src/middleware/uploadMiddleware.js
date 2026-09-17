@@ -22,8 +22,12 @@ const upload = multer({
 
 export const uploadAgentDocuments = upload.fields([
   { name: 'documentImage', maxCount: 1 },
+  { name: 'documentFront', maxCount: 1 },
+  { name: 'documentBack', maxCount: 1 },
   { name: 'selfieImage', maxCount: 1 },
 ])
+
+export const uploadSingleImage = upload.single('image')
 
 export function handleMulterError(err, _req, res, next) {
   if (!err) return next()
