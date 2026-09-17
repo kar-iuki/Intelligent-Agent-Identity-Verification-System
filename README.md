@@ -65,7 +65,35 @@ python app.py
 
 Verify: `GET http://localhost:5000/health` → `{ "status": "ok" }`
 
-> **Note:** Full AI dependencies (InsightFace, EasyOCR, etc.) are large and may require additional system libraries. Install them when you reach the KYC pipeline module.
+> **Note:** Full AI dependencies (InsightFace, EasyOCR, etc.) are large and may require additional system libraries.
+
+### InsightFace / ArcFace (face matching)
+
+```bash
+pip install insightface onnxruntime
+```
+
+- On first run, the `buffalo_l` model downloads to `~/.insightface/models/buffalo_l` (internet required).
+- On Linux you may also need build tools: `sudo apt-get install cmake build-essential`.
+- On Windows, install a recent Visual C++ redistributable if native wheels fail to load.
+- If model download or initialisation fails, `POST /api/face/verify` returns **503** with a clear error instead of crashing the service.
+
+### Silent-Face-Anti-Spoofing (liveness detection)
+
+The Silent-Face model lives under `ai-service/silent_face/` with pretrained weights in
+`silent_face/resources/anti_spoof_models/`.
+
+```bash
+# CPU-only PyTorch (recommended for local development without a GPU)
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+pip install timm easydict
+```
+
+- Pretrained `.pth` weights must exist in `ai-service/silent_face/resources/anti_spoof_models/` before the service starts.
+- Weights are included from the [Silent-Face-Anti-Spoofing](https://github.com/minivision-ai/Silent-Face-Anti-Spoofing) repository.
+- All torch inference is forced to **CPU** when CUDA is unavailable.
+- If weights are missing or the model fails to load, `POST /api/liveness/detect` returns **503**.
+- Prefer OpenCV 4.x (`opencv-python>=4.8,<5`) for full Caffe face-detector support. On OpenCV 5 the service falls back to a center-crop bbox so liveness still runs.
 
 ### Environment Variables
 
