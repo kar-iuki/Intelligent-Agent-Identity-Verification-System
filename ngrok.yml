@@ -1,0 +1,26 @@
+# Phone / Google OAuth testing via HTTPS
+#
+# You only need the FRONTEND tunnel (5173).
+# Vite already proxies /api and /socket.io to backend :3000 on this PC.
+# Backend talks to AI on localhost:5000 — no public AI tunnel needed.
+#
+# Free ngrok usually allows only ONE tunnel — do not use --all on the free plan.
+#
+# Setup:
+#   1. npm run dev
+#   2. npm run tunnel
+#   3. Copy https://....ngrok-free.app
+#   4. Supabase → Authentication → URL Configuration → Redirect URLs:
+#        https://YOUR-SUBDOMAIN.ngrok-free.app/**
+#        https://YOUR-SUBDOMAIN.ngrok-free.app/login
+#   5. backend/.env:
+#        FRONTEND_URL=https://YOUR-SUBDOMAIN.ngrok-free.app
+#      then restart backend
+#   6. Open the https URL on your phone
+
+version: "2"
+
+tunnels:
+  frontend:
+    proto: http
+    addr: 5173
