@@ -1,9 +1,15 @@
 flask
 flask-cors
-opencv-python
+opencv-python>=4.8,<5
 easyocr
 insightface
+onnxruntime
 scikit-learn
 numpy
 pillow
 python-dotenv
+torch
+torchvision
+timm
+easydict
+tqdm
