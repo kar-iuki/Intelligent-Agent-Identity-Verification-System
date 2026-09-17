@@ -8,6 +8,9 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from routes.qualityRoutes import quality_bp
+from routes.ocrRoutes import ocr_bp
+from routes.faceRoutes import face_bp
+from routes.livenessRoutes import liveness_bp
 
 load_dotenv()
 
@@ -18,6 +21,9 @@ PORT = int(os.getenv('FLASK_PORT', 5000))
 ENV = os.getenv('FLASK_ENV', 'development')
 
 app.register_blueprint(quality_bp, url_prefix='/api/quality')
+app.register_blueprint(ocr_bp, url_prefix='/api/ocr')
+app.register_blueprint(face_bp, url_prefix='/api/face')
+app.register_blueprint(liveness_bp, url_prefix='/api/liveness')
 
 
 @app.route('/health', methods=['GET'])
