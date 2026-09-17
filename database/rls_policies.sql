@@ -39,6 +39,14 @@ CREATE POLICY "Admins can view all audit logs"
   ON audit_logs FOR SELECT
   USING (is_admin());
 
+CREATE POLICY "Agents can view own audit logs"
+  ON audit_logs FOR SELECT
+  USING (
+    agent_id IN (
+      SELECT agent_id FROM agents WHERE user_id = auth.uid()
+    )
+  );
+
 -- ============================================================
 -- Users table policies (needed for role lookups via RLS)
 -- ============================================================

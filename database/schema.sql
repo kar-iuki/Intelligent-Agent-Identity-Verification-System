@@ -33,6 +33,7 @@ CREATE TABLE agents (
     full_name         VARCHAR(255) NOT NULL,
     phone_number      VARCHAR(50),
     national_id       VARCHAR(100) NOT NULL UNIQUE,
+    date_of_birth     DATE,
     profile_photo_url TEXT,
     created_at        TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -87,6 +88,7 @@ CREATE TABLE kyc_decisions (
     verified_probability FLOAT NOT NULL,
     review_probability   FLOAT NOT NULL,
     rejected_probability FLOAT NOT NULL,
+    decision_basis       VARCHAR(100) NOT NULL DEFAULT 'placeholder_threshold',
     decided_at           TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -108,10 +110,14 @@ CREATE TABLE access_control_records (
 
 CREATE TABLE audit_logs (
     log_id     UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    agent_id   UUID NOT NULL REFERENCES agents(agent_id) ON DELETE CASCADE,
+    agent_id   UUID REFERENCES agents(agent_id) ON DELETE CASCADE,
     request_id UUID REFERENCES verification_requests(request_id) ON DELETE CASCADE,
     action     VARCHAR(255) NOT NULL,
     outcome    VARCHAR(255) NOT NULL,
+    details    JSONB,
+    performed_by TEXT,
+    ip_address VARCHAR(45),
+    device_fingerprint VARCHAR(255),
     timestamp  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
