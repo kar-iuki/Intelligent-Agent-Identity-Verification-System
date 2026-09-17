@@ -3,8 +3,8 @@
     <div class="auth-card">
       <h1>Complete Your Profile</h1>
       <p class="subtitle">
-        Google signed you in as <strong>{{ email }}</strong>. Add the details
-        below to finish agent registration.
+        Signed in as <strong>{{ email }}</strong>. Add your phone number, national ID,
+        and date of birth to finish registration.
       </p>
 
       <form @submit.prevent="handleSubmit">
@@ -15,8 +15,11 @@
             v-model="form.fullName"
             type="text"
             placeholder="John Doe"
+            :readonly="nameLocked"
+            :class="{ readonly: nameLocked }"
             required
           />
+          <span v-if="nameLocked" class="hint">Taken from your account / Google profile</span>
           <span v-if="errors.fullName" class="field-error">{{ errors.fullName }}</span>
         </div>
 
@@ -44,6 +47,19 @@
           <span v-if="errors.nationalID" class="field-error">{{ errors.nationalID }}</span>
         </div>
 
+        <div class="form-group">
+          <label for="dateOfBirth">Date of Birth</label>
+          <input
+            id="dateOfBirth"
+            v-model="form.dateOfBirth"
+            type="date"
+            :max="maxDateOfBirth"
+            required
+          />
+          <span class="hint">Must match the date on your ID or passport</span>
+          <span v-if="errors.dateOfBirth" class="field-error">{{ errors.dateOfBirth }}</span>
+        </div>
+
         <p v-if="errors.general" class="error">{{ errors.general }}</p>
 
         <button type="submit" class="btn btn-primary" :disabled="loading">
@@ -55,7 +71,7 @@
 </template>
 
 <script setup>
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore.js'
 
@@ -64,19 +80,30 @@ const { state, completeProfile, fetchCurrentUser, getDashboardRoute } = useAuthS
 
 const email = ref(state.user?.email || localStorage.getItem('oauth_email') || '')
 const loading = ref(false)
+const suggestedName = ref(localStorage.getItem('suggested_full_name') || '')
 
 const form = reactive({
   fullName: '',
   phoneNumber: '',
   nationalID: '',
+  dateOfBirth: '',
 })
 
 const errors = reactive({
   fullName: '',
   phoneNumber: '',
   nationalID: '',
+  dateOfBirth: '',
   general: '',
 })
+
+const maxDateOfBirth = computed(() => {
+  const d = new Date()
+  d.setFullYear(d.getFullYear() - 18)
+  return d.toISOString().slice(0, 10)
+})
+
+const nameLocked = computed(() => Boolean(suggestedName.value?.trim()))
 
 onMounted(async () => {
   try {
@@ -84,6 +111,13 @@ onMounted(async () => {
     if (data?.email) {
       email.value = data.email
       localStorage.setItem('oauth_email', data.email)
+    }
+    if (data?.suggestedFullName) {
+      suggestedName.value = data.suggestedFullName
+      localStorage.setItem('suggested_full_name', data.suggestedFullName)
+    }
+    if (suggestedName.value) {
+      form.fullName = suggestedName.value
     }
     if (data && !data.needsProfile && data.role) {
       router.push(getDashboardRoute(data.role))
@@ -110,6 +144,24 @@ function validate() {
     valid = false
   }
 
+  if (!form.dateOfBirth) {
+    errors.dateOfBirth = 'Date of birth is required'
+    valid = false
+  } else {
+    const date = new Date(`${form.dateOfBirth}T00:00:00`)
+    if (Number.isNaN(date.getTime())) {
+      errors.dateOfBirth = 'Enter a valid date of birth'
+      valid = false
+    } else {
+      const now = new Date()
+      const ageYears = (now - date) / (365.25 * 24 * 60 * 60 * 1000)
+      if (ageYears < 18) {
+        errors.dateOfBirth = 'You must be at least 18 years old'
+        valid = false
+      }
+    }
+  }
+
   return valid
 }
 
@@ -122,7 +174,9 @@ async function handleSubmit() {
   try {
     await completeProfile(form)
     localStorage.removeItem('oauth_email')
-    router.push('/pending')
+    localStorage.removeItem('suggested_full_name')
+    sessionStorage.removeItem('pending_verify_email')
+    router.push('/agent/dashboard')
   } catch (err) {
     errors.general = err.response?.data?.error || 'Failed to save profile'
   } finally {
@@ -184,10 +238,22 @@ input {
   transition: border-color 0.2s;
 }
 
+input.readonly {
+  background: #f7fafc;
+  color: #243b53;
+}
+
 input:focus {
   outline: none;
   border-color: #3e7cb1;
   box-shadow: 0 0 0 3px rgba(62, 124, 177, 0.15);
+}
+
+.hint {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: #829ab1;
 }
 
 .field-error {
