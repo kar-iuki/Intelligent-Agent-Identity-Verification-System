@@ -21,11 +21,19 @@ export default async function authMiddleware(req, res, next) {
     .eq('user_id', user.id)
     .single()
 
+  const meta = user.user_metadata || {}
+  const suggestedFullName =
+    meta.full_name?.trim()
+    || meta.name?.trim()
+    || `${meta.given_name || ''} ${meta.family_name || ''}`.trim()
+    || null
+
   req.user = {
     id: user.id,
     email: user.email,
     role: userRecord?.role || null,
     profileComplete: !!userRecord,
+    suggestedFullName,
     ...(userRecord || {}),
   }
 
