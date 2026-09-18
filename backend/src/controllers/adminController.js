@@ -114,12 +114,17 @@ export async function getAgentVerificationDetail(req, res) {
           extractedName: latestOcrLog.details.extractedName ?? null,
           extractedIDNumber: latestOcrLog.details.extractedIDNumber ?? null,
           extractedDOB: latestOcrLog.details.extractedDOB ?? null,
+          extractedExpiry: latestOcrLog.details.extractedExpiry ?? null,
           registeredName: latestOcrLog.details.registeredName ?? agent.full_name ?? null,
           registeredIDNumber: latestOcrLog.details.registeredIDNumber ?? agent.national_id ?? null,
           registeredDOB: latestOcrLog.details.registeredDOB ?? agent.date_of_birth ?? null,
           nameMatch: latestOcrLog.details.nameMatch ?? null,
           idMatch: latestOcrLog.details.idMatch ?? null,
           dobMatch: latestOcrLog.details.dobMatch ?? null,
+          documentType: latestOcrLog.details.documentType ?? null,
+          fieldMatches: latestOcrLog.details.fieldMatches ?? [],
+          needsManualReview: latestOcrLog.details.needsManualReview ?? null,
+          rejectReason: latestOcrLog.details.rejectReason ?? null,
           rawText: latestOcrLog.details.rawText ?? [],
         }
       : null

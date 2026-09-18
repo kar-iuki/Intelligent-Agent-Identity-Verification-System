@@ -118,6 +118,8 @@ export async function runOCRVerification({
   )
 
   const confidenceScore = Number(ocrResult.confidenceScore ?? 0)
+  const needsRetake = Boolean(ocrResult.needsRetake)
+  const needsManualReview = Boolean(ocrResult.needsManualReview)
 
   const { error: scoreUpdateError } = await supabase
     .from('verification_scores')
@@ -129,9 +131,12 @@ export async function runOCRVerification({
   }
 
   const lowConfidence = !ocrResult.matched && confidenceScore < 0.4
-  const ocrOutcome = scoreToOutcome(confidenceScore, 0.7, 0.4)
+  const flaggedForReview = needsManualReview || lowConfidence
+  const ocrOutcome = needsRetake
+    ? OUTCOMES.FAILED
+    : scoreToOutcome(confidenceScore, 0.7, 0.4)
 
-  if (lowConfidence) {
+  if (flaggedForReview && !needsRetake) {
     const { error: statusError } = await supabase
       .from('verification_requests')
       .update({ status: 'review' })
@@ -154,13 +159,19 @@ export async function runOCRVerification({
       nameMatch: Boolean(ocrResult.nameMatch),
       idMatch: Boolean(ocrResult.idMatch),
       dobMatch: Boolean(ocrResult.dobMatch),
-      flaggedForReview: lowConfidence,
+      flaggedForReview,
+      needsRetake,
+      needsManualReview,
+      documentType: ocrResult.documentType ?? null,
+      fieldMatches: ocrResult.fieldMatches ?? [],
       extractedName: ocrResult.extractedName ?? null,
       extractedIDNumber: ocrResult.extractedIDNumber ?? null,
       extractedDOB: ocrResult.extractedDOB ?? null,
+      extractedExpiry: ocrResult.extractedExpiry ?? ocrResult.dateOfExpiry ?? null,
       registeredName: agent.full_name ?? null,
       registeredIDNumber: agent.national_id ?? null,
       registeredDOB: agent.date_of_birth ?? null,
+      rejectReason: ocrResult.rejectReason ?? null,
       rawText: Array.isArray(ocrResult.rawText) ? ocrResult.rawText.slice(0, 40) : [],
     },
   })
@@ -168,7 +179,9 @@ export async function runOCRVerification({
   return {
     ...ocrResult,
     confidenceScore,
-    flaggedForReview: lowConfidence,
+    flaggedForReview,
+    needsRetake,
+    needsManualReview,
   }
 }
 
@@ -848,6 +861,22 @@ export async function initiateVerification(req, res) {
         ocrCompleted: false,
         faceMatchCompleted: false,
         requestId: verificationRequest.request_id,
+      })
+    }
+
+    if (ocrResult.needsRetake) {
+      const retakeMessage =
+        ocrResult.rejectReason || 'Your document image is too blurry. Please retake.'
+      return res.status(422).json({
+        overallPassed: false,
+        qualityPassed: true,
+        ocrCompleted: false,
+        needsRetake: true,
+        failedImages: ['document'],
+        failures: [retakeMessage],
+        message: retakeMessage,
+        requestId: verificationRequest.request_id,
+        ocr: ocrResult,
       })
     }
 

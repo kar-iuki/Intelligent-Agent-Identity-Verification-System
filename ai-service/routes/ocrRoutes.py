@@ -16,6 +16,11 @@ def _decode_image(file_storage):
     return cv2.imdecode(raw, cv2.IMREAD_COLOR)
 
 
+def _debug_requested():
+    flag = request.args.get('debug', request.form.get('debug', ''))
+    return str(flag).strip().lower() in ('1', 'true', 'yes', 'on')
+
+
 @ocr_bp.route('/verify', methods=['POST'])
 def verify_document_ocr():
     try:
@@ -49,7 +54,11 @@ def verify_document_ocr():
             'dateOfBirth': registered_dob,
         }
 
-        result = assess_document_ocr(image, registered_details)
+        result = assess_document_ocr(
+            image,
+            registered_details,
+            debug=_debug_requested(),
+        )
         return jsonify(result), 200
 
     except Exception as exc:

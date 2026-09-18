@@ -366,6 +366,10 @@
             </p>
             <dl class="detail-grid ocr-grid">
               <div>
+                <dt>Document type</dt>
+                <dd>{{ latestOcr.documentType || '—' }}</dd>
+              </div>
+              <div>
                 <dt>Extracted name</dt>
                 <dd>{{ latestOcr.extractedName || '—' }}</dd>
               </div>
@@ -390,6 +394,9 @@
                 <dd>{{ formatDateOfBirth(latestOcr.registeredDOB) }}</dd>
               </div>
             </dl>
+            <p v-if="latestOcr.needsManualReview" class="muted ocr-note">
+              Flagged for manual review{{ latestOcr.rejectReason ? `: ${latestOcr.rejectReason}` : '.' }}
+            </p>
             <div class="ocr-matches">
               <span class="match-pill" :class="latestOcr.nameMatch ? 'ok' : 'bad'">
                 Name {{ latestOcr.nameMatch ? 'match' : 'mismatch' }}
