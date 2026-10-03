@@ -35,9 +35,11 @@ api.interceptors.response.use(
   async (error) => {
     if (error.response?.status === 401) {
       clearAuthToken()
-      localStorage.removeItem('auth_user')
-      localStorage.removeItem('auth_role')
-      localStorage.removeItem('auth_agent')
+      try {
+        localStorage.removeItem('auth_user')
+        localStorage.removeItem('auth_role')
+        localStorage.removeItem('auth_agent')
+      } catch { /* Storage may be blocked. */ }
 
       const { default: router } = await import('../router')
       const currentRoute = router.currentRoute.value

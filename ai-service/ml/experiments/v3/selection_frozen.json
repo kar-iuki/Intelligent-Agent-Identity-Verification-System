@@ -1,0 +1,38 @@
+{
+  "selected": {
+    "candidate": "raw_native_sigmoid",
+    "policy": "probability",
+    "review_multiplier": 1.0,
+    "verified_threshold": 0.0,
+    "verified_margin": 0.0,
+    "log_loss": 0.703824505781107,
+    "accuracy": 0.7573333333333333,
+    "macro_f1": 0.6598946388372183,
+    "rejected_to_verified": 29,
+    "review_to_verified": 92,
+    "review_recall": 0.3,
+    "eligible": true
+  },
+  "baseline": {
+    "candidate": "raw_native_sigmoid",
+    "policy": "probability",
+    "review_multiplier": 1.0,
+    "verified_threshold": 0.0,
+    "verified_margin": 0.0,
+    "log_loss": 0.703824505781107,
+    "accuracy": 0.7573333333333333,
+    "macro_f1": 0.6598946388372183,
+    "rejected_to_verified": 29,
+    "review_to_verified": 92,
+    "review_recall": 0.3
+  },
+  "training": {
+    "best_params": {
+      "C": 10,
+      "gamma": "scale"
+    },
+    "cv_macro_f1": 0.6727661071732829,
+    "cv_source": "legacy_v2/reports/full_svm_grid_search.csv (same training rows)"
+  },
+  "frozen_at": "2026-10-02T19:51:36.107832+00:00"
+}

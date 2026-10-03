@@ -1,0 +1,22 @@
+[
+  {
+    "test": "test_svm.py",
+    "exit_code": 0,
+    "output": "test_class_probability_order_is_not_assumed (__main__.SVMContractTests.test_class_probability_order_is_not_assumed) ... ok\ntest_rejects_missing_malformed_nonfinite_out_of_range (__main__.SVMContractTests.test_rejects_missing_malformed_nonfinite_out_of_range) ... ok\ntest_saved_artifact_prediction_parity_and_legacy_contract (__main__.SVMContractTests.test_saved_artifact_prediction_parity_and_legacy_contract) ... ok\ntest_saved_review_policy_is_honored_without_rewriting_probabilities (__main__.SVMContractTests.test_saved_review_policy_is_honored_without_rewriting_probabilities) ... ok\ntest_sharp_image_valid_without_assumed_decision (__main__.SVMContractTests.test_sharp_image_valid_without_assumed_decision) ... ok\ntest_unavailable_has_no_silent_prediction (__main__.SVMContractTests.test_unavailable_has_no_silent_prediction) ... ok\n\n----------------------------------------------------------------------\nRan 6 tests in 0.677s\n\nOK\n"
+  },
+  {
+    "test": "test_kyc_experiment.py",
+    "exit_code": 0,
+    "output": "test_saved_dataset_is_reproducible_and_has_no_hidden_predictors (__main__.ExperimentTests.test_saved_dataset_is_reproducible_and_has_no_hidden_predictors) ... ok\ntest_split_manifest_and_scaler_only_fit_training (__main__.ExperimentTests.test_split_manifest_and_scaler_only_fit_training) ... ok\n\n----------------------------------------------------------------------\nRan 2 tests in 1.125s\n\nOK\n"
+  },
+  {
+    "test": "test_kyc_improvement.py",
+    "exit_code": 0,
+    "output": "test_native_boundary_can_differ_from_probability_argmax (__main__.ImprovementTests.test_native_boundary_can_differ_from_probability_argmax) ... ok\ntest_probability_column_order_and_margin (__main__.ImprovementTests.test_probability_column_order_and_margin) ... ok\ntest_quality_transform_preserves_identity_columns_and_fitted_state (__main__.ImprovementTests.test_quality_transform_preserves_identity_columns_and_fitted_state) ... ok\ntest_review_policy_changes_decision_without_changing_probability (__main__.ImprovementTests.test_review_policy_changes_decision_without_changing_probability) ... ok\n\n----------------------------------------------------------------------\nRan 4 tests in 0.162s\n\nOK\n"
+  },
+  {
+    "test": "backend/tests/kycDecision.test.js",
+    "exit_code": 0,
+    "output": "\u00e2\u0153\u201d Incomplete scores fail before inference or threshold fallback (6.7918ms)\n\u00e2\u0153\u201d Model prediction preserves database enums and decision basis (13.6958ms)\n\u00e2\u201e\u00b9 tests 2\n\u00e2\u201e\u00b9 suites 0\n\u00e2\u201e\u00b9 pass 2\n\u00e2\u201e\u00b9 fail 0\n\u00e2\u201e\u00b9 cancelled 0\n\u00e2\u201e\u00b9 skipped 0\n\u00e2\u201e\u00b9 todo 0\n\u00e2\u201e\u00b9 duration_ms 2550.3257\n"
+  }
+]

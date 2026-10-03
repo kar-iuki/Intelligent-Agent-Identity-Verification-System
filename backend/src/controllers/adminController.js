@@ -1,7 +1,12 @@
+import { readFile } from 'node:fs/promises'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import supabase from '../utils/supabaseClient.js'
+import { getSVMStatus } from '../services/verificationService.js'
 import { enforceAccessDecision } from '../services/accessControlService.js'
 import { logAction, ACTIONS, OUTCOMES } from '../utils/auditLogger.js'
 import { resetStrikes, getStrikeCount } from '../services/strikeService.js'
+import { auditWindow } from '../utils/auditWindow.js'
 
 async function resolvePerformerLabel(performedBy) {
   if (!performedBy || performedBy === 'system') {
@@ -97,7 +102,7 @@ export async function getAgentVerificationDetail(req, res) {
           .maybeSingle(),
       ])
 
-      history.push({ request, scores, decision, access })
+      history.push({ request, scores, decision, access, auditWindow: auditWindow(request.status, decision) })
     }
 
     const { data: auditLogs } = await supabase
@@ -347,6 +352,8 @@ export async function getAllAgents(req, res) {
       }
 
       if (statusFilter && status !== statusFilter) continue
+      const window = auditWindow(status, decision)
+      if (req.query.auditWindow === 'open' && !window.open) continue
 
       results.push({
         agent,
@@ -354,6 +361,7 @@ export async function getAllAgents(req, res) {
         request: latestRequest,
         scores,
         decision,
+        auditWindow: window,
       })
     }
 
@@ -477,12 +485,29 @@ function startOfTodayIso() {
 export async function getAgentDocumentImages(req, res) {
   try {
     const { agentID } = req.params
+    const { data: latestRequest, error: requestError } = await supabase.from('verification_requests')
+      .select('request_id, status').eq('agent_id', agentID)
+      .order('created_at', { ascending: false }).limit(1).maybeSingle()
+    if (requestError) throw requestError
+    let signedUrlSeconds = 3600
+    if (latestRequest?.status === 'verified') {
+      const { data: decision, error: decisionError } = await supabase.from('kyc_decisions')
+        .select('final_decision, decided_at').eq('request_id', latestRequest.request_id).maybeSingle()
+      if (decisionError) throw decisionError
+      const window = auditWindow(latestRequest.status, decision)
+      if (window.expiresAt) {
+        signedUrlSeconds = Math.min(3600, Math.floor((new Date(window.expiresAt).getTime() - Date.now()) / 1000))
+        if (signedUrlSeconds <= 0) {
+          return res.json({ documentImage: null, documentBackImage: null, selfieImage: null, retentionExpired: true })
+        }
+      }
+    }
 
     const { data: documents, error } = await supabase
       .from('documents')
       .select('*')
       .eq('agent_id', agentID)
-      .in('document_type', ['national_id', 'id_front', 'id_back', 'passport', 'selfie'])
+      .in('document_type', ['national_id', 'id_front', 'id_back', 'passport', 'drivers_licence', 'selfie'])
       .order('uploaded_at', { ascending: false })
 
     if (error) return res.status(500).json({ error: error.message })
@@ -490,16 +515,17 @@ export async function getAgentDocumentImages(req, res) {
     const primaryDoc =
       documents?.find((doc) => doc.document_type === 'id_front')
       || documents?.find((doc) => doc.document_type === 'passport')
+      || documents?.find((doc) => doc.document_type === 'drivers_licence')
       || documents?.find((doc) => doc.document_type === 'national_id')
     const backDoc = documents?.find((doc) => doc.document_type === 'id_back')
     const selfieDoc = documents?.find((doc) => doc.document_type === 'selfie')
 
     async function signDocument(doc) {
-      if (!doc) return null
+      if (!doc?.file_url) return null
       const path = storagePathFromFileUrl(doc.file_url)
       const { data, error: signError } = await supabase.storage
         .from(BUCKET)
-        .createSignedUrl(path, 3600)
+        .createSignedUrl(path, signedUrlSeconds)
 
       if (signError) {
         return {
@@ -734,5 +760,59 @@ export async function resetAgentStrikes(req, res) {
     })
   } catch (err) {
     return res.status(500).json({ error: err.message })
+  }
+}
+
+const EVALUATION_REPORT_PATH =
+  process.env.MODEL_EVALUATION_REPORT_PATH ||
+  path.resolve(
+    path.dirname(fileURLToPath(import.meta.url)),
+    '../../../ai-service/ml/reports/evaluation_report.json'
+  )
+
+/**
+ * GET /api/admin/model/status — SVM availability for the dashboard indicator.
+ * Always 200 so the dashboard can render the fallback badge when the AI service is down.
+ */
+export async function getModelStatus(req, res) {
+  try {
+    const status = await getSVMStatus()
+    return res.json({
+      ...status,
+      mode: status.modelLoaded ? 'svm' : 'fallback',
+      aiServiceReachable: true,
+    })
+  } catch (err) {
+    return res.json({
+      modelLoaded: false,
+      modelVersion: null,
+      trainedAt: null,
+      mode: 'fallback',
+      aiServiceReachable: false,
+      error: err.message,
+    })
+  }
+}
+
+/**
+ * GET /api/admin/model/evaluation — the report written by ai-service/ml/train_model.py.
+ */
+export async function getModelEvaluation(req, res) {
+  let raw
+  try {
+    raw = await readFile(EVALUATION_REPORT_PATH, 'utf-8')
+  } catch (err) {
+    if (err.code === 'ENOENT') {
+      return res.status(404).json({
+        error: 'Evaluation report not found. Run `python ml/train_model.py` in ai-service.',
+      })
+    }
+    return res.status(500).json({ error: err.message })
+  }
+
+  try {
+    return res.json(JSON.parse(raw))
+  } catch (err) {
+    return res.status(500).json({ error: `Evaluation report is not valid JSON: ${err.message}` })
   }
 }

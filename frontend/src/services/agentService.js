@@ -12,17 +12,18 @@ export async function submitPersonalDetails(data) {
   return response
 }
 
-export async function checkImageQuality(file, purpose = 'document') {
+export async function checkImageQuality(file, purpose = 'document', documentKind = null) {
   const formData = new FormData()
   formData.append('image', file, file.name || 'image.jpg')
   formData.append('purpose', purpose)
+  if (documentKind) formData.append('documentKind', documentKind)
   const { data } = await api.post('/api/agent/documents/quality-check', formData)
   return data
 }
 
 /**
  * @param {{
- *   documentKind?: 'national_id'|'passport',
+ *   documentKind?: 'national_id'|'passport'|'drivers_licence',
  *   documentFront?: File|null,
  *   documentBack?: File|null,
  *   selfieImage?: File|null,

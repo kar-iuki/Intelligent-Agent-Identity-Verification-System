@@ -5,9 +5,10 @@ export async function getPendingCases() {
   return data
 }
 
-export async function getAllAgents(statusFilter) {
+export async function getAllAgents(statusFilter, recent = false) {
   const params = {}
   if (statusFilter) params.status = statusFilter
+  if (recent) params.auditWindow = 'open'
   const { data } = await api.get('/api/admin/agents', { params })
   return data
 }
@@ -75,4 +76,14 @@ export async function exportAuditLogs(filters = {}) {
     responseType: 'blob',
   })
   return response.data
+}
+
+export async function getModelStatus() {
+  const { data } = await api.get('/api/admin/model/status')
+  return data
+}
+
+export async function getModelEvaluation() {
+  const { data } = await api.get('/api/admin/model/evaluation')
+  return data
 }

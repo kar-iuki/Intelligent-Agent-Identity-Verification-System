@@ -1,11 +1,25 @@
 <template>
-  <div class="admin">
+  <div class="admin workspace">
     <header class="admin-header">
       <div>
-        <h1>Admin Dashboard</h1>
+        <p class="workspace-eyebrow">ADMINISTRATION / IDENTITY OPERATIONS</p>
+        <h1>Identity control center</h1>
         <p class="welcome">Signed in as {{ state.user?.email || 'Administrator' }}</p>
       </div>
-      <button class="btn-logout" @click="handleLogout">Sign Out</button>
+      <div class="header-actions">
+        <router-link
+          to="/admin/model"
+          class="model-badge"
+          :class="modelStatus.loading ? 'checking' : modelStatus.modelLoaded ? 'active' : 'fallback'"
+          :title="modelStatusTitle"
+        >
+          <span class="model-dot" aria-hidden="true" />
+          <span v-if="modelStatus.loading">Checking model…</span>
+          <span v-else-if="modelStatus.modelLoaded">SVM Model Active v{{ modelStatus.modelVersion }}</span>
+          <span v-else>Fallback Mode — Threshold Rules</span>
+        </router-link>
+        <button class="btn-logout" @click="handleLogout">Sign Out</button>
+      </div>
     </header>
 
     <!-- Real-time toast -->
@@ -29,13 +43,13 @@
             <p class="stat-value">{{ stats.totalAgents }}</p>
           </div>
         </article>
-        <article class="stat-card clickable amber" @click="goToPending">
+        <button type="button" class="stat-card clickable amber" @click="goToPending">
           <div class="stat-icon amber" aria-hidden="true">AR</div>
           <div>
             <p class="stat-label">Awaiting Review</p>
             <p class="stat-value">{{ stats.awaitingReview }}</p>
           </div>
-        </article>
+        </button>
         <article class="stat-card green">
           <div class="stat-icon green" aria-hidden="true">VT</div>
           <div>
@@ -59,26 +73,10 @@
         </article>
       </section>
 
-      <!-- Recent activity -->
-      <section class="panel activity-panel">
-        <div class="toolbar">
-          <h2>Recent activity</h2>
-          <span class="muted">Auto-refreshes every 30s</span>
-        </div>
-        <ul class="activity-list">
-          <li v-for="entry in recentActivity" :key="entry.logId">
-            <span class="activity-time">{{ formatDate(entry.timestamp) }}</span>
-            <span class="activity-name">{{ entry.agentName }}</span>
-            <span class="activity-action">{{ entry.action }}</span>
-            <span class="activity-outcome">{{ entry.outcome }}</span>
-          </li>
-          <li v-if="!recentActivity.length" class="empty">No recent activity.</li>
-        </ul>
-      </section>
-
-      <nav class="tabs">
+      <nav class="tabs" aria-label="Agent views">
         <button :class="{ active: tab === 'pending' }" @click="switchTab('pending')">Pending review</button>
         <button :class="{ active: tab === 'agents' }" @click="switchTab('agents')">All agents</button>
+        <button :class="{ active: tab === 'recent' }" @click="switchTab('recent')">Last 3 business days</button>
         <button :class="{ active: tab === 'flagged' }" @click="switchTab('flagged')">Flagged registrations</button>
         <button :class="{ active: tab === 'audit' }" @click="switchTab('audit')">Audit log</button>
       </nav>
@@ -129,12 +127,13 @@
       </section>
 
       <!-- All agents -->
-      <section v-if="tab === 'agents'" class="panel">
+      <section v-if="tab === 'agents' || tab === 'recent'" class="panel">
         <div class="toolbar">
-          <h2>All agents</h2>
+          <div><h2>{{ tab === 'recent' ? 'Verified · open audit window' : 'Agent directory' }}</h2>
+            <p v-if="tab === 'recent'" class="muted">Files retained for 3 business days after verification. Weekends excluded.</p></div>
           <div class="filters">
-            <input v-model="search" type="search" placeholder="Search name or national ID" />
-            <select v-model="statusFilter" @change="loadAgents">
+            <input v-model="search" aria-label="Search agents" type="search" placeholder="Search name or national ID" />
+            <select v-if="tab !== 'recent'" aria-label="Filter agents by status" v-model="statusFilter" @change="loadAgents">
               <option value="">All statuses</option>
               <option value="verified">Verified</option>
               <option value="review">Review</option>
@@ -151,7 +150,8 @@
                 <th>Agent Name</th>
                 <th>National ID</th>
                 <th>Status</th>
-                <th>Submission Date</th>
+                <th>{{ tab === 'recent' ? 'Verified at' : 'Submission date' }}</th>
+                <th>Audit deadline</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -165,11 +165,12 @@
                 <td>{{ item.agent.full_name }}</td>
                 <td>{{ item.agent.national_id }}</td>
                 <td><span class="badge" :class="item.status">{{ item.status }}</span></td>
-                <td>{{ formatDate(item.request?.created_at || item.agent.created_at) }}</td>
+                <td>{{ formatDate(tab === 'recent' ? item.auditWindow?.verifiedAt : item.request?.created_at || item.agent.created_at) }}</td>
+                <td><span v-if="item.auditWindow?.expiresAt" :class="{ muted: !item.auditWindow.open }">{{ formatDate(item.auditWindow.expiresAt) }}<small class="audit-state">{{ item.auditWindow.open ? 'Available for review' : 'Retention period ended' }}</small></span><span v-else class="muted">—</span></td>
                 <td><button class="btn ghost" @click.stop="openDetail(item.agent.agent_id)">View</button></td>
               </tr>
               <tr v-if="!filteredAgents.length && !loading">
-                <td colspan="5" class="empty">No agents found.</td>
+                <td colspan="6" class="empty">{{ tab === 'recent' ? 'No verified agents with an open audit window.' : 'No agents found.' }}</td>
               </tr>
             </tbody>
           </table>
@@ -258,6 +259,23 @@
           </table>
         </div>
       </section>
+      <!-- Recent activity -->
+      <section class="panel activity-panel">
+        <div class="toolbar">
+          <h2>Recent activity</h2>
+          <span class="muted">Auto-refreshes every 30s</span>
+        </div>
+        <ul class="activity-list">
+          <li v-for="entry in recentActivity" :key="entry.logId">
+            <span class="activity-time">{{ formatDate(entry.timestamp) }}</span>
+            <span class="activity-name">{{ entry.agentName }}</span>
+            <span class="activity-action">{{ entry.action }}</span>
+            <span class="activity-outcome">{{ entry.outcome }}</span>
+          </li>
+          <li v-if="!recentActivity.length" class="empty">No recent activity.</li>
+        </ul>
+      </section>
+
     </main>
 
     <!-- Reject modal -->
@@ -321,6 +339,7 @@
 
         <section class="drawer-section">
           <h4>Document images</h4>
+          <p v-if="detail.history?.[0]?.auditWindow?.expiresAt" class="muted">Audit deadline: {{ formatDate(detail.history[0].auditWindow.expiresAt) }}. {{ detail.history[0].auditWindow.open ? 'Files available during the 3-business-day review window.' : 'Retention period ended; files are scheduled for automatic deletion.' }}</p>
           <div v-if="imagesLoading" class="image-grid">
             <div class="skeleton" />
             <div class="skeleton" />
@@ -476,7 +495,18 @@
             <span class="badge" :class="latestRequest.status">{{ latestRequest.status }}</span>
             <p v-if="latestDecision?.decided_at" class="muted">
               Decided {{ formatDate(latestDecision.decided_at) }}
-              <span v-if="latestDecision.decision_basis"> · {{ latestDecision.decision_basis }}</span>
+            </p>
+            <p
+              v-if="latestDecision"
+              class="basis-label"
+              :class="decisionBasisInfo(latestDecision.decision_basis).tone"
+            >
+              {{ decisionBasisInfo(latestDecision.decision_basis).label }}
+            </p>
+            <p v-if="latestDecision?.decision_basis === 'svm_model'" class="muted probabilities">
+              P(verified) {{ formatProbability(latestDecision.verified_probability) }} ·
+              P(review) {{ formatProbability(latestDecision.review_probability) }} ·
+              P(rejected) {{ formatProbability(latestDecision.rejected_probability) }}
             </p>
             <div v-if="latestRequest.status === 'review'" class="actions">
               <button class="btn approve" @click="handleApproveFromDetail">Approve</button>
@@ -489,6 +519,18 @@
             </div>
             <p v-if="strikeMessage" class="muted">{{ strikeMessage }}</p>
             <p v-else-if="latestRequest.status !== 'review'" class="muted">Decision is read-only for this status.</p>
+            <div v-if="previousDecisions.length" class="previous-decisions">
+              <p class="muted">Previous decisions</p>
+              <ul>
+                <li v-for="item in previousDecisions" :key="item.decision.decision_id">
+                  <span class="badge" :class="item.decision.final_decision">{{ item.decision.final_decision }}</span>
+                  <span class="muted">{{ formatDate(item.decision.decided_at) }}</span>
+                  <span class="basis-label" :class="decisionBasisInfo(item.decision.decision_basis).tone">
+                    {{ decisionBasisInfo(item.decision.decision_basis).label }}
+                  </span>
+                </li>
+              </ul>
+            </div>
           </div>
           <p v-else class="muted">No verification request found.</p>
         </section>
@@ -536,13 +578,14 @@ import {
   rejectAgent,
   getAuditLogs,
   exportAuditLogs,
+  getModelStatus,
 } from '../services/adminService.js'
 import { connectAdminSocket, disconnectAdminSocket } from '../services/socket.js'
 
 const router = useRouter()
 const { state, logout } = useAuthStore()
 
-const tab = ref('overview')
+const tab = ref('agents')
 const loading = ref(false)
 const error = ref('')
 const pendingCases = ref([])
@@ -624,6 +667,56 @@ const latestScores = computed(() => detail.value?.history?.[0]?.scores || null)
 const latestRequest = computed(() => detail.value?.history?.[0]?.request || null)
 const latestDecision = computed(() => detail.value?.history?.[0]?.decision || null)
 const latestOcr = computed(() => detail.value?.latestOcr || null)
+const previousDecisions = computed(() =>
+  (detail.value?.history || []).slice(1).filter((item) => item.decision)
+)
+
+const MODEL_STATUS_REFRESH_MS = 60000
+const modelStatus = reactive({
+  loading: true,
+  modelLoaded: false,
+  modelVersion: null,
+  trainedAt: null,
+  aiServiceReachable: true,
+})
+const modelStatusTitle = computed(() => {
+  if (modelStatus.loading) return 'Checking SVM model status'
+  if (modelStatus.modelLoaded) return 'KYC decisions are made by the SVM classifier. Click for evaluation metrics.'
+  return modelStatus.aiServiceReachable
+    ? 'The AI service is running but the SVM model is not loaded; decisions use threshold rules.'
+    : 'The AI service is unreachable; decisions use threshold rules.'
+})
+let modelStatusTimer = null
+
+const DECISION_BASIS = {
+  svm_model: { label: 'Decision made by SVM classifier', tone: 'svm' },
+  placeholder_threshold: { label: 'Decision made by threshold rules', tone: 'threshold' },
+  image_quality_failure: { label: 'Rejected at image quality check', tone: 'neutral' },
+}
+
+function decisionBasisInfo(basis) {
+  return DECISION_BASIS[basis || 'placeholder_threshold'] || { label: `Decision basis: ${basis}`, tone: 'neutral' }
+}
+
+function formatProbability(value) {
+  const n = Number(value)
+  return Number.isFinite(n) ? `${(n * 100).toFixed(1)}%` : '—'
+}
+
+async function loadModelStatus() {
+  try {
+    const data = await getModelStatus()
+    modelStatus.modelLoaded = Boolean(data.modelLoaded)
+    modelStatus.modelVersion = data.modelVersion
+    modelStatus.trainedAt = data.trainedAt
+    modelStatus.aiServiceReachable = data.aiServiceReachable !== false
+  } catch (err) {
+    console.error('Failed to load model status', err)
+    modelStatus.modelLoaded = false
+  } finally {
+    modelStatus.loading = false
+  }
+}
 
 const lightboxImages = computed(() => {
   const images = []
@@ -634,9 +727,15 @@ const lightboxImages = computed(() => {
 })
 
 onMounted(async () => {
-  tab.value = 'pending'
-  await Promise.all([loadStats(), loadRecentActivity(), loadPending()])
-  activityTimer = setInterval(loadRecentActivity, 30000)
+  tab.value = 'agents'
+  await Promise.all([loadStats(), loadRecentActivity(), loadAgents()])
+  activityTimer = setInterval(() => {
+    loadRecentActivity()
+    loadStats()
+    if (tab.value === 'recent') loadAgents()
+  }, 30000)
+  loadModelStatus()
+  modelStatusTimer = setInterval(loadModelStatus, MODEL_STATUS_REFRESH_MS)
 
   socket = connectAdminSocket()
   socket.on('new_review_case', onNewReviewCase)
@@ -644,6 +743,7 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   if (activityTimer) clearInterval(activityTimer)
+  if (modelStatusTimer) clearInterval(modelStatusTimer)
   if (toastTimer) clearTimeout(toastTimer)
   if (socket) {
     socket.off('new_review_case', onNewReviewCase)
@@ -682,7 +782,10 @@ function goToPending() {
 function switchTab(next) {
   tab.value = next
   if (next === 'pending') loadPending()
-  if (next === 'agents') loadAgents()
+  if (next === 'agents' || next === 'recent') {
+    agents.value = []
+    loadAgents()
+  }
   if (next === 'flagged') loadFlagged()
   if (next === 'audit') loadAuditLogs()
 }
@@ -741,8 +844,9 @@ async function loadAgents() {
   loading.value = true
   error.value = ''
   try {
-    const data = await getAllAgents(statusFilter.value || undefined)
-    agents.value = data.agents || []
+    const requestedTab = tab.value
+    const data = await getAllAgents(requestedTab === 'recent' ? 'verified' : statusFilter.value || undefined, requestedTab === 'recent')
+    if (tab.value === requestedTab) agents.value = data.agents || []
   } catch (err) {
     error.value = err.response?.data?.error || 'Failed to load agents'
   } finally {
@@ -769,7 +873,7 @@ async function handleApprove(item) {
   try {
     await approveAgent(item.agent.agent_id, item.request.request_id)
     await Promise.all([loadPending(), loadStats(), loadRecentActivity()])
-    if (tab.value === 'agents') await loadAgents()
+    if (['agents', 'recent'].includes(tab.value)) await loadAgents()
     if (detail.value?.agent?.agent_id === item.agent.agent_id) {
       await openDetail(item.agent.agent_id)
     }
@@ -811,7 +915,7 @@ async function confirmReject() {
     )
     rejectModal.open = false
     await Promise.all([loadPending(), loadStats(), loadRecentActivity()])
-    if (tab.value === 'agents') await loadAgents()
+    if (['agents', 'recent'].includes(tab.value)) await loadAgents()
     if (detail.value?.agent?.agent_id === rejectModal.item.agent.agent_id) {
       await openDetail(rejectModal.item.agent.agent_id)
     }
@@ -1008,6 +1112,82 @@ h1 {
 .welcome {
   color: #627d98;
   font-size: 0.875rem;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.model-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.model-badge .model-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.model-badge.active { background: #c6f6d5; color: #276749; border-color: #9ae6b4; }
+.model-badge.fallback { background: #feebc8; color: #975a16; border-color: #fbd38d; }
+.model-badge.checking { background: #edf2f7; color: #4a5568; border-color: #e2e8f0; }
+
+.basis-label {
+  display: inline-block;
+  margin: 0.35rem 0 0;
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.basis-label.svm { background: #ebf8ff; color: #2b6cb0; }
+.basis-label.threshold { background: #feebc8; color: #975a16; }
+.basis-label.neutral { background: #edf2f7; color: #4a5568; }
+
+.probabilities {
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+.previous-decisions {
+  margin-top: 0.75rem;
+  border-top: 1px solid #edf2f7;
+  padding-top: 0.5rem;
+}
+
+.previous-decisions ul {
+  list-style: none;
+  padding: 0;
+  margin: 0.25rem 0 0;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.previous-decisions li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  font-size: 0.8rem;
+}
+
+.previous-decisions .basis-label {
+  margin: 0;
 }
 
 .btn-logout {

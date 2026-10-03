@@ -11,7 +11,11 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     flowType: 'pkce',
     persistSession: true,
     autoRefreshToken: true,
-    storage: typeof window !== 'undefined' ? window.localStorage : undefined,
+    storage: {
+      getItem(key) { try { return window.localStorage.getItem(key) } catch { return null } },
+      setItem(key, value) { try { window.localStorage.setItem(key, value) } catch { /* Optional persistence. */ } },
+      removeItem(key) { try { window.localStorage.removeItem(key) } catch { /* Optional persistence. */ } },
+    },
   },
 })
 

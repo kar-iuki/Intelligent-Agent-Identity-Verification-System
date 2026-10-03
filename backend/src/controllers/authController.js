@@ -172,6 +172,11 @@ export async function login(req, res) {
     return res.status(401).json({ error: error.message })
   }
 
+  return res.json(await buildAuthSession(data, req))
+}
+
+// Shared by password and verified passkey login.
+export async function buildAuthSession(data, req) {
   const { data: userRecord, error: dbError } = await supabase
     .from('users')
     .select('*')
@@ -180,7 +185,7 @@ export async function login(req, res) {
 
   // Email confirmed but agent profile not finished yet
   if (dbError || !userRecord) {
-    return res.json({
+    return {
       needsProfile: true,
       token: data.session.access_token,
       refreshToken: data.session.refresh_token,
@@ -189,7 +194,7 @@ export async function login(req, res) {
       user: null,
       role: null,
       agent: null,
-    })
+    }
   }
 
   const agent =
@@ -203,16 +208,16 @@ export async function login(req, res) {
     outcome: OUTCOMES.SUCCESS,
     performedBy: userRecord.user_id,
     ipAddress: req.clientIP,
-    details: { email, role: userRecord.role },
+    details: { email: data.user.email, role: userRecord.role },
   })
 
-  return res.json({
+  return {
     token: data.session.access_token,
     refreshToken: data.session.refresh_token,
     user: userRecord,
     role: userRecord.role,
     agent,
-  })
+  }
 }
 
 export async function logout(req, res) {

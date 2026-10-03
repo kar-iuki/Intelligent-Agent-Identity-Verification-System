@@ -1,0 +1,290 @@
+{
+  "face_match_score": {
+    "class_statistics": {
+      "Manual Review": {
+        "mean": 57.83835575914686,
+        "std": 18.193719540206796,
+        "min": 1.938215720308864,
+        "max": 100.0,
+        "p05": 26.6671540173671,
+        "p95": 87.92481403470687
+      },
+      "Rejected": {
+        "mean": 43.89285400011859,
+        "std": 29.323834914396162,
+        "min": 0.0,
+        "max": 100.0,
+        "p05": 0.11994482109892589,
+        "p95": 85.22584176625611
+      },
+      "Verified": {
+        "mean": 62.589893184884325,
+        "std": 16.897905873331414,
+        "min": 0.0,
+        "max": 100.0,
+        "p05": 33.47271206385084,
+        "p95": 89.52739759777651
+      }
+    },
+    "pairwise_overlap": {
+      "Manual Review / Rejected": {
+        "central_90_percent_intersection": [
+          26.6671540173671,
+          85.22584176625611
+        ]
+      },
+      "Manual Review / Verified": {
+        "central_90_percent_intersection": [
+          33.47271206385084,
+          87.92481403470687
+        ]
+      },
+      "Rejected / Verified": {
+        "central_90_percent_intersection": [
+          33.47271206385084,
+          85.22584176625611
+        ]
+      }
+    }
+  },
+  "liveness_score": {
+    "class_statistics": {
+      "Manual Review": {
+        "mean": 0.8316755801364405,
+        "std": 0.1739654604884198,
+        "min": 0.0452616506825088,
+        "max": 1.0,
+        "p05": 0.4717186071201131,
+        "p95": 1.0
+      },
+      "Rejected": {
+        "mean": 0.6435712842924375,
+        "std": 0.3838566834984276,
+        "min": 0.0,
+        "max": 1.0,
+        "p05": 0.021468486510034857,
+        "p95": 1.0
+      },
+      "Verified": {
+        "mean": 0.9296648469784186,
+        "std": 0.05191349205280589,
+        "min": 0.682100431736264,
+        "max": 1.0,
+        "p05": 0.8335447420767303,
+        "p95": 1.0
+      }
+    },
+    "pairwise_overlap": {
+      "Manual Review / Rejected": {
+        "central_90_percent_intersection": [
+          0.4717186071201131,
+          1.0
+        ]
+      },
+      "Manual Review / Verified": {
+        "central_90_percent_intersection": [
+          0.8335447420767303,
+          1.0
+        ]
+      },
+      "Rejected / Verified": {
+        "central_90_percent_intersection": [
+          0.8335447420767303,
+          1.0
+        ]
+      }
+    }
+  },
+  "ocr_confidence_score": {
+    "class_statistics": {
+      "Manual Review": {
+        "mean": 0.6128544236372814,
+        "std": 0.19305216968166172,
+        "min": 0.0,
+        "max": 1.0,
+        "p05": 0.2798931927032636,
+        "p95": 0.9088542753463081
+      },
+      "Rejected": {
+        "mean": 0.617498361014954,
+        "std": 0.24158528226546264,
+        "min": 0.0,
+        "max": 1.0,
+        "p05": 0.12923461129420696,
+        "p95": 0.9260706474298562
+      },
+      "Verified": {
+        "mean": 0.6664410620373166,
+        "std": 0.18308394583660337,
+        "min": 0.0,
+        "max": 1.0,
+        "p05": 0.33037845748371064,
+        "p95": 0.9344249410550466
+      }
+    },
+    "pairwise_overlap": {
+      "Manual Review / Rejected": {
+        "central_90_percent_intersection": [
+          0.2798931927032636,
+          0.9088542753463081
+        ]
+      },
+      "Manual Review / Verified": {
+        "central_90_percent_intersection": [
+          0.33037845748371064,
+          0.9088542753463081
+        ]
+      },
+      "Rejected / Verified": {
+        "central_90_percent_intersection": [
+          0.33037845748371064,
+          0.9260706474298562
+        ]
+      }
+    }
+  },
+  "blur_score": {
+    "class_statistics": {
+      "Manual Review": {
+        "mean": 51.29568828765505,
+        "std": 59.1389531347241,
+        "min": 1.1371209788343406,
+        "max": 914.096845375202,
+        "p05": 6.661987350223745,
+        "p95": 157.2473613166803
+      },
+      "Rejected": {
+        "mean": 58.812040868633716,
+        "std": 57.897742466813305,
+        "min": 0.8096894608999268,
+        "max": 756.7545071300684,
+        "p05": 9.467323372125714,
+        "p95": 170.13525516668025
+      },
+      "Verified": {
+        "mean": 58.11825593337682,
+        "std": 59.50219604041992,
+        "min": 0.8644553509968256,
+        "max": 683.0512964407212,
+        "p05": 9.212657070392483,
+        "p95": 162.38145464714182
+      }
+    },
+    "pairwise_overlap": {
+      "Manual Review / Rejected": {
+        "central_90_percent_intersection": [
+          9.467323372125714,
+          157.2473613166803
+        ]
+      },
+      "Manual Review / Verified": {
+        "central_90_percent_intersection": [
+          9.212657070392483,
+          157.2473613166803
+        ]
+      },
+      "Rejected / Verified": {
+        "central_90_percent_intersection": [
+          9.467323372125714,
+          162.38145464714182
+        ]
+      }
+    }
+  },
+  "brightness_score": {
+    "class_statistics": {
+      "Manual Review": {
+        "mean": 165.51966295399774,
+        "std": 47.07980846607897,
+        "min": 0.0,
+        "max": 255.0,
+        "p05": 86.46235825465759,
+        "p95": 247.2265192360963
+      },
+      "Rejected": {
+        "mean": 170.50608274616098,
+        "std": 45.767068983394054,
+        "min": 13.3146243763849,
+        "max": 255.0,
+        "p05": 92.1748764679527,
+        "p95": 246.42747699653324
+      },
+      "Verified": {
+        "mean": 170.9498424098091,
+        "std": 45.42635568851169,
+        "min": 0.0,
+        "max": 255.0,
+        "p05": 92.7247000436596,
+        "p95": 249.5783775780228
+      }
+    },
+    "pairwise_overlap": {
+      "Manual Review / Rejected": {
+        "central_90_percent_intersection": [
+          92.1748764679527,
+          246.42747699653324
+        ]
+      },
+      "Manual Review / Verified": {
+        "central_90_percent_intersection": [
+          92.7247000436596,
+          247.2265192360963
+        ]
+      },
+      "Rejected / Verified": {
+        "central_90_percent_intersection": [
+          92.7247000436596,
+          246.42747699653324
+        ]
+      }
+    }
+  },
+  "contrast_score": {
+    "class_statistics": {
+      "Manual Review": {
+        "mean": 41.28147211803449,
+        "std": 16.95262328294958,
+        "min": 0.0,
+        "max": 94.1512595718099,
+        "p05": 13.002952784939337,
+        "p95": 68.58238235824975
+      },
+      "Rejected": {
+        "mean": 43.240834967479685,
+        "std": 17.404792615607935,
+        "min": 0.0,
+        "max": 99.58361140757783,
+        "p05": 15.031357210908125,
+        "p95": 72.82741228693935
+      },
+      "Verified": {
+        "mean": 42.91209297663243,
+        "std": 17.086101361527568,
+        "min": 0.0,
+        "max": 103.75139422074238,
+        "p05": 14.144044680890604,
+        "p95": 70.7809707879629
+      }
+    },
+    "pairwise_overlap": {
+      "Manual Review / Rejected": {
+        "central_90_percent_intersection": [
+          15.031357210908125,
+          68.58238235824975
+        ]
+      },
+      "Manual Review / Verified": {
+        "central_90_percent_intersection": [
+          14.144044680890604,
+          68.58238235824975
+        ]
+      },
+      "Rejected / Verified": {
+        "central_90_percent_intersection": [
+          15.031357210908125,
+          70.7809707879629
+        ]
+      }
+    }
+  }
+}

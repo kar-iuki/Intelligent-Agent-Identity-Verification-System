@@ -1,16 +1,19 @@
 <template>
-  <div class="dashboard">
+  <div class="dashboard workspace">
     <header class="dashboard-header">
       <div>
+        <p class="workspace-eyebrow">AGENT PORTAL / IDENTITY</p>
         <h1>Agent Registration</h1>
         <p class="welcome">Welcome, {{ displayName }}</p>
       </div>
       <div class="header-actions">
+        <router-link class="btn-link" to="/agent/passkeys">Manage Passkeys</router-link>
         <router-link class="btn-link" to="/agent/audit">My audit trail</router-link>
         <button class="btn-logout" @click="handleLogout">Sign Out</button>
       </div>
     </header>
 
+    <PasskeyPrompt :ready="!bootLoading && currentStep === 4 && verificationPhase !== 'loading'" />
     <div class="dashboard-content">
       <div v-if="bootLoading" class="panel loading-panel">Loading your registration status...</div>
 
@@ -86,7 +89,7 @@
                 type="date"
                 :max="maxDateOfBirth"
               />
-              <span class="field-hint">Must match the date on your ID or passport</span>
+              <span class="field-hint">Must match the date on your ID, passport, or driver's licence</span>
               <span v-if="personalErrors.dateOfBirth" class="field-error">{{ personalErrors.dateOfBirth }}</span>
             </div>
 
@@ -112,22 +115,25 @@
           <div v-if="docSubstep === 'choose'" class="doc-type-grid">
             <button type="button" class="doc-type-card" @click="selectDocKind('national_id')">
               <strong>National ID</strong>
-              <span>Capture front, then back</span>
+              <span>Capture front, then back (ID number must match)</span>
             </button>
             <button type="button" class="doc-type-card" @click="selectDocKind('passport')">
               <strong>Passport</strong>
-              <span>Bio-data page only</span>
+              <span>Bio-data page (includes expiry)</span>
+            </button>
+            <button type="button" class="doc-type-card" @click="selectDocKind('drivers_licence')">
+              <strong>Driver's licence</strong>
+              <span>Front of the licence card</span>
             </button>
             <button type="button" class="btn-secondary" @click="currentStep = 1">Back</button>
           </div>
 
           <DocumentCaptureStep
             v-else-if="docSubstep === 'front'"
-            :title="documentKind === 'passport' ? 'Passport bio-data page' : 'ID front'"
-            :hint="documentKind === 'passport'
-              ? 'Capture the page with your photo and personal details.'
-              : 'Capture the front of your national ID. Keep text sharp and evenly lit.'"
+            :title="frontCaptureTitle"
+            :hint="frontCaptureHint"
             :initial-file="documentFrontFile"
+            :document-kind="documentKind"
             @back="onDocumentFrontBack"
             @passed="onFrontPassed"
           />
@@ -135,8 +141,9 @@
           <DocumentCaptureStep
             v-else-if="docSubstep === 'back'"
             title="ID back"
-            hint="Capture the back of your national ID."
+            hint="Capture the back of your national ID. The ID number must be readable so it can be matched to the front."
             :initial-file="documentBackFile"
+            :document-kind="documentKind"
             @back="docSubstep = 'front'"
             @passed="onBackPassed"
           />
@@ -216,6 +223,34 @@
               </li>
             </ol>
 
+            <div v-if="feedback?.scores" class="score-panel">
+              <h3>Your results</h3>
+              <ScoreBar
+                label="Document check (OCR confidence)"
+                :value="Math.round((feedback.scores.ocrConfidenceScore ?? 0) * 100)"
+                :max="100"
+                :green-threshold="70"
+                :amber-threshold="40"
+              />
+              <ScoreBar
+                label="Face match"
+                :value="feedback.scores.faceMatchScore ?? 0"
+                :max="100"
+                :green-threshold="80"
+                :amber-threshold="50"
+              />
+              <ScoreBar
+                label="Liveness"
+                :value="Math.round((feedback.scores.livenessScore ?? 0) * 100)"
+                :max="100"
+                :green-threshold="75"
+                :amber-threshold="50"
+              />
+              <p class="score-note">
+                Automatic approval needs OCR above 70%, face match above 80% and liveness above 75%.
+              </p>
+            </div>
+
             <template v-if="finalDecision === 'verified'">
               <div class="banner banner-success">Your identity has been verified</div>
               <p class="panel-copy">
@@ -232,15 +267,44 @@
                 An administrator is reviewing your case. You will be notified once a decision is made.
                 No further action is required from you right now.
               </p>
+              <div v-if="feedback?.reasons?.length" class="feedback-block">
+                <h3>Why it needs a review</h3>
+                <ul class="reason-list">
+                  <li v-for="reason in feedback.reasons" :key="reason">{{ reason }}</li>
+                </ul>
+              </div>
             </template>
 
             <template v-else-if="finalDecision === 'rejected'">
               <div class="banner banner-rejected">Your verification was unsuccessful</div>
-              <p class="panel-copy">
-                Your identity could not be verified with the documents provided.
-                If you believe this is an error, please contact support.
-              </p>
-              <a class="support-link" href="mailto:support@example.com">Contact support</a>
+              <p class="panel-copy">{{ feedback?.summary || 'Your identity could not be verified with the documents provided.' }}</p>
+
+              <div v-if="feedback?.reasons?.length" class="feedback-block">
+                <h3>What went wrong</h3>
+                <ul class="reason-list">
+                  <li v-for="reason in feedback.reasons" :key="reason">{{ reason }}</li>
+                </ul>
+              </div>
+
+              <div v-if="feedback?.canRetry && feedback?.suggestions?.length" class="feedback-block tips">
+                <h3>Before you try again</h3>
+                <ul class="reason-list">
+                  <li v-for="tip in feedback.suggestions" :key="tip">{{ tip }}</li>
+                </ul>
+              </div>
+
+              <template v-if="feedback?.canRetry">
+                <button type="button" class="btn-primary" @click="handleRetryVerification">
+                  Try again ({{ feedback.attemptsRemaining }} of {{ feedback.maxAttempts }} attempts left)
+                </button>
+                <p class="score-note">
+                  You will retake your document photos and selfie, then the checks run again.
+                </p>
+              </template>
+              <template v-else>
+                <p class="panel-copy">If you believe this is an error, please contact support.</p>
+                <a class="support-link" href="mailto:support@example.com">Contact support</a>
+              </template>
             </template>
 
             <template v-else>
@@ -258,10 +322,12 @@
 </template>
 
 <script setup>
+import PasskeyPrompt from '../components/PasskeyPrompt.vue'
 import { computed, onMounted, onBeforeUnmount, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore.js'
 import DocumentCaptureStep from '../components/DocumentCaptureStep.vue'
+import ScoreBar from '../components/ScoreBar.vue'
 import LiveSelfieChallenge from '../components/LiveSelfieChallenge.vue'
 import {
   submitPersonalDetails,
@@ -288,10 +354,30 @@ const uploading = ref(false)
 const uploadError = ref('')
 const email = ref('')
 
-const documentKind = ref('national_id') // national_id | passport
+const documentKind = ref('national_id') // national_id | passport | drivers_licence
 const docSubstep = ref('choose') // choose | front | back
 const documentFrontFile = ref(null)
 const documentBackFile = ref(null)
+
+const frontCaptureTitle = computed(() => {
+  if (documentKind.value === 'passport') return 'Passport bio-data page'
+  if (documentKind.value === 'drivers_licence') return "Driver's licence front"
+  return 'ID front'
+})
+
+const frontCaptureHint = computed(() => {
+  if (documentKind.value === 'passport') {
+    return 'Open the passport to the page with your photo and lay it flat. Make sure the two lines of <<< text at the bottom are sharp and fully in the frame - the facing page may be in the shot.'
+  }
+  if (documentKind.value === 'drivers_licence') {
+    return 'Capture the front of your licence. Surname, other names, national ID, date of birth, and expiry must be readable.'
+  }
+  return 'Capture the front of your national ID. Keep the name, ID number, and dates sharp and evenly lit.'
+})
+
+function needsDocumentBack(kind = documentKind.value) {
+  return kind === 'national_id'
+}
 const selfieFile = ref(null)
 const selfieChallenge = ref(null)
 /** null | 'selfie' | 'document' | 'both' — targeted recapture after verification quality failure */
@@ -302,6 +388,8 @@ const qualityFailures = ref([])
 const failedImages = ref([])
 const verificationError = ref('')
 const finalDecision = ref(null)
+// plain-language results from the backend: scores, reasons, whether a retry is allowed
+const feedback = ref(null)
 const pipelineState = ref({
   imageQuality: 'pending',
   documentVerification: 'pending',
@@ -463,7 +551,7 @@ async function uploadDocumentOnly() {
     await uploadDocuments({
       documentKind: documentKind.value,
       documentFront: documentFrontFile.value,
-      documentBack: documentKind.value === 'national_id' ? documentBackFile.value : null,
+      documentBack: needsDocumentBack() ? documentBackFile.value : null,
     })
     returnToVerificationReady()
   } catch (err) {
@@ -475,15 +563,15 @@ async function uploadDocumentOnly() {
 
 function onFrontPassed(file) {
   documentFrontFile.value = file
-  if (documentKind.value === 'passport') {
-    if (recaptureMode.value === 'document') {
-      uploadDocumentOnly()
-      return
-    }
-    currentStep.value = 3
-  } else {
+  if (needsDocumentBack()) {
     docSubstep.value = 'back'
+    return
   }
+  if (recaptureMode.value === 'document') {
+    uploadDocumentOnly()
+    return
+  }
+  currentStep.value = 3
 }
 
 function onBackPassed(file) {
@@ -502,7 +590,7 @@ function backFromSelfie() {
     return
   }
   currentStep.value = 2
-  docSubstep.value = documentKind.value === 'passport' ? 'front' : 'back'
+  docSubstep.value = needsDocumentBack() ? 'back' : 'front'
 }
 
 async function onSelfiePassed({ file, challenge }) {
@@ -524,7 +612,7 @@ async function onSelfiePassed({ file, challenge }) {
     await uploadDocuments({
       documentKind: documentKind.value,
       documentFront: documentFrontFile.value,
-      documentBack: documentKind.value === 'national_id' ? documentBackFile.value : null,
+      documentBack: needsDocumentBack() ? documentBackFile.value : null,
       selfieImage: file,
       selfieChallenge: challenge,
     })
@@ -618,6 +706,9 @@ async function refreshVerificationStatus() {
     if (status.pipeline) {
       pipelineState.value = { ...pipelineState.value, ...status.pipeline }
     }
+    if (status.feedback) {
+      feedback.value = status.feedback
+    }
 
     if (status.decision?.finalDecision) {
       finalDecision.value = status.decision.finalDecision
@@ -667,6 +758,7 @@ async function handleProceedToVerification() {
   qualityFailures.value = []
   failedImages.value = []
   finalDecision.value = null
+  feedback.value = null
   pipelineState.value = {
     imageQuality: 'pending',
     documentVerification: 'pending',
@@ -688,6 +780,9 @@ async function handleProceedToVerification() {
     if (result.pipeline) {
       pipelineState.value = { ...pipelineState.value, ...result.pipeline }
     }
+    if (result.feedback) {
+      feedback.value = result.feedback
+    }
 
     if (result.finalDecision || result.decision?.finalDecision) {
       finalDecision.value = result.finalDecision || result.decision.finalDecision
@@ -704,6 +799,15 @@ async function handleProceedToVerification() {
     verificationError.value =
       err.response?.data?.error || err.message || 'Verification request failed'
   }
+}
+
+/** Borderline rejection: start over from the document capture with fresh photos. */
+function handleRetryVerification() {
+  stopPolling()
+  finalDecision.value = null
+  feedback.value = null
+  failedImages.value = ['document', 'selfie']
+  handleReupload()
 }
 
 function handleReupload() {
@@ -979,7 +1083,7 @@ input[readonly] {
 
 .doc-type-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 1rem;
   margin-top: 0.5rem;
 }
@@ -1132,6 +1236,53 @@ input[readonly] {
   color: #9b2c2c;
   font-size: 0.9rem;
   font-weight: 500;
+}
+
+.score-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #f8fafc;
+  margin-bottom: 1rem;
+}
+
+.score-panel h3,
+.feedback-block h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.score-note {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.feedback-block {
+  margin: 1rem 0;
+  padding: 0.9rem 1rem;
+  border-radius: 10px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+}
+
+.feedback-block.tips {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.reason-list {
+  margin: 0.5rem 0 0;
+  padding-left: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  line-height: 1.4;
 }
 
 .pipeline-progress {

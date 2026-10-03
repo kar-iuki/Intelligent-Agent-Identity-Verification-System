@@ -1,0 +1,30 @@
+{
+  "native": {
+    "accuracy": 0.712,
+    "macro_f1": 0.6411516073841619,
+    "rejected_to_verified": 21,
+    "review_to_verified": 81,
+    "review_recall": 0.37333333333333335
+  },
+  "sigmoid": {
+    "accuracy": 0.7573333333333333,
+    "macro_f1": 0.6598946388372183,
+    "rejected_to_verified": 29,
+    "review_to_verified": 92,
+    "review_recall": 0.3
+  },
+  "isotonic": {
+    "accuracy": 0.7573333333333333,
+    "macro_f1": 0.6590397908642379,
+    "rejected_to_verified": 37,
+    "review_to_verified": 98,
+    "review_recall": 0.29333333333333333
+  },
+  "temperature": {
+    "accuracy": 0.7133333333333334,
+    "macro_f1": 0.6420644361352198,
+    "rejected_to_verified": 21,
+    "review_to_verified": 81,
+    "review_recall": 0.37333333333333335
+  }
+}

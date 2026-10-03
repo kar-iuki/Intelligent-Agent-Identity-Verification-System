@@ -1,0 +1,8 @@
+# Extra packages for dataset generation, training notebooks and retraining.
+# The AI service itself only needs ai-service/requirements.txt.
+-r ../requirements.txt
+pandas
+matplotlib
+seaborn
+scipy
+jupyter

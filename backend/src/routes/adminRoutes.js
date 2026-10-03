@@ -15,6 +15,8 @@ import {
   getAuditLogsByAgent,
   getFlaggedRegistrations,
   resetAgentStrikes,
+  getModelStatus,
+  getModelEvaluation,
 } from '../controllers/adminController.js'
 
 const router = Router()
@@ -22,6 +24,8 @@ const router = Router()
 router.use(authMiddleware, requireRole('admin'))
 
 router.get('/stats', getDashboardStats)
+router.get('/model/status', getModelStatus)
+router.get('/model/evaluation', getModelEvaluation)
 router.get('/activity/recent', getRecentActivity)
 router.get('/fraud/flagged', getFlaggedRegistrations)
 router.get('/audit/export', exportAuditLogs)

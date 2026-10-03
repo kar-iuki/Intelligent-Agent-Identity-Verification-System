@@ -1,7 +1,8 @@
 <template>
-  <div class="audit-page">
+  <div class="audit-page workspace">
     <header class="page-header">
       <div>
+        <p class="workspace-eyebrow">AGENT PORTAL / AUDIT HISTORY</p>
         <h1>My audit trail</h1>
         <p class="subtitle">Read-only history of actions on your account</p>
       </div>

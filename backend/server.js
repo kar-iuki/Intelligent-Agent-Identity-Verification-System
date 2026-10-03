@@ -11,6 +11,8 @@ import adminRoutes from './src/routes/adminRoutes.js'
 import { startReviewCaseRealtime } from './src/services/realtimeService.js'
 import requestLogger from './src/middleware/requestLogger.js'
 import { isFraudConfigValid } from './src/config/fraudConfig.js'
+import supabase from './src/utils/supabaseClient.js'
+import { startDocumentRetention } from './src/services/documentRetentionService.js'
 
 isFraudConfigValid()
 
@@ -52,7 +54,9 @@ app.use(helmet({
 app.use(cors({
   origin: corsOrigin,
 }))
-app.set('trust proxy', 1)
+// Only trust known reverse proxies; an exposed API must not accept arbitrary
+// X-Forwarded-For values as the passkey rate-limit identity.
+app.set('trust proxy', process.env.TRUST_PROXY || 'loopback')
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(requestLogger)
@@ -74,6 +78,7 @@ io.on('connection', (socket) => {
 })
 
 startReviewCaseRealtime(io)
+startDocumentRetention(supabase)
 
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`Backend server running on port ${PORT}`)

@@ -12,8 +12,23 @@
       <span>{{ statusText }}</span>
     </div>
 
-    <div class="stage">
-      <video v-show="phase !== 'success'" ref="videoRef" class="media" autoplay playsinline muted />
+    <!--
+      The stage takes the camera stream's own aspect ratio so the whole frame is
+      visible: the landmark overlay, the guide oval and the captured photo then
+      all share one coordinate system. (object-fit: cover hid the top/bottom of
+      portrait phone streams, so the oval sat below the real face.)
+    -->
+    <div class="stage" :style="{ aspectRatio: streamAspect }">
+      <video
+        v-show="phase !== 'success'"
+        ref="videoRef"
+        class="media"
+        autoplay
+        playsinline
+        muted
+        @loadedmetadata="updateStreamAspect"
+        @resize="updateStreamAspect"
+      />
       <img
         v-if="previewUrl && phase === 'success'"
         :src="previewUrl"
@@ -76,6 +91,15 @@ const emit = defineEmits(['back', 'passed'])
 const videoRef = ref(null)
 const overlayRef = ref(null)
 const captureRef = ref(null)
+// CSS aspect-ratio of the live stream, e.g. '720 / 1280' on a phone held upright
+const streamAspect = ref('4 / 3')
+
+function updateStreamAspect() {
+  const video = videoRef.value
+  if (video?.videoWidth && video?.videoHeight) {
+    streamAspect.value = `${video.videoWidth} / ${video.videoHeight}`
+  }
+}
 const loadingModel = ref(true)
 const error = ref('')
 const busy = ref(false)
@@ -192,6 +216,7 @@ async function startCamera() {
   if (videoRef.value) {
     videoRef.value.srcObject = mediaStream
     await videoRef.value.play()
+    updateStreamAspect()
   }
 }
 
@@ -443,17 +468,24 @@ function emitPassed() {
 
 .stage {
   position: relative;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  aspect-ratio: 4 / 3;
   border-radius: 12px;
   overflow: hidden;
   background: #0f172a;
 }
 
 .media {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  max-height: 420px;
+  height: 100%;
   display: block;
   transform: scaleX(-1);
-  object-fit: cover;
+  /* never crop: the stage already has the stream's aspect ratio */
+  object-fit: contain;
 }
 
 .media.preview {

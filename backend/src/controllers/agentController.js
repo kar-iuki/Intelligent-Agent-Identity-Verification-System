@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto'
 import supabase from '../utils/supabaseClient.js'
 import { logAction, ACTIONS, OUTCOMES } from '../utils/auditLogger.js'
 import { assessSingleImageQuality } from '../services/verificationService.js'
@@ -134,10 +135,12 @@ export async function checkImageQuality(req, res) {
     }
 
     const purpose = String(req.body?.purpose || 'document').toLowerCase()
+    const documentKind = String(req.body?.documentKind || '').toLowerCase()
     const result = await assessSingleImageQuality(imageFile.buffer, {
       filename: imageFile.originalname || 'image.jpg',
       mime: imageFile.mimetype,
       purpose: purpose === 'selfie' ? 'selfie' : 'document',
+      documentKind: ['national_id', 'passport', 'drivers_licence'].includes(documentKind) ? documentKind : undefined,
     })
 
     return res.json(result)
@@ -262,7 +265,7 @@ export async function uploadDocuments(req, res) {
       }
 
       const types = new Set((existingDocs || []).map((doc) => doc.document_type))
-      const hasIdentity = ['national_id', 'id_front', 'passport'].some((t) => types.has(t))
+      const hasIdentity = ['national_id', 'id_front', 'passport', 'drivers_licence'].some((t) => types.has(t))
       const hasSelfie = types.has('selfie')
 
       if (!updatingDocument && !hasIdentity) {
@@ -291,6 +294,7 @@ export async function uploadDocuments(req, res) {
     }
 
     try {
+      const uploadId = randomUUID()
       let primaryDocumentType = null
       let primaryPath = null
       let backPath = null
@@ -301,20 +305,26 @@ export async function uploadDocuments(req, res) {
 
         if (documentKind === 'passport') {
           primaryDocumentType = 'passport'
-          primaryPath = `${agent.agent_id}/documents/passport.${frontExt}`
+          primaryPath = `${agent.agent_id}/documents/passport-${uploadId}.${frontExt}`
           await uploadBufferToStorage(primaryPath, documentFront)
           await upsertDocumentRecord(agent.agent_id, 'passport', primaryPath)
           await upsertDocumentRecord(agent.agent_id, 'national_id', primaryPath)
+        } else if (documentKind === 'drivers_licence') {
+          primaryDocumentType = 'drivers_licence'
+          primaryPath = `${agent.agent_id}/documents/drivers_licence-${uploadId}.${frontExt}`
+          await uploadBufferToStorage(primaryPath, documentFront)
+          await upsertDocumentRecord(agent.agent_id, 'drivers_licence', primaryPath)
+          await upsertDocumentRecord(agent.agent_id, 'national_id', primaryPath)
         } else {
           primaryDocumentType = 'id_front'
-          primaryPath = `${agent.agent_id}/documents/id_front.${frontExt}`
+          primaryPath = `${agent.agent_id}/documents/id_front-${uploadId}.${frontExt}`
           await uploadBufferToStorage(primaryPath, documentFront)
           await upsertDocumentRecord(agent.agent_id, 'id_front', primaryPath)
           await upsertDocumentRecord(agent.agent_id, 'national_id', primaryPath)
 
           if (documentBack) {
             const backExt = extensionForMime(documentBack.mimetype)
-            backPath = `${agent.agent_id}/documents/id_back.${backExt}`
+            backPath = `${agent.agent_id}/documents/id_back-${uploadId}.${backExt}`
             await uploadBufferToStorage(backPath, documentBack)
             await upsertDocumentRecord(agent.agent_id, 'id_back', backPath)
           }
@@ -323,7 +333,7 @@ export async function uploadDocuments(req, res) {
 
       if (updatingSelfie) {
         const selfieExt = extensionForMime(selfieFile.mimetype)
-        selfiePath = `${agent.agent_id}/selfies/selfieImage.${selfieExt}`
+        selfiePath = `${agent.agent_id}/selfies/selfieImage-${uploadId}.${selfieExt}`
         await uploadBufferToStorage(selfiePath, selfieFile)
         await upsertDocumentRecord(agent.agent_id, 'selfie', selfiePath)
       }
@@ -426,8 +436,9 @@ export async function getAgentAuditLogs(req, res) {
       return res.status(500).json({ error: error.message })
     }
 
+    // SVM-fallback warnings are internal system notices for administrators, not agent-facing decisions
     return res.json({
-      logs: (data || []).map((row) => ({
+      logs: (data || []).filter((row) => !row.details?.svmFallback).map((row) => ({
         logId: row.log_id,
         timestamp: row.timestamp,
         action: row.action,
@@ -448,7 +459,7 @@ async function resolveRegistrationStatus(agent, documents) {
     return 'incomplete'
   }
 
-  const identityTypes = new Set(['national_id', 'id_front', 'passport'])
+  const identityTypes = new Set(['national_id', 'id_front', 'passport', 'drivers_licence'])
   const hasIdentityDoc = documents.some((doc) => identityTypes.has(doc.document_type))
   const hasSelfieDoc = documents.some((doc) => doc.document_type === 'selfie')
 

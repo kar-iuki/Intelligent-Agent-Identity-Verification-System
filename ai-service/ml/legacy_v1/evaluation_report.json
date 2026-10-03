@@ -1,0 +1,71 @@
+{
+  "model_version": "1.0.0",
+  "training_date": "2026-09-24T19:47:25+00:00",
+  "dataset_size": 4000,
+  "split_sizes": {
+    "train": 2800,
+    "validation": 600,
+    "test": 600
+  },
+  "accuracy": 1.0,
+  "macro_f1": 1.0,
+  "weighted_f1": 1.0,
+  "per_class": {
+    "verified": {
+      "label": "Verified",
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 360
+    },
+    "review": {
+      "label": "Manual Review",
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 120
+    },
+    "rejected": {
+      "label": "Rejected",
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 120
+    }
+  },
+  "confusion_matrix": [
+    [
+      360,
+      0,
+      0
+    ],
+    [
+      0,
+      120,
+      0
+    ],
+    [
+      0,
+      0,
+      120
+    ]
+  ],
+  "confusion_matrix_labels": [
+    "verified",
+    "review",
+    "rejected"
+  ],
+  "best_params": {
+    "C": 0.1,
+    "gamma": 0.1
+  },
+  "kernel": "rbf",
+  "features": [
+    "faceMatchScore",
+    "livenessScore",
+    "ocrConfidenceScore",
+    "blurScore",
+    "brightnessScore",
+    "contrastScore"
+  ]
+}

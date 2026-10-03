@@ -1,0 +1,4 @@
+{
+  "status": "V3 comparison to saved v2 identity model is not a controlled feature ablation.",
+  "prior_controlled_ablation": "legacy_v2/reports/ablation_comparison.json"
+}

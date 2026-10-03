@@ -11,6 +11,7 @@ from routes.qualityRoutes import quality_bp
 from routes.ocrRoutes import ocr_bp
 from routes.faceRoutes import face_bp
 from routes.livenessRoutes import liveness_bp
+from routes.svmRoutes import svm_bp
 
 load_dotenv()
 
@@ -24,6 +25,7 @@ app.register_blueprint(quality_bp, url_prefix='/api/quality')
 app.register_blueprint(ocr_bp, url_prefix='/api/ocr')
 app.register_blueprint(face_bp, url_prefix='/api/face')
 app.register_blueprint(liveness_bp, url_prefix='/api/liveness')
+app.register_blueprint(svm_bp, url_prefix='/api/svm')
 
 
 @app.route('/health', methods=['GET'])

@@ -1,0 +1,30 @@
+{
+  "records": 4000,
+  "counts": {
+    "0": 2400,
+    "2": 800,
+    "1": 800
+  },
+  "exact_duplicates": 0,
+  "conflicting_vectors": 0,
+  "train_test_duplicate_vectors": 0,
+  "near_duplicate_pairs_within_point005_fixed_range_each_feature": 0,
+  "single_feature_tree_training_cv_macro_f1": {
+    "faceMatchScore": 0.9586258147244016,
+    "livenessScore": 0.9681412188691224,
+    "ocrConfidenceScore": 0.9572678335404797,
+    "blurScore": 0.9485490021348486,
+    "brightnessScore": 0.9551737955634525,
+    "contrastScore": 0.9300400950490424
+  },
+  "findings": [
+    "Labels assigned before independent class-specific clipped distributions.",
+    "All six feature ranges nearly isolate classes; quality is an artificial class proxy.",
+    "Small noise does not remove multivariate separation; old report accuracy=1.",
+    "Training script fits scaler on training only, but hard-codes notebook hyperparameters.",
+    "Notebook scales all training rows before GridSearchCV: CV-fold preprocessing leakage.",
+    "No evidence of direct target column or final test rows passed to model fit in inspected code.",
+    "No automatic duplicate or contamination checks; historical test reuse cannot be proven absent.",
+    "Benchmark score files exist but old generator does not derive its parameters from them."
+  ]
+}

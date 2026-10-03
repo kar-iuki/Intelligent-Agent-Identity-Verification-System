@@ -1,16 +1,19 @@
 <template>
-  <div class="platform">
+  <div class="platform workspace">
     <header class="platform-header">
       <div>
+        <p class="workspace-eyebrow">AGENT PORTAL / WORKSPACE</p>
         <h1>Agent Platform</h1>
         <p class="subtitle">Placeholder workspace for verified agents</p>
       </div>
       <div class="actions">
+        <router-link class="link" to="/agent/passkeys">Manage Passkeys</router-link>
         <router-link class="link" to="/agent/dashboard">Back to dashboard</router-link>
         <button class="btn-logout" @click="handleLogout">Sign Out</button>
       </div>
     </header>
 
+    <PasskeyPrompt :ready="true" />
     <main class="platform-content">
       <section class="card">
         <h2>Welcome</h2>
@@ -24,6 +27,7 @@
 </template>
 
 <script setup>
+import PasskeyPrompt from '../components/PasskeyPrompt.vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore.js'
 

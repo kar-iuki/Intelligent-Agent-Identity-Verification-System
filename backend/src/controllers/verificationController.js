@@ -6,11 +6,13 @@ import {
   detectLiveness,
 } from '../services/verificationService.js'
 import {
-  applyPlaceholderDecision,
+  makeKYCDecision,
   enforceAccessDecision,
 } from '../services/accessControlService.js'
 import { logAction, ACTIONS, OUTCOMES, scoreToOutcome } from '../utils/auditLogger.js'
-import { recordStrike } from '../services/strikeService.js'
+import { recordStrike, getStrikeCount } from '../services/strikeService.js'
+import { buildAgentFeedback } from '../services/verificationFeedbackService.js'
+import fraudConfig from '../config/fraudConfig.js'
 
 const BUCKET = 'agent-documents'
 
@@ -103,6 +105,9 @@ export async function runOCRVerification({
   verificationRequest,
   documentBuffer,
   documentPath,
+  backBuffer = null,
+  backPath = null,
+  documentKind = 'national_id',
 }) {
   const ocrResult = await verifyDocumentOCR(
     documentBuffer,
@@ -114,6 +119,10 @@ export async function runOCRVerification({
     {
       documentFilename: documentPath.split('/').pop(),
       documentMime: mimeFromPath(documentPath),
+      backFileBuffer: backBuffer || undefined,
+      backFilename: backPath ? backPath.split('/').pop() : undefined,
+      backMime: backPath ? mimeFromPath(backPath) : undefined,
+      documentKind,
     }
   )
 
@@ -166,8 +175,11 @@ export async function runOCRVerification({
       fieldMatches: ocrResult.fieldMatches ?? [],
       extractedName: ocrResult.extractedName ?? null,
       extractedIDNumber: ocrResult.extractedIDNumber ?? null,
+      extractedSerial: ocrResult.extractedSerial ?? null,
       extractedDOB: ocrResult.extractedDOB ?? null,
       extractedExpiry: ocrResult.extractedExpiry ?? ocrResult.dateOfExpiry ?? null,
+      documentExpired: Boolean(ocrResult.documentExpired),
+      frontBackMatch: ocrResult.frontBackMatch ?? null,
       registeredName: agent.full_name ?? null,
       registeredIDNumber: agent.national_id ?? null,
       registeredDOB: agent.date_of_birth ?? null,
@@ -302,8 +314,7 @@ export async function runLivenessDetection({
 }
 
 /**
- * Module 8 access decision using placeholder thresholds.
- * Replaced by the trained SVM in Module 12.
+ * Access decision (Module 12): SVM classifier, with placeholder thresholds as fallback.
  */
 export async function makeAccessDecision({
   agent,
@@ -321,7 +332,10 @@ export async function makeAccessDecision({
     throw new Error(scoresError?.message || 'Verification scores not found')
   }
 
-  const decisionResult = applyPlaceholderDecision(scores)
+  const decisionResult = await makeKYCDecision(scores, {
+    agentID: agent.agent_id,
+    requestID: verificationRequest.request_id,
+  })
 
   const { data: existingDecision } = await supabase
     .from('kyc_decisions')
@@ -398,6 +412,11 @@ export async function makeAccessDecision({
     details: {
       decision: decisionResult.finalDecision,
       basis: decisionResult.decisionBasis,
+      decisionBasis: decisionResult.decisionBasis,
+      modelVersion: decisionResult.modelVersion ?? null,
+      verifiedProbability: decisionResult.verifiedProbability,
+      reviewProbability: decisionResult.reviewProbability,
+      rejectedProbability: decisionResult.rejectedProbability,
       reasons: decisionResult.reasons,
       decisionId: decision.decision_id,
     },
@@ -525,11 +544,47 @@ export async function getVerificationStatus(req, res) {
     const finalStatuses = ['verified', 'review', 'rejected']
     const isFinal = finalStatuses.includes(request.status) && Boolean(decision)
 
+    let feedback = null
+    let decisionReasons = []
+    if (hasScores) {
+      const { data: logs } = await supabase
+        .from('audit_logs')
+        .select('action, details, timestamp')
+        .eq('request_id', request.request_id)
+        .in('action', [
+          ACTIONS.OCR_VERIFIED,
+          ACTIONS.FACE_MATCH_COMPLETED,
+          ACTIONS.LIVENESS_DETECTED,
+          ACTIONS.KYC_DECISION_MADE,
+        ])
+        .order('timestamp', { ascending: false })
+      const latest = {}
+      for (const row of logs || []) {
+        if (!latest[row.action]) latest[row.action] = row.details || {}
+      }
+      decisionReasons = latest[ACTIONS.KYC_DECISION_MADE]?.reasons || []
+      feedback = buildAgentFeedback({
+        finalDecision: decision?.final_decision || (finalStatuses.includes(request.status) ? request.status : null),
+        scores: {
+          ocrConfidenceScore: scores.ocr_confidence_score,
+          faceMatchScore: scores.face_match_score,
+          livenessScore: scores.liveness_score,
+          blurScore: scores.blur_score,
+        },
+        ocr: latest[ACTIONS.OCR_VERIFIED] || {},
+        faceMatch: latest[ACTIONS.FACE_MATCH_COMPLETED] || {},
+        liveness: latest[ACTIONS.LIVENESS_DETECTED] || {},
+        strikeCount: await getStrikeCount(agent.agent_id),
+        maxStrikes: fraudConfig.maxStrikesBeforeReject,
+      })
+    }
+
     return res.json({
       status: request.status,
       isFinal,
       requestId: request.request_id,
       pipeline,
+      feedback,
       scores: scores
         ? {
             blurScore: scores.blur_score,
@@ -548,6 +603,7 @@ export async function getVerificationStatus(req, res) {
             reviewProbability: decision.review_probability,
             rejectedProbability: decision.rejected_probability,
             decidedAt: decision.decided_at,
+            reasons: decisionReasons,
           }
         : null,
       access: access
@@ -635,19 +691,26 @@ export async function initiateVerification(req, res) {
       return res.status(500).json({ error: docsError.message })
     }
 
-    const nationalIdDoc =
-      documents?.find((doc) => doc.document_type === 'national_id')
-      || documents?.find((doc) => doc.document_type === 'id_front')
+    const identityDoc =
+      documents?.find((doc) => doc.document_type === 'id_front')
       || documents?.find((doc) => doc.document_type === 'passport')
+      || documents?.find((doc) => doc.document_type === 'drivers_licence')
+      || documents?.find((doc) => doc.document_type === 'national_id')
+    const backDoc = documents?.find((doc) => doc.document_type === 'id_back')
     const selfieDoc = documents?.find((doc) => doc.document_type === 'selfie')
+    // passport and driving licence get their own sharpness limits in the AI service
+    const documentKind =
+      identityDoc?.document_type === 'passport' || identityDoc?.document_type === 'drivers_licence'
+        ? identityDoc.document_type
+        : 'national_id'
 
-    if (!nationalIdDoc || !selfieDoc) {
+    if (!identityDoc || !selfieDoc) {
       return res.status(400).json({
         error: 'Both identity document and selfie must be uploaded before verification',
       })
     }
 
-    const documentPath = storagePathFromFileUrl(nationalIdDoc.file_url)
+    const documentPath = storagePathFromFileUrl(identityDoc.file_url)
     const selfiePath = storagePathFromFileUrl(selfieDoc.file_url)
 
     const { data: documentBlob, error: documentDownloadError } = await supabase.storage
@@ -673,9 +736,26 @@ export async function initiateVerification(req, res) {
     const documentBuffer = Buffer.from(await documentBlob.arrayBuffer())
     const selfieBuffer = Buffer.from(await selfieBlob.arrayBuffer())
 
+    let backBuffer = null
+    let backPath = null
+    if (backDoc) {
+      backPath = storagePathFromFileUrl(backDoc.file_url)
+      const { data: backBlob, error: backDownloadError } = await supabase.storage
+        .from(BUCKET)
+        .download(backPath)
+
+      if (backDownloadError || !backBlob) {
+        return res.status(500).json({
+          error: backDownloadError?.message || 'Failed to download ID back image',
+        })
+      }
+      backBuffer = Buffer.from(await backBlob.arrayBuffer())
+    }
+
     let quality
     try {
       quality = await assessImageQuality(documentBuffer, selfieBuffer, {
+        documentKind,
         documentFilename: documentPath.split('/').pop(),
         selfieFilename: selfiePath.split('/').pop(),
         documentMime: mimeFromPath(documentPath),
@@ -689,7 +769,7 @@ export async function initiateVerification(req, res) {
       .from('verification_requests')
       .insert({
         agent_id: agent.agent_id,
-        document_id: nationalIdDoc.document_id,
+        document_id: identityDoc.document_id,
         status: quality.overallPassed ? 'pending' : 'rejected',
       })
       .select()
@@ -710,7 +790,7 @@ export async function initiateVerification(req, res) {
       ipAddress,
       deviceFingerprint,
       details: {
-        documentId: nationalIdDoc.document_id,
+        documentId: identityDoc.document_id,
         qualityPassed: Boolean(quality.overallPassed),
         deviceFingerprint,
       },
@@ -852,6 +932,9 @@ export async function initiateVerification(req, res) {
         verificationRequest,
         documentBuffer,
         documentPath,
+        documentKind,
+        backBuffer,
+        backPath,
       })
     } catch (err) {
       return res.status(503).json({
@@ -951,6 +1034,21 @@ export async function initiateVerification(req, res) {
       })
     }
 
+    const feedback = buildAgentFeedback({
+      finalDecision: accessDecision.finalDecision,
+      scores: {
+        ocrConfidenceScore: ocrResult.confidenceScore,
+        faceMatchScore: faceResult.faceMatchScore,
+        livenessScore: livenessResult.livenessScore,
+        blurScore,
+      },
+      ocr: ocrResult,
+      faceMatch: faceResult,
+      liveness: livenessResult,
+      strikeCount: await getStrikeCount(agent.agent_id),
+      maxStrikes: fraudConfig.maxStrikesBeforeReject,
+    })
+
     return res.status(200).json({
       overallPassed: true,
       qualityPassed: true,
@@ -961,6 +1059,7 @@ export async function initiateVerification(req, res) {
       message: 'Full verification pipeline completed.',
       requestId: verificationRequest.request_id,
       finalDecision: accessDecision.finalDecision,
+      feedback,
       scores: {
         blurScore,
         brightnessScore,

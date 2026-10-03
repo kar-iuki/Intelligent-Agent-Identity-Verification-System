@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { getAuthToken } from '../utils/authToken.js'
+import { useAuthStore } from '../stores/authStore.js'
 import LoginPage from '../views/LoginPage.vue'
 import RegisterPage from '../views/RegisterPage.vue'
 import CheckEmailPage from '../views/CheckEmailPage.vue'
@@ -9,8 +10,15 @@ import AgentDashboard from '../views/AgentDashboard.vue'
 import AgentAuditLog from '../views/AgentAuditLog.vue'
 import AgentPlatformPage from '../views/AgentPlatformPage.vue'
 import AdminDashboard from '../views/AdminDashboard.vue'
+import AdminModelEvaluation from '../views/AdminModelEvaluation.vue'
 
 const routes = [
+  {
+    path: '/agent/passkeys',
+    name: 'agent-passkeys',
+    component: () => import('../views/ManagePasskeysPage.vue'),
+    meta: { requiresAuth: true, role: 'agent' },
+  },
   {
     path: '/',
     redirect: '/login',
@@ -73,6 +81,12 @@ const routes = [
     component: AdminDashboard,
     meta: { requiresAuth: true, role: 'admin' },
   },
+  {
+    path: '/admin/model',
+    name: 'admin-model',
+    component: AdminModelEvaluation,
+    meta: { requiresAuth: true, role: 'admin' },
+  },
 ]
 
 const router = createRouter({
@@ -82,7 +96,7 @@ const router = createRouter({
 
 router.beforeEach((to, _from, next) => {
   const token = getAuthToken()
-  const role = localStorage.getItem('auth_role')
+  const role = useAuthStore().state.role
   const isAuthenticated = !!token
 
   if (to.meta.requiresAuth) {

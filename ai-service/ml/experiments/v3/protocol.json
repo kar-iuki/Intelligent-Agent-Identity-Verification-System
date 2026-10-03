@@ -1,0 +1,46 @@
+{
+  "version": "3.0.0",
+  "seed": 42,
+  "fresh_test_seed": 2684470948,
+  "dataset_sha256": "d6dbe75aa5d765e4b3d92112e2825dde608f75d3ddf98ad265c735e632855cb0",
+  "generator_config_sha256": "a308e701ebd9cf2242dc61826f445d208d8365cd9797e715d92c5ae2d3a00570",
+  "generator_source_sha256": "b6b2f1281ed8fc339ceed5e5b5dfe9fb966763b1efd5ef7d9ba1fa5053f067d2",
+  "architectures": [
+    "raw_native",
+    "power_native",
+    "raw_ovr",
+    "power_ovr"
+  ],
+  "grid_C": [
+    0.1,
+    1,
+    10,
+    100
+  ],
+  "grid_gamma": [
+    0.001,
+    0.01,
+    0.1,
+    1,
+    "scale",
+    "auto"
+  ],
+  "calibrations": [
+    "sigmoid",
+    "isotonic",
+    "temperature"
+  ],
+  "cv": "5-fold training-only macro F1; accuracy also recorded",
+  "partitions": {
+    "train": 7000,
+    "calibration": 750,
+    "selection": 750,
+    "retired_test": 1500,
+    "new_test": 1500
+  },
+  "selection": "Maximum selection accuracy with macro F1, Manual Review recall and both false-verification counts no worse than raw-native-sigmoid baseline; tie macro F1 then log loss.",
+  "release_gate": "Strictly higher fresh accuracy, macro F1 not lower, neither false-verification count higher than saved v2 on same fresh rows. Failure retains v2; no retries.",
+  "no_online_learning": true,
+  "label_generator_changed": false,
+  "fresh_test_generated_after_freeze": true
+}

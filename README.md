@@ -179,9 +179,105 @@ intelligent-agent-verification/
 | `access_control_records` | Access grant/deny per decision |
 | `audit_logs` | Action audit trail |
 
+## Verified-agent file retention
+
+Identity images and selfies are retained for three business days after the latest
+successful verification decision (including manual approval). Business days are
+Monday–Friday in Africa/Nairobi; public holidays are not excluded. For example,
+verification on Friday at 14:00 expires on Wednesday at 14:00.
+
+The backend checks expiry at startup and every 15 minutes, including superseded
+uploads. It deletes storage objects and clears their file references, preserving
+document rows, decisions, scores, and audit history. Failed storage removals are
+retried on the next run. Pending, review, and rejected cases are not purged by this
+policy. No database migration is required. Existing verified cases also follow
+this policy when the updated backend starts. Keep the backend running to execute
+cleanup; signed admin image links cannot outlive the audit window.
+
+The admin dashboard opens on the agent directory, followed by recent activity.
+**Last 3 business days** shows verified agents whose audit window is still open,
+with verification timestamps and audit deadlines.
+
 ## Health Checks
 
 | Service | Endpoint |
 |---|---|
 | Backend | `GET /health` |
 | AI Service | `GET /health` |
+
+## Optional passkey authentication
+
+Passkeys supplement password and Google login. The Vue client uses
+`@simplewebauthn/browser`; Express verifies credentials with
+`@simplewebauthn/server`. Node 22 or newer is required. No biometric data is
+stored. Existing authentication and recovery methods remain available.
+
+### Supabase and environment setup
+
+1. In **Supabase → SQL Editor**, run the entire [database/passkeys.sql](database/passkeys.sql)
+   file after the existing schema. It adds the user handle, passkeys, expiring
+   challenges, shared rate-limit storage, and restricted SQL functions. It is
+   safe to rerun. Do not rerun `schema.sql` on an existing installation.
+2. Keep the Email provider enabled under **Authentication → Providers**. After
+   verifying a passkey, the backend generates and consumes a server-only
+   magic-link token to obtain a normal Supabase session; no email is sent.
+   The account must have a confirmed email. Keep existing Google settings.
+   No Supabase JWT secret or new frontend service-role key is needed.
+3. Add these values to `backend/.env` for local development:
+
+   ```dotenv
+   WEBAUTHN_RP_ID=localhost
+   WEBAUTHN_RP_NAME=Agent Identity Verification
+   WEBAUTHN_ORIGINS=http://localhost:5173
+   TRUST_PROXY=loopback
+   ```
+
+   For deployment, set the RP ID to your stable domain (no scheme, port, or path),
+   and origins to the exact HTTPS frontend origins, comma-separated, without
+   trailing slashes. Origins must belong to that RP domain. Set `FRONTEND_URL`
+   consistently for CORS. HTTPS is required except on localhost; HTTP LAN IPs
+   do not work. Changing an ngrok hostname or RP domain requires new passkeys.
+   If using a remote reverse proxy, configure `TRUST_PROXY` with its actual
+   trusted IPs/CIDRs and prevent direct access that could bypass it.
+4. Install dependencies with `npm install --prefix backend` and
+   `npm install --prefix frontend`, then restart both services.
+
+The migration grants access only to the backend service role, not anonymous or
+authenticated browser clients. Keep `SUPABASE_SERVICE_ROLE_KEY` server-side.
+All passkey endpoints use the existing `/api/auth` prefix. Authenticated changes
+require explicit Bearer tokens and an allowed Origin (no ambient auth cookies).
+Challenges expire after five minutes and are consumed atomically even on
+verification failure. Rate limiting allows 60 passkey requests per IP per five
+minutes across backend instances. Counter updates use compare-and-swap; removal
+is serialized per user and checks actual Supabase password/OAuth recovery methods.
+There is no existing reauthentication or user-preferences framework in this app;
+removal follows existing authenticated-action conventions, and prompt preferences
+are browser-local. No new one-time-code login UI is introduced.
+
+The popup waits for the results/workspace screen rather than interrupting identity
+forms. Skip permanently dismisses by default; change
+`MAX_SKIPS_BEFORE_PERMANENT_DISMISS` in `frontend/src/utils/passkeyStorage.js`
+to permit reminders. Local flags are hints only and survive sign-out. A duplicate
+registration confirms availability without inventing an unknown credential ID.
+Manage Passkeys remains available after dismissal; incapable browsers see only
+the existing list without management actions. Styling follows the existing light
+theme; the app has no theme switcher or i18n framework.
+
+### Verification
+
+```sh
+npm run test:passkeys --prefix backend
+npm run test:passkeys --prefix frontend
+npx --prefix frontend playwright install chromium
+npm run test:passkeys:e2e --prefix frontend
+npm run build --prefix frontend
+```
+
+Backend tests include actual migration execution in embedded PostgreSQL. Browser
+tests use a Chromium virtual authenticator and real WebAuthn signature verification,
+with isolated storage and a stubbed Supabase session boundary. Conditional autofill
+tests simulate selecting the dropdown item because CDP cannot select native autofill
+UI. After deploying, verify a real password login → passkey setup → sign-out →
+passkey login against your Supabase project, plus native autofill and phone/QR
+handoff on your target devices. These live integrations are not certified by the
+isolated tests.

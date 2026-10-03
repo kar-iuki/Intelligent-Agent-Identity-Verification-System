@@ -1,0 +1,1888 @@
+{
+  "accuracy": 0.7433333333333333,
+  "macro_f1": 0.6213828294425309,
+  "weighted_f1": 0.7055660160734788,
+  "per_class": {
+    "verified": {
+      "label": "Verified",
+      "precision": 0.7531531531531531,
+      "recall": 0.9288888888888889,
+      "f1-score": 0.8318407960199005,
+      "support": 900.0,
+      "f1": 0.8318407960199005
+    },
+    "review": {
+      "label": "Manual Review",
+      "precision": 0.6333333333333333,
+      "recall": 0.19,
+      "f1-score": 0.2923076923076923,
+      "support": 300.0,
+      "f1": 0.2923076923076923
+    },
+    "rejected": {
+      "label": "Rejected",
+      "precision": 0.74,
+      "recall": 0.74,
+      "f1-score": 0.74,
+      "support": 300.0,
+      "f1": 0.74
+    }
+  },
+  "classification_report": {
+    "Verified": {
+      "precision": 0.7531531531531531,
+      "recall": 0.9288888888888889,
+      "f1-score": 0.8318407960199005,
+      "support": 900.0
+    },
+    "Manual Review": {
+      "precision": 0.6333333333333333,
+      "recall": 0.19,
+      "f1-score": 0.2923076923076923,
+      "support": 300.0
+    },
+    "Rejected": {
+      "precision": 0.74,
+      "recall": 0.74,
+      "f1-score": 0.74,
+      "support": 300.0
+    },
+    "accuracy": 0.7433333333333333,
+    "macro avg": {
+      "precision": 0.7088288288288288,
+      "recall": 0.6196296296296296,
+      "f1-score": 0.6213828294425309,
+      "support": 1500.0
+    },
+    "weighted avg": {
+      "precision": 0.7265585585585587,
+      "recall": 0.7433333333333333,
+      "f1-score": 0.7055660160734788,
+      "support": 1500.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      836,
+      12,
+      52
+    ],
+    [
+      217,
+      57,
+      26
+    ],
+    [
+      57,
+      21,
+      222
+    ]
+  ],
+  "confusion_matrix_labels": [
+    "Verified",
+    "Manual Review",
+    "Rejected"
+  ],
+  "errors": {
+    "Verified -> Manual Review": 12,
+    "Verified -> Rejected": 52,
+    "Manual Review -> Verified": 217,
+    "Manual Review -> Rejected": 26,
+    "Rejected -> Verified": 57,
+    "Rejected -> Manual Review": 21
+  },
+  "probability_calibration": {
+    "log_loss": 0.6926558885224231,
+    "multiclass_brier_sum": 0.39151981761144256,
+    "brier_definition": "Mean sum of squared errors over 3 classes, range [0,2].",
+    "classwise_ece_10_bins": {
+      "Verified": 0.03689608840272317,
+      "Manual Review": 0.025965313218950934,
+      "Rejected": 0.03213463572861308
+    },
+    "reliability_bins": {
+      "Verified": [
+        {
+          "lower": 0.1,
+          "n": 317,
+          "mean_probability": 0.14026710028308606,
+          "observed_fraction": 0.08832807570977919
+        },
+        {
+          "lower": 0.2,
+          "n": 8,
+          "mean_probability": 0.2152357534126131,
+          "observed_fraction": 0.5
+        },
+        {
+          "lower": 0.30000000000000004,
+          "n": 51,
+          "mean_probability": 0.3584358181086259,
+          "observed_fraction": 0.49019607843137253
+        },
+        {
+          "lower": 0.4,
+          "n": 44,
+          "mean_probability": 0.47841154824296656,
+          "observed_fraction": 0.5
+        },
+        {
+          "lower": 0.5,
+          "n": 138,
+          "mean_probability": 0.5263050099711166,
+          "observed_fraction": 0.5652173913043478
+        },
+        {
+          "lower": 0.7000000000000001,
+          "n": 375,
+          "mean_probability": 0.7927788757723261,
+          "observed_fraction": 0.744
+        },
+        {
+          "lower": 0.8,
+          "n": 567,
+          "mean_probability": 0.8090481558213939,
+          "observed_fraction": 0.818342151675485
+        }
+      ],
+      "Manual Review": [
+        {
+          "lower": 0.0,
+          "n": 65,
+          "mean_probability": 0.038149697824000524,
+          "observed_fraction": 0.15384615384615385
+        },
+        {
+          "lower": 0.1,
+          "n": 1178,
+          "mean_probability": 0.15822143700593702,
+          "observed_fraction": 0.1502546689303905
+        },
+        {
+          "lower": 0.4,
+          "n": 218,
+          "mean_probability": 0.4480123017932643,
+          "observed_fraction": 0.3853211009174312
+        },
+        {
+          "lower": 0.5,
+          "n": 39,
+          "mean_probability": 0.5288162665881792,
+          "observed_fraction": 0.7435897435897436
+        }
+      ],
+      "Rejected": [
+        {
+          "lower": 0.0,
+          "n": 1109,
+          "mean_probability": 0.03835158538230547,
+          "observed_fraction": 0.05049594229035167
+        },
+        {
+          "lower": 0.2,
+          "n": 37,
+          "mean_probability": 0.2575073405455226,
+          "observed_fraction": 0.24324324324324326
+        },
+        {
+          "lower": 0.30000000000000004,
+          "n": 54,
+          "mean_probability": 0.3486613292303094,
+          "observed_fraction": 0.24074074074074073
+        },
+        {
+          "lower": 0.5,
+          "n": 26,
+          "mean_probability": 0.580125417146475,
+          "observed_fraction": 0.3076923076923077
+        },
+        {
+          "lower": 0.6000000000000001,
+          "n": 146,
+          "mean_probability": 0.6814016247698824,
+          "observed_fraction": 0.726027397260274
+        },
+        {
+          "lower": 0.7000000000000001,
+          "n": 128,
+          "mean_probability": 0.728283165829142,
+          "observed_fraction": 0.84375
+        }
+      ]
+    }
+  },
+  "best_params": {
+    "C": 10,
+    "gamma": "scale"
+  },
+  "cv_macro_f1": 0.6727661071732829,
+  "cv_folds": 5,
+  "cv_scoring": "f1_macro",
+  "candidate_count": 24,
+  "model_version": "2.0.0",
+  "training_timestamp": "2026-10-02T19:14:14+00:00",
+  "training_date": "2026-10-02T19:14:14+00:00",
+  "random_seed": 42,
+  "dataset_size": 10000,
+  "total_records": 10000,
+  "split_sizes": {
+    "train": 7000,
+    "validation": 1500,
+    "test": 1500
+  },
+  "class_distribution": {
+    "Verified": 6000,
+    "Manual Review": 2000,
+    "Rejected": 2000
+  },
+  "per_split_class_distributions": {
+    "train": {
+      "Verified": 4200,
+      "Rejected": 1400,
+      "Manual Review": 1400
+    },
+    "validation": {
+      "Verified": 900,
+      "Manual Review": 300,
+      "Rejected": 300
+    },
+    "test": {
+      "Verified": 900,
+      "Manual Review": 300,
+      "Rejected": 300
+    }
+  },
+  "features": [
+    "face_match_score",
+    "liveness_score",
+    "ocr_confidence_score",
+    "blur_score",
+    "brightness_score",
+    "contrast_score"
+  ],
+  "feature_bounds": [
+    [
+      0,
+      100
+    ],
+    [
+      0,
+      1
+    ],
+    [
+      0,
+      1
+    ],
+    [
+      0,
+      null
+    ],
+    [
+      0,
+      255
+    ],
+    [
+      0,
+      127.5
+    ]
+  ],
+  "kernel": "rbf",
+  "feature_generation_parameters": {
+    "configuration": {
+      "seed": 42,
+      "class_counts": {
+        "Verified": 6000,
+        "Manual Review": 2000,
+        "Rejected": 2000
+      },
+      "provenance": "Benchmark moments are computed from existing local measured CSVs. Scenario mixtures, borderline distributions, quality shifts and measurement variation are modelling assumptions, not benchmark results or real fraud prevalence.",
+      "face_borderline": [
+        45,
+        16
+      ],
+      "face_difficult_impostor": [
+        32,
+        18
+      ],
+      "live_borderline": [
+        0.65,
+        0.17
+      ],
+      "live_difficult_attack": [
+        0.43,
+        0.24
+      ],
+      "ocr_borderline": [
+        0.53,
+        0.19
+      ],
+      "ocr_mismatch": [
+        0.22,
+        0.17
+      ],
+      "clear_ocr_quantile": 0.5,
+      "poor_quality_shift": [
+        -0.65,
+        -20,
+        -7
+      ],
+      "quality_observation_noise": [
+        0.12,
+        4,
+        2
+      ],
+      "face_measurement_sd": 3,
+      "live_measurement_sd": 0.025,
+      "ocr_measurement_sd": 0.04,
+      "ocr_quality_penalty": 0.16,
+      "quality_logblur_reference": 3.4,
+      "quality_contrast_reference": 25,
+      "scenarios": {
+        "Verified": [
+          [
+            "consistent_genuine",
+            0.7,
+            "genuine",
+            "real",
+            "clear",
+            false
+          ],
+          [
+            "genuine_reading_variation",
+            0.2,
+            "genuine",
+            "real",
+            "borderline",
+            false
+          ],
+          [
+            "genuine_face_variation",
+            0.1,
+            "borderline",
+            "real",
+            "clear",
+            false
+          ]
+        ],
+        "Manual Review": [
+          [
+            "uncertain_face",
+            0.2,
+            "borderline",
+            "real",
+            "clear",
+            false
+          ],
+          [
+            "uncertain_document",
+            0.2,
+            "genuine",
+            "real",
+            "borderline",
+            false
+          ],
+          [
+            "uncertain_presentation",
+            0.2,
+            "genuine",
+            "borderline",
+            "clear",
+            false
+          ],
+          [
+            "recapture_needed",
+            0.25,
+            "genuine",
+            "real",
+            "clear",
+            true
+          ],
+          [
+            "multiple_uncertainties",
+            0.15,
+            "borderline",
+            "borderline",
+            "borderline",
+            false
+          ]
+        ],
+        "Rejected": [
+          [
+            "identity_mismatch",
+            0.25,
+            "impostor",
+            "real",
+            "clear",
+            false
+          ],
+          [
+            "photo_attack",
+            0.25,
+            "genuine",
+            "attack",
+            "clear",
+            false
+          ],
+          [
+            "document_mismatch",
+            0.2,
+            "genuine",
+            "real",
+            "mismatch",
+            false
+          ],
+          [
+            "difficult_identity_mismatch",
+            0.15,
+            "difficult_impostor",
+            "real",
+            "clear",
+            false
+          ],
+          [
+            "difficult_presentation_attack",
+            0.15,
+            "genuine",
+            "difficult_attack",
+            "clear",
+            false
+          ]
+        ]
+      }
+    },
+    "measured_sources": {
+      "lfw_face_match": {
+        "rows": 1000,
+        "sha256": "ed82a85dfb6ab74ab338c1d396eb3cb66439a7a10784c12449f408ed5db9f86c"
+      },
+      "nuaa_liveness": {
+        "rows": 1200,
+        "sha256": "bbecefd0c98140ec54a8c230c1c4abf1fc57c9faf129056a4d3957e066787e5f"
+      },
+      "midv_image_quality": {
+        "rows": 500,
+        "sha256": "c39f918cdc086f0bb02dd4f8406f049121788c03487379a38f025e1e28250326"
+      },
+      "midv_ocr": {
+        "rows": 480,
+        "sha256": "5b13defefbef0ddf92df071b0c933e04a1e2ae81cff4542269cdd184da2c25f1"
+      }
+    },
+    "measured_parameters": {
+      "face": {
+        "genuine": [
+          64.81733419999999,
+          16.47402134717157
+        ],
+        "impostor": [
+          2.2927294000000003,
+          3.5656385254627487
+        ]
+      },
+      "liveness": {
+        "photo_attack": [
+          0.0199725,
+          0.07516618512376493
+        ],
+        "real": [
+          0.9689096666666668,
+          0.07043918443874983
+        ]
+      },
+      "ocr_clear_conditional": [
+        0.76895625,
+        0.1489445240948629
+      ],
+      "ocr_all": [
+        0.45190208333333337,
+        0.35222573712218497
+      ],
+      "quality_transformed_mean": [
+        3.7200620127901636,
+        171.70002240000002,
+        43.2495346
+      ],
+      "quality_transformed_covariance": [
+        [
+          0.7211578661338847,
+          11.38622734783699,
+          0.4879691908211453
+        ],
+        [
+          11.38622734783699,
+          2172.433061105429,
+          -275.16620785919343
+        ],
+        [
+          0.4879691908211453,
+          -275.16620785919343,
+          288.27221128831945
+        ]
+      ]
+    },
+    "scenario_counts": {
+      "consistent_genuine": 4263,
+      "genuine_reading_variation": 1169,
+      "genuine_face_variation": 568,
+      "uncertain_face": 387,
+      "uncertain_document": 445,
+      "uncertain_presentation": 381,
+      "recapture_needed": 500,
+      "multiple_uncertainties": 287,
+      "identity_mismatch": 516,
+      "photo_attack": 486,
+      "document_mismatch": 378,
+      "difficult_identity_mismatch": 315,
+      "difficult_presentation_attack": 305
+    },
+    "caveat": "Truncated normals approximate benchmark moments; resulting moments differ after truncation. Joint KYC labels and cross-modality dependencies are assumptions. No benchmark is a joint KYC ground-truth dataset."
+  },
+  "library_versions": {
+    "scikit-learn": "1.9.0",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "pandas": "3.0.6",
+    "joblib": "1.6.0",
+    "matplotlib": "3.11.2",
+    "flask": "3.1.3"
+  },
+  "python_version": "3.13.3",
+  "svm_parameters": {
+    "C": 10,
+    "break_ties": false,
+    "cache_size": 200,
+    "class_weight": "balanced",
+    "coef0": 0.0,
+    "decision_function_shape": "ovr",
+    "degree": 3,
+    "gamma": "scale",
+    "kernel": "rbf",
+    "max_iter": -1,
+    "probability": "deprecated",
+    "random_state": 42,
+    "shrinking": true,
+    "tol": 0.001,
+    "verbose": false
+  },
+  "scaler_parameters": {
+    "clip": true,
+    "copy": true,
+    "feature_range": [
+      0,
+      1
+    ]
+  },
+  "scaler_training_min": [
+    0.0,
+    0.0,
+    0.0,
+    0.8096894608999268,
+    0.0,
+    0.0
+  ],
+  "scaler_training_max": [
+    100.0,
+    1.0,
+    1.0,
+    756.7545071300684,
+    255.0,
+    103.75139422074238
+  ],
+  "scaler_samples_seen": 7000,
+  "svm_permutation_importance": [
+    {
+      "feature": "face_match_score",
+      "importance": 0.10722688548159023,
+      "std": 0.008111626334498691,
+      "repeats": [
+        0.1169267292341678,
+        0.09807316376476205,
+        0.1036219788450834,
+        0.10841363865815179,
+        0.10650079463099815,
+        0.10225300884983635,
+        0.10113219284657948,
+        0.08963052685908024,
+        0.10405635054060236,
+        0.12512428047247598,
+        0.1082458000654849,
+        0.11529361047285736,
+        0.12022298538794995,
+        0.09665704370062056,
+        0.10770761576731724,
+        0.10828777650301658,
+        0.10476808726445486,
+        0.10323581766965506,
+        0.1112219323010788,
+        0.11316437579763206
+      ]
+    },
+    {
+      "feature": "liveness_score",
+      "importance": 0.18001530582065825,
+      "std": 0.010315865716620366,
+      "repeats": [
+        0.1672609430064062,
+        0.18266443809572425,
+        0.17677313566043612,
+        0.17338150654384432,
+        0.18330610062716374,
+        0.16043329419242042,
+        0.1771620062141292,
+        0.1883917367905958,
+        0.17334719887525474,
+        0.20530293856308035,
+        0.186269150658109,
+        0.1958520826415338,
+        0.1863294192173836,
+        0.16916915084004386,
+        0.17020517780457184,
+        0.1855216431097798,
+        0.17952395433098206,
+        0.1836779951030812,
+        0.18654891288327885,
+        0.16918533125534607
+      ]
+    },
+    {
+      "feature": "ocr_confidence_score",
+      "importance": 0.047298583615062714,
+      "std": 0.006824260775512612,
+      "repeats": [
+        0.04628244980288465,
+        0.0441443849136941,
+        0.047796185201932295,
+        0.030426462442711966,
+        0.049181249884756584,
+        0.049274896458761264,
+        0.04389579374013519,
+        0.05149698161788874,
+        0.03780005762462402,
+        0.03402832768472752,
+        0.05420547696087952,
+        0.04968403619605666,
+        0.059539704168831475,
+        0.05365579546358301,
+        0.050977307537720895,
+        0.054563412177908166,
+        0.04496642769923509,
+        0.04648892398106286,
+        0.046324742721612355,
+        0.051239056022247986
+      ]
+    },
+    {
+      "feature": "blur_score",
+      "importance": 0.001410492646212319,
+      "std": 0.0029981177881790635,
+      "repeats": [
+        0.0022654954097638402,
+        0.0003331114536654356,
+        0.00047052120353241467,
+        0.0030043978382927605,
+        0.00037420279151012537,
+        0.0044265071747318085,
+        0.00042560008544034744,
+        -0.004424890835779793,
+        0.0042363696909151205,
+        -0.0018905163047781004,
+        0.005205014886501713,
+        0.004104036949721057,
+        -0.00022774797523306134,
+        0.004499767572812563,
+        -0.003549968574703355,
+        -0.00030504841757683643,
+        -0.0030593441581894254,
+        0.004604075300943311,
+        0.002017429036523133,
+        0.005700839796153323
+      ]
+    },
+    {
+      "feature": "brightness_score",
+      "importance": -7.191664721823421e-05,
+      "std": 0.003925327696129665,
+      "repeats": [
+        -0.00433497884414924,
+        -0.0012976002065399062,
+        -0.0022473985941541264,
+        -0.0035583289989652434,
+        0.003079940025535466,
+        0.004022355468425998,
+        -0.00247851233391172,
+        -0.0007872137440985139,
+        0.0014612853476734244,
+        -0.0009736344388033835,
+        -0.0022262745979695353,
+        0.006621448786839901,
+        -0.0022426693740582593,
+        -0.004016138061699759,
+        0.0008544038963846923,
+        0.0069201370512347316,
+        0.007260768747146651,
+        -0.0053599618749997635,
+        0.0029483248915609384,
+        -0.005084286089817036
+      ]
+    },
+    {
+      "feature": "contrast_score",
+      "importance": -0.004103338634338416,
+      "std": 0.005581560233693798,
+      "repeats": [
+        0.0018461852002225054,
+        -1.0302971005571315e-05,
+        -0.0127298348242606,
+        0.0014617129198248868,
+        -0.00046974815980271867,
+        -0.012365174424869618,
+        -0.00695592438641901,
+        -0.014590164859417443,
+        -0.01444829212064802,
+        -0.005547357877579984,
+        0.001973653126619901,
+        0.0031444512279763526,
+        -0.0018664178413321242,
+        -0.006026625305984634,
+        -0.0029130168154694047,
+        -0.003112592286111493,
+        -0.004574746078214509,
+        0.0026436219647361092,
+        -0.0014905961747263552,
+        -0.006035603000306589
+      ]
+    }
+  ],
+  "decision_tree_feature_importance": [
+    {
+      "feature": "face_match_score",
+      "importance": 0.4110041169906758
+    },
+    {
+      "feature": "liveness_score",
+      "importance": 0.5888252060676145
+    },
+    {
+      "feature": "ocr_confidence_score",
+      "importance": 0.0
+    },
+    {
+      "feature": "blur_score",
+      "importance": 0.0
+    },
+    {
+      "feature": "brightness_score",
+      "importance": 0.0001706769417097141
+    },
+    {
+      "feature": "contrast_score",
+      "importance": 0.0
+    }
+  ],
+  "decision_tree": {
+    "accuracy": 0.742,
+    "macro_f1": 0.6181647523933141,
+    "weighted_f1": 0.7043582087138713,
+    "per_class": {
+      "verified": {
+        "label": "Verified",
+        "precision": 0.725328947368421,
+        "recall": 0.98,
+        "f1-score": 0.833648393194707,
+        "support": 900.0,
+        "f1": 0.833648393194707
+      },
+      "review": {
+        "label": "Manual Review",
+        "precision": 0.5929203539823009,
+        "recall": 0.22333333333333333,
+        "f1-score": 0.324455205811138,
+        "support": 300.0,
+        "f1": 0.324455205811138
+      },
+      "rejected": {
+        "label": "Rejected",
+        "precision": 0.9590643274853801,
+        "recall": 0.5466666666666666,
+        "f1-score": 0.6963906581740976,
+        "support": 300.0,
+        "f1": 0.6963906581740976
+      }
+    },
+    "classification_report": {
+      "Verified": {
+        "precision": 0.725328947368421,
+        "recall": 0.98,
+        "f1-score": 0.833648393194707,
+        "support": 900.0
+      },
+      "Manual Review": {
+        "precision": 0.5929203539823009,
+        "recall": 0.22333333333333333,
+        "f1-score": 0.324455205811138,
+        "support": 300.0
+      },
+      "Rejected": {
+        "precision": 0.9590643274853801,
+        "recall": 0.5466666666666666,
+        "f1-score": 0.6963906581740976,
+        "support": 300.0
+      },
+      "accuracy": 0.742,
+      "macro avg": {
+        "precision": 0.7591045429453672,
+        "recall": 0.5833333333333334,
+        "f1-score": 0.6181647523933141,
+        "support": 1500.0
+      },
+      "weighted avg": {
+        "precision": 0.7455943047145888,
+        "recall": 0.742,
+        "f1-score": 0.7043582087138714,
+        "support": 1500.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        882,
+        17,
+        1
+      ],
+      [
+        227,
+        67,
+        6
+      ],
+      [
+        107,
+        29,
+        164
+      ]
+    ],
+    "confusion_matrix_labels": [
+      "Verified",
+      "Manual Review",
+      "Rejected"
+    ],
+    "errors": {
+      "Verified -> Manual Review": 17,
+      "Verified -> Rejected": 1,
+      "Manual Review -> Verified": 227,
+      "Manual Review -> Rejected": 6,
+      "Rejected -> Verified": 107,
+      "Rejected -> Manual Review": 29
+    },
+    "probability_calibration": {
+      "log_loss": 0.8052642282549471,
+      "multiclass_brier_sum": 0.47011875261970876,
+      "brier_definition": "Mean sum of squared errors over 3 classes, range [0,2].",
+      "classwise_ece_10_bins": {
+        "Verified": 0.19476485220227807,
+        "Manual Review": 0.1394241221217145,
+        "Rejected": 0.06007197496724985
+      },
+      "reliability_bins": {
+        "Verified": [
+          {
+            "lower": 0.0,
+            "n": 284,
+            "mean_probability": 0.019575989092756894,
+            "observed_fraction": 0.06338028169014084
+          },
+          {
+            "lower": 0.4,
+            "n": 1216,
+            "mean_probability": 0.4953068592057894,
+            "observed_fraction": 0.725328947368421
+          }
+        ],
+        "Manual Review": [
+          {
+            "lower": 0.0,
+            "n": 162,
+            "mean_probability": 0.019394417915789133,
+            "observed_fraction": 0.030864197530864196
+          },
+          {
+            "lower": 0.1,
+            "n": 9,
+            "mean_probability": 0.1458333333333333,
+            "observed_fraction": 0.1111111111111111
+          },
+          {
+            "lower": 0.30000000000000004,
+            "n": 1216,
+            "mean_probability": 0.3451263537905948,
+            "observed_fraction": 0.18667763157894737
+          },
+          {
+            "lower": 0.5,
+            "n": 1,
+            "mean_probability": 0.5714285714285715,
+            "observed_fraction": 0.0
+          },
+          {
+            "lower": 0.7000000000000001,
+            "n": 112,
+            "mean_probability": 0.7207187866440873,
+            "observed_fraction": 0.5982142857142857
+          }
+        ],
+        "Rejected": [
+          {
+            "lower": 0.1,
+            "n": 1216,
+            "mean_probability": 0.15956678700359914,
+            "observed_fraction": 0.08799342105263158
+          },
+          {
+            "lower": 0.2,
+            "n": 112,
+            "mean_probability": 0.24279999289327023,
+            "observed_fraction": 0.25
+          },
+          {
+            "lower": 0.4,
+            "n": 1,
+            "mean_probability": 0.4285714285714286,
+            "observed_fraction": 1.0
+          },
+          {
+            "lower": 0.8,
+            "n": 9,
+            "mean_probability": 0.8541666666666663,
+            "observed_fraction": 0.8888888888888888
+          },
+          {
+            "lower": 0.9,
+            "n": 162,
+            "mean_probability": 0.9715087659698514,
+            "observed_fraction": 0.9629629629629629
+          }
+        ]
+      }
+    },
+    "best_params": {
+      "max_depth": 3,
+      "min_samples_leaf": 5
+    },
+    "cv_macro_f1": 0.6547013075068495,
+    "calibrated_comparison": {
+      "accuracy": 0.742,
+      "macro_f1": 0.6181647523933141,
+      "weighted_f1": 0.7043582087138713,
+      "per_class": {
+        "verified": {
+          "label": "Verified",
+          "precision": 0.725328947368421,
+          "recall": 0.98,
+          "f1-score": 0.833648393194707,
+          "support": 900.0,
+          "f1": 0.833648393194707
+        },
+        "review": {
+          "label": "Manual Review",
+          "precision": 0.5929203539823009,
+          "recall": 0.22333333333333333,
+          "f1-score": 0.324455205811138,
+          "support": 300.0,
+          "f1": 0.324455205811138
+        },
+        "rejected": {
+          "label": "Rejected",
+          "precision": 0.9590643274853801,
+          "recall": 0.5466666666666666,
+          "f1-score": 0.6963906581740976,
+          "support": 300.0,
+          "f1": 0.6963906581740976
+        }
+      },
+      "classification_report": {
+        "Verified": {
+          "precision": 0.725328947368421,
+          "recall": 0.98,
+          "f1-score": 0.833648393194707,
+          "support": 900.0
+        },
+        "Manual Review": {
+          "precision": 0.5929203539823009,
+          "recall": 0.22333333333333333,
+          "f1-score": 0.324455205811138,
+          "support": 300.0
+        },
+        "Rejected": {
+          "precision": 0.9590643274853801,
+          "recall": 0.5466666666666666,
+          "f1-score": 0.6963906581740976,
+          "support": 300.0
+        },
+        "accuracy": 0.742,
+        "macro avg": {
+          "precision": 0.7591045429453672,
+          "recall": 0.5833333333333334,
+          "f1-score": 0.6181647523933141,
+          "support": 1500.0
+        },
+        "weighted avg": {
+          "precision": 0.7455943047145888,
+          "recall": 0.742,
+          "f1-score": 0.7043582087138714,
+          "support": 1500.0
+        }
+      },
+      "confusion_matrix": [
+        [
+          882,
+          17,
+          1
+        ],
+        [
+          227,
+          67,
+          6
+        ],
+        [
+          107,
+          29,
+          164
+        ]
+      ],
+      "confusion_matrix_labels": [
+        "Verified",
+        "Manual Review",
+        "Rejected"
+      ],
+      "errors": {
+        "Verified -> Manual Review": 17,
+        "Verified -> Rejected": 1,
+        "Manual Review -> Verified": 227,
+        "Manual Review -> Rejected": 6,
+        "Rejected -> Verified": 107,
+        "Rejected -> Manual Review": 29
+      },
+      "probability_calibration": {
+        "log_loss": 0.7167093856144868,
+        "multiclass_brier_sum": 0.4038775481820693,
+        "brier_definition": "Mean sum of squared errors over 3 classes, range [0,2].",
+        "classwise_ece_10_bins": {
+          "Verified": 0.010358561420272043,
+          "Manual Review": 0.021693456005693786,
+          "Rejected": 0.01165541896508034
+        },
+        "reliability_bins": {
+          "Verified": [
+            {
+              "lower": 0.0,
+              "n": 284,
+              "mean_probability": 0.06026087784620375,
+              "observed_fraction": 0.06338028169014084
+            },
+            {
+              "lower": 0.7000000000000001,
+              "n": 1216,
+              "mean_probability": 0.7373782330910608,
+              "observed_fraction": 0.725328947368421
+            }
+          ],
+          "Manual Review": [
+            {
+              "lower": 0.0,
+              "n": 171,
+              "mean_probability": 0.03395480299492596,
+              "observed_fraction": 0.03508771929824561
+            },
+            {
+              "lower": 0.1,
+              "n": 1216,
+              "mean_probability": 0.1746317421142888,
+              "observed_fraction": 0.18667763157894737
+            },
+            {
+              "lower": 0.5,
+              "n": 1,
+              "mean_probability": 0.5064836024599239,
+              "observed_fraction": 0.0
+            },
+            {
+              "lower": 0.7000000000000001,
+              "n": 112,
+              "mean_probability": 0.7517158047248953,
+              "observed_fraction": 0.5982142857142857
+            }
+          ],
+          "Rejected": [
+            {
+              "lower": 0.0,
+              "n": 1216,
+              "mean_probability": 0.08799002479465037,
+              "observed_fraction": 0.08799342105263158
+            },
+            {
+              "lower": 0.1,
+              "n": 110,
+              "mean_probability": 0.17142900207222067,
+              "observed_fraction": 0.2545454545454545
+            },
+            {
+              "lower": 0.2,
+              "n": 2,
+              "mean_probability": 0.21499606145324143,
+              "observed_fraction": 0.0
+            },
+            {
+              "lower": 0.4,
+              "n": 1,
+              "mean_probability": 0.43653810392574083,
+              "observed_fraction": 1.0
+            },
+            {
+              "lower": 0.8,
+              "n": 9,
+              "mean_probability": 0.8885396281342379,
+              "observed_fraction": 0.8888888888888888
+            },
+            {
+              "lower": 0.9,
+              "n": 162,
+              "mean_probability": 0.9176568428389689,
+              "observed_fraction": 0.9629629629629629
+            }
+          ]
+        }
+      }
+    }
+  },
+  "identity_only_model": {
+    "accuracy": 0.736,
+    "macro_f1": 0.6397350372152794,
+    "weighted_f1": 0.7143823910727837,
+    "per_class": {
+      "verified": {
+        "label": "Verified",
+        "precision": 0.7646502835538752,
+        "recall": 0.8988888888888888,
+        "f1-score": 0.8263534218590398,
+        "support": 900.0,
+        "f1": 0.8263534218590398
+      },
+      "review": {
+        "label": "Manual Review",
+        "precision": 0.49700598802395207,
+        "recall": 0.27666666666666667,
+        "f1-score": 0.3554603854389722,
+        "support": 300.0,
+        "f1": 0.3554603854389722
+      },
+      "rejected": {
+        "label": "Rejected",
+        "precision": 0.7709090909090909,
+        "recall": 0.7066666666666667,
+        "f1-score": 0.7373913043478261,
+        "support": 300.0,
+        "f1": 0.7373913043478261
+      }
+    },
+    "classification_report": {
+      "Verified": {
+        "precision": 0.7646502835538752,
+        "recall": 0.8988888888888888,
+        "f1-score": 0.8263534218590398,
+        "support": 900.0
+      },
+      "Manual Review": {
+        "precision": 0.49700598802395207,
+        "recall": 0.27666666666666667,
+        "f1-score": 0.3554603854389722,
+        "support": 300.0
+      },
+      "Rejected": {
+        "precision": 0.7709090909090909,
+        "recall": 0.7066666666666667,
+        "f1-score": 0.7373913043478261,
+        "support": 300.0
+      },
+      "accuracy": 0.736,
+      "macro avg": {
+        "precision": 0.6775217874956394,
+        "recall": 0.6274074074074073,
+        "f1-score": 0.6397350372152794,
+        "support": 1500.0
+      },
+      "weighted avg": {
+        "precision": 0.7123731859189336,
+        "recall": 0.736,
+        "f1-score": 0.7143823910727837,
+        "support": 1500.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        809,
+        49,
+        42
+      ],
+      [
+        196,
+        83,
+        21
+      ],
+      [
+        53,
+        35,
+        212
+      ]
+    ],
+    "confusion_matrix_labels": [
+      "Verified",
+      "Manual Review",
+      "Rejected"
+    ],
+    "errors": {
+      "Verified -> Manual Review": 49,
+      "Verified -> Rejected": 42,
+      "Manual Review -> Verified": 196,
+      "Manual Review -> Rejected": 21,
+      "Rejected -> Verified": 53,
+      "Rejected -> Manual Review": 35
+    },
+    "probability_calibration": {
+      "log_loss": 0.7047054630116645,
+      "multiclass_brier_sum": 0.3989887053099398,
+      "brier_definition": "Mean sum of squared errors over 3 classes, range [0,2].",
+      "classwise_ece_10_bins": {
+        "Verified": 0.03739665158501445,
+        "Manual Review": 0.019859595859616313,
+        "Rejected": 0.025567572804229458
+      },
+      "reliability_bins": {
+        "Verified": [
+          {
+            "lower": 0.1,
+            "n": 332,
+            "mean_probability": 0.1310689919208415,
+            "observed_fraction": 0.10542168674698796
+          },
+          {
+            "lower": 0.2,
+            "n": 1,
+            "mean_probability": 0.20191982255208038,
+            "observed_fraction": 0.0
+          },
+          {
+            "lower": 0.30000000000000004,
+            "n": 34,
+            "mean_probability": 0.35153656009372447,
+            "observed_fraction": 0.5588235294117647
+          },
+          {
+            "lower": 0.4,
+            "n": 86,
+            "mean_probability": 0.4549830208190369,
+            "observed_fraction": 0.5348837209302325
+          },
+          {
+            "lower": 0.5,
+            "n": 9,
+            "mean_probability": 0.5365994562340282,
+            "observed_fraction": 0.4444444444444444
+          },
+          {
+            "lower": 0.7000000000000001,
+            "n": 584,
+            "mean_probability": 0.7933560020289848,
+            "observed_fraction": 0.7585616438356164
+          },
+          {
+            "lower": 0.8,
+            "n": 454,
+            "mean_probability": 0.8046467726428208,
+            "observed_fraction": 0.7775330396475771
+          }
+        ],
+        "Manual Review": [
+          {
+            "lower": 0.0,
+            "n": 40,
+            "mean_probability": 0.02629753413340245,
+            "observed_fraction": 0.2
+          },
+          {
+            "lower": 0.1,
+            "n": 1283,
+            "mean_probability": 0.1599055456549462,
+            "observed_fraction": 0.16289945440374123
+          },
+          {
+            "lower": 0.4,
+            "n": 48,
+            "mean_probability": 0.48474886830133884,
+            "observed_fraction": 0.1875
+          },
+          {
+            "lower": 0.5,
+            "n": 126,
+            "mean_probability": 0.5354044444105007,
+            "observed_fraction": 0.5714285714285714
+          },
+          {
+            "lower": 0.6000000000000001,
+            "n": 3,
+            "mean_probability": 0.602291817561548,
+            "observed_fraction": 0.6666666666666666
+          }
+        ],
+        "Rejected": [
+          {
+            "lower": 0.0,
+            "n": 1117,
+            "mean_probability": 0.041291034851599996,
+            "observed_fraction": 0.051924798567591766
+          },
+          {
+            "lower": 0.2,
+            "n": 42,
+            "mean_probability": 0.26612637937875877,
+            "observed_fraction": 0.2857142857142857
+          },
+          {
+            "lower": 0.30000000000000004,
+            "n": 66,
+            "mean_probability": 0.3330444107369314,
+            "observed_fraction": 0.2727272727272727
+          },
+          {
+            "lower": 0.5,
+            "n": 8,
+            "mean_probability": 0.5866535235497476,
+            "observed_fraction": 0.375
+          },
+          {
+            "lower": 0.6000000000000001,
+            "n": 133,
+            "mean_probability": 0.6822104402073654,
+            "observed_fraction": 0.7293233082706767
+          },
+          {
+            "lower": 0.7000000000000001,
+            "n": 134,
+            "mean_probability": 0.7335031170146762,
+            "observed_fraction": 0.835820895522388
+          }
+        ]
+      }
+    },
+    "best_params": {
+      "C": 100,
+      "gamma": "auto"
+    },
+    "cv_macro_f1": 0.675051351254578,
+    "cv_folds": 5,
+    "cv_scoring": "f1_macro",
+    "candidate_count": 24
+  },
+  "ablation_comparison": {
+    "full": {
+      "accuracy": 0.7433333333333333,
+      "macro_f1": 0.6213828294425309,
+      "weighted_f1": 0.7055660160734788,
+      "per_class": {
+        "verified": {
+          "label": "Verified",
+          "precision": 0.7531531531531531,
+          "recall": 0.9288888888888889,
+          "f1-score": 0.8318407960199005,
+          "support": 900.0,
+          "f1": 0.8318407960199005
+        },
+        "review": {
+          "label": "Manual Review",
+          "precision": 0.6333333333333333,
+          "recall": 0.19,
+          "f1-score": 0.2923076923076923,
+          "support": 300.0,
+          "f1": 0.2923076923076923
+        },
+        "rejected": {
+          "label": "Rejected",
+          "precision": 0.74,
+          "recall": 0.74,
+          "f1-score": 0.74,
+          "support": 300.0,
+          "f1": 0.74
+        }
+      },
+      "classification_report": {
+        "Verified": {
+          "precision": 0.7531531531531531,
+          "recall": 0.9288888888888889,
+          "f1-score": 0.8318407960199005,
+          "support": 900.0
+        },
+        "Manual Review": {
+          "precision": 0.6333333333333333,
+          "recall": 0.19,
+          "f1-score": 0.2923076923076923,
+          "support": 300.0
+        },
+        "Rejected": {
+          "precision": 0.74,
+          "recall": 0.74,
+          "f1-score": 0.74,
+          "support": 300.0
+        },
+        "accuracy": 0.7433333333333333,
+        "macro avg": {
+          "precision": 0.7088288288288288,
+          "recall": 0.6196296296296296,
+          "f1-score": 0.6213828294425309,
+          "support": 1500.0
+        },
+        "weighted avg": {
+          "precision": 0.7265585585585587,
+          "recall": 0.7433333333333333,
+          "f1-score": 0.7055660160734788,
+          "support": 1500.0
+        }
+      },
+      "confusion_matrix": [
+        [
+          836,
+          12,
+          52
+        ],
+        [
+          217,
+          57,
+          26
+        ],
+        [
+          57,
+          21,
+          222
+        ]
+      ],
+      "confusion_matrix_labels": [
+        "Verified",
+        "Manual Review",
+        "Rejected"
+      ],
+      "errors": {
+        "Verified -> Manual Review": 12,
+        "Verified -> Rejected": 52,
+        "Manual Review -> Verified": 217,
+        "Manual Review -> Rejected": 26,
+        "Rejected -> Verified": 57,
+        "Rejected -> Manual Review": 21
+      },
+      "probability_calibration": {
+        "log_loss": 0.6926558885224231,
+        "multiclass_brier_sum": 0.39151981761144256,
+        "brier_definition": "Mean sum of squared errors over 3 classes, range [0,2].",
+        "classwise_ece_10_bins": {
+          "Verified": 0.03689608840272317,
+          "Manual Review": 0.025965313218950934,
+          "Rejected": 0.03213463572861308
+        },
+        "reliability_bins": {
+          "Verified": [
+            {
+              "lower": 0.1,
+              "n": 317,
+              "mean_probability": 0.14026710028308606,
+              "observed_fraction": 0.08832807570977919
+            },
+            {
+              "lower": 0.2,
+              "n": 8,
+              "mean_probability": 0.2152357534126131,
+              "observed_fraction": 0.5
+            },
+            {
+              "lower": 0.30000000000000004,
+              "n": 51,
+              "mean_probability": 0.3584358181086259,
+              "observed_fraction": 0.49019607843137253
+            },
+            {
+              "lower": 0.4,
+              "n": 44,
+              "mean_probability": 0.47841154824296656,
+              "observed_fraction": 0.5
+            },
+            {
+              "lower": 0.5,
+              "n": 138,
+              "mean_probability": 0.5263050099711166,
+              "observed_fraction": 0.5652173913043478
+            },
+            {
+              "lower": 0.7000000000000001,
+              "n": 375,
+              "mean_probability": 0.7927788757723261,
+              "observed_fraction": 0.744
+            },
+            {
+              "lower": 0.8,
+              "n": 567,
+              "mean_probability": 0.8090481558213939,
+              "observed_fraction": 0.818342151675485
+            }
+          ],
+          "Manual Review": [
+            {
+              "lower": 0.0,
+              "n": 65,
+              "mean_probability": 0.038149697824000524,
+              "observed_fraction": 0.15384615384615385
+            },
+            {
+              "lower": 0.1,
+              "n": 1178,
+              "mean_probability": 0.15822143700593702,
+              "observed_fraction": 0.1502546689303905
+            },
+            {
+              "lower": 0.4,
+              "n": 218,
+              "mean_probability": 0.4480123017932643,
+              "observed_fraction": 0.3853211009174312
+            },
+            {
+              "lower": 0.5,
+              "n": 39,
+              "mean_probability": 0.5288162665881792,
+              "observed_fraction": 0.7435897435897436
+            }
+          ],
+          "Rejected": [
+            {
+              "lower": 0.0,
+              "n": 1109,
+              "mean_probability": 0.03835158538230547,
+              "observed_fraction": 0.05049594229035167
+            },
+            {
+              "lower": 0.2,
+              "n": 37,
+              "mean_probability": 0.2575073405455226,
+              "observed_fraction": 0.24324324324324326
+            },
+            {
+              "lower": 0.30000000000000004,
+              "n": 54,
+              "mean_probability": 0.3486613292303094,
+              "observed_fraction": 0.24074074074074073
+            },
+            {
+              "lower": 0.5,
+              "n": 26,
+              "mean_probability": 0.580125417146475,
+              "observed_fraction": 0.3076923076923077
+            },
+            {
+              "lower": 0.6000000000000001,
+              "n": 146,
+              "mean_probability": 0.6814016247698824,
+              "observed_fraction": 0.726027397260274
+            },
+            {
+              "lower": 0.7000000000000001,
+              "n": 128,
+              "mean_probability": 0.728283165829142,
+              "observed_fraction": 0.84375
+            }
+          ]
+        }
+      },
+      "best_params": {
+        "C": 10,
+        "gamma": "scale"
+      },
+      "cv_macro_f1": 0.6727661071732829,
+      "cv_folds": 5,
+      "cv_scoring": "f1_macro",
+      "candidate_count": 24
+    },
+    "identity_only": {
+      "accuracy": 0.736,
+      "macro_f1": 0.6397350372152794,
+      "weighted_f1": 0.7143823910727837,
+      "per_class": {
+        "verified": {
+          "label": "Verified",
+          "precision": 0.7646502835538752,
+          "recall": 0.8988888888888888,
+          "f1-score": 0.8263534218590398,
+          "support": 900.0,
+          "f1": 0.8263534218590398
+        },
+        "review": {
+          "label": "Manual Review",
+          "precision": 0.49700598802395207,
+          "recall": 0.27666666666666667,
+          "f1-score": 0.3554603854389722,
+          "support": 300.0,
+          "f1": 0.3554603854389722
+        },
+        "rejected": {
+          "label": "Rejected",
+          "precision": 0.7709090909090909,
+          "recall": 0.7066666666666667,
+          "f1-score": 0.7373913043478261,
+          "support": 300.0,
+          "f1": 0.7373913043478261
+        }
+      },
+      "classification_report": {
+        "Verified": {
+          "precision": 0.7646502835538752,
+          "recall": 0.8988888888888888,
+          "f1-score": 0.8263534218590398,
+          "support": 900.0
+        },
+        "Manual Review": {
+          "precision": 0.49700598802395207,
+          "recall": 0.27666666666666667,
+          "f1-score": 0.3554603854389722,
+          "support": 300.0
+        },
+        "Rejected": {
+          "precision": 0.7709090909090909,
+          "recall": 0.7066666666666667,
+          "f1-score": 0.7373913043478261,
+          "support": 300.0
+        },
+        "accuracy": 0.736,
+        "macro avg": {
+          "precision": 0.6775217874956394,
+          "recall": 0.6274074074074073,
+          "f1-score": 0.6397350372152794,
+          "support": 1500.0
+        },
+        "weighted avg": {
+          "precision": 0.7123731859189336,
+          "recall": 0.736,
+          "f1-score": 0.7143823910727837,
+          "support": 1500.0
+        }
+      },
+      "confusion_matrix": [
+        [
+          809,
+          49,
+          42
+        ],
+        [
+          196,
+          83,
+          21
+        ],
+        [
+          53,
+          35,
+          212
+        ]
+      ],
+      "confusion_matrix_labels": [
+        "Verified",
+        "Manual Review",
+        "Rejected"
+      ],
+      "errors": {
+        "Verified -> Manual Review": 49,
+        "Verified -> Rejected": 42,
+        "Manual Review -> Verified": 196,
+        "Manual Review -> Rejected": 21,
+        "Rejected -> Verified": 53,
+        "Rejected -> Manual Review": 35
+      },
+      "probability_calibration": {
+        "log_loss": 0.7047054630116645,
+        "multiclass_brier_sum": 0.3989887053099398,
+        "brier_definition": "Mean sum of squared errors over 3 classes, range [0,2].",
+        "classwise_ece_10_bins": {
+          "Verified": 0.03739665158501445,
+          "Manual Review": 0.019859595859616313,
+          "Rejected": 0.025567572804229458
+        },
+        "reliability_bins": {
+          "Verified": [
+            {
+              "lower": 0.1,
+              "n": 332,
+              "mean_probability": 0.1310689919208415,
+              "observed_fraction": 0.10542168674698796
+            },
+            {
+              "lower": 0.2,
+              "n": 1,
+              "mean_probability": 0.20191982255208038,
+              "observed_fraction": 0.0
+            },
+            {
+              "lower": 0.30000000000000004,
+              "n": 34,
+              "mean_probability": 0.35153656009372447,
+              "observed_fraction": 0.5588235294117647
+            },
+            {
+              "lower": 0.4,
+              "n": 86,
+              "mean_probability": 0.4549830208190369,
+              "observed_fraction": 0.5348837209302325
+            },
+            {
+              "lower": 0.5,
+              "n": 9,
+              "mean_probability": 0.5365994562340282,
+              "observed_fraction": 0.4444444444444444
+            },
+            {
+              "lower": 0.7000000000000001,
+              "n": 584,
+              "mean_probability": 0.7933560020289848,
+              "observed_fraction": 0.7585616438356164
+            },
+            {
+              "lower": 0.8,
+              "n": 454,
+              "mean_probability": 0.8046467726428208,
+              "observed_fraction": 0.7775330396475771
+            }
+          ],
+          "Manual Review": [
+            {
+              "lower": 0.0,
+              "n": 40,
+              "mean_probability": 0.02629753413340245,
+              "observed_fraction": 0.2
+            },
+            {
+              "lower": 0.1,
+              "n": 1283,
+              "mean_probability": 0.1599055456549462,
+              "observed_fraction": 0.16289945440374123
+            },
+            {
+              "lower": 0.4,
+              "n": 48,
+              "mean_probability": 0.48474886830133884,
+              "observed_fraction": 0.1875
+            },
+            {
+              "lower": 0.5,
+              "n": 126,
+              "mean_probability": 0.5354044444105007,
+              "observed_fraction": 0.5714285714285714
+            },
+            {
+              "lower": 0.6000000000000001,
+              "n": 3,
+              "mean_probability": 0.602291817561548,
+              "observed_fraction": 0.6666666666666666
+            }
+          ],
+          "Rejected": [
+            {
+              "lower": 0.0,
+              "n": 1117,
+              "mean_probability": 0.041291034851599996,
+              "observed_fraction": 0.051924798567591766
+            },
+            {
+              "lower": 0.2,
+              "n": 42,
+              "mean_probability": 0.26612637937875877,
+              "observed_fraction": 0.2857142857142857
+            },
+            {
+              "lower": 0.30000000000000004,
+              "n": 66,
+              "mean_probability": 0.3330444107369314,
+              "observed_fraction": 0.2727272727272727
+            },
+            {
+              "lower": 0.5,
+              "n": 8,
+              "mean_probability": 0.5866535235497476,
+              "observed_fraction": 0.375
+            },
+            {
+              "lower": 0.6000000000000001,
+              "n": 133,
+              "mean_probability": 0.6822104402073654,
+              "observed_fraction": 0.7293233082706767
+            },
+            {
+              "lower": 0.7000000000000001,
+              "n": 134,
+              "mean_probability": 0.7335031170146762,
+              "observed_fraction": 0.835820895522388
+            }
+          ]
+        }
+      },
+      "best_params": {
+        "C": 100,
+        "gamma": "auto"
+      },
+      "cv_macro_f1": 0.675051351254578,
+      "cv_folds": 5,
+      "cv_scoring": "f1_macro",
+      "candidate_count": 24
+    },
+    "macro_f1_difference_full_minus_identity": -0.018352207772748486,
+    "paired_bootstrap_macro_f1_difference_95_percent_interval": [
+      -0.03600691591113115,
+      -0.000685255611252689
+    ],
+    "bootstrap_repeats": 1000,
+    "caveat": "Conditional on this fitted pair and synthetic population; not real-world or training-seed uncertainty."
+  },
+  "duplicate_diagnostics": {
+    "exact_duplicate_feature_vectors": 0,
+    "conflicting_label_vectors": 0,
+    "cross_split_duplicates": {
+      "train_test": 0,
+      "train_validation": 0,
+      "validation_test": 0
+    },
+    "near_duplicate_pairs": 0,
+    "near_duplicate_definition": "All differences <= face .1, live .001, OCR .001, log1p(blur) .01, brightness .1, contrast .1",
+    "nearest_neighbor_tolerance_distance_percentiles": {
+      "min": 14.391706328282226,
+      "p01": 28.39143885849157,
+      "p50": 64.53915163340258
+    }
+  },
+  "leakage_diagnostics": {
+    "split_rows_disjoint": true,
+    "features_exclude_target_and_scenario_ids": true,
+    "scaler_fit": "Each CV training fold; final scaler on 7000 training rows only.",
+    "tuning": "5-fold stratified training CV only, both SVMs and tree.",
+    "calibration": "Frozen estimators fitted on train; sigmoid calibrators fitted on 1500 validation rows only.",
+    "test": "1500 rows used only for final metrics, diagnostic importance, plots and paired uncertainty, never selection.",
+    "synthetic_label_limitation": "Outcomes assigned by assumed scenarios, not real adjudication. Some scenarios intentionally have identical observable distributions under different latent outcomes.",
+    "single_feature_training_cv_macro_f1": {
+      "face_match_score": 0.4793011614684854,
+      "liveness_score": 0.5593005984693551,
+      "ocr_confidence_score": 0.3801582275188119,
+      "blur_score": 0.3128598072572787,
+      "brightness_score": 0.29314221349682257,
+      "contrast_score": 0.21943920610675693
+    },
+    "benchmark_limitations": "Local measurement files reused as distribution evidence, not independent real-world validation. Raw benchmark images not rerun in this experiment.",
+    "near_perfect_trigger": false,
+    "quality_dominates_permutation": false,
+    "test_experiments_run": 1
+  },
+  "limitations": [
+    "Synthetic joint distributions and adjudication labels are assumptions.",
+    "60/20/20 is an experimental allocation, not prevalence.",
+    "MIDV score is text agreement, not proof of document authenticity.",
+    "LFW and NUAA are limited benchmarks; no demographic, modern attack or device shift validation.",
+    "Calibration is for this synthetic population, not real-world certainty.",
+    "Clipping outside training extrema may conceal production distribution shift.",
+    "No online learning; explicit offline retraining needs confirmed real labels."
+  ]
+}

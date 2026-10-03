@@ -1,8 +1,37 @@
+import json
+import logging
+import os
+from datetime import datetime
+
 from flask import Blueprint, jsonify, request
 import cv2
 import numpy as np
 
 from services.imageQualityService import assess_image_quality
+
+logger = logging.getLogger(__name__)
+QUALITY_DEBUG_ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'debug', 'quality')
+
+
+def _debug_enabled():
+    flag = request.args.get('debug', request.form.get('debug', ''))
+    return str(flag).strip().lower() in ('1', 'true', 'yes', 'on') or str(
+        os.environ.get('OCR_DEBUG', '')
+    ).strip().lower() in ('1', 'true', 'yes', 'on')
+
+
+def _save_quality_debug(image, result, purpose):
+    """Keep the checked image and its scores so a rejected capture can be inspected."""
+    try:
+        os.makedirs(QUALITY_DEBUG_ROOT, exist_ok=True)
+        stamp = datetime.now().strftime('%Y%m%d_%H%M%S_%f')
+        verdict = 'pass' if result.get('passed') else 'fail'
+        base = os.path.join(QUALITY_DEBUG_ROOT, f'{stamp}_{purpose}_{verdict}')
+        cv2.imwrite(base + '.jpg', image, [cv2.IMWRITE_JPEG_QUALITY, 90])
+        with open(base + '.json', 'w', encoding='utf-8') as handle:
+            json.dump(result, handle, indent=2, default=str)
+    except Exception:
+        logger.exception('failed to save quality debug capture')
 
 
 quality_bp = Blueprint('quality', __name__)
@@ -35,7 +64,8 @@ def assess_quality():
             return jsonify({'error': 'Invalid image file'}), 400
 
         # Documents stay stricter for OCR; selfies use laptop-webcam-friendly limits
-        document_result = assess_image_quality(document_image, purpose='document')
+        document_kind = request.form.get('documentKind')
+        document_result = assess_image_quality(document_image, purpose='document', document_kind=document_kind)
         selfie_result = assess_image_quality(selfie_image, purpose='selfie')
 
         overall_passed = document_result['passed'] and selfie_result['passed']
@@ -66,14 +96,28 @@ def assess_single_quality():
         if purpose not in ('document', 'selfie'):
             purpose = 'document'
 
-        result = assess_image_quality(image, purpose=purpose)
+        document_kind = request.form.get('documentKind')
+        result = assess_image_quality(image, purpose=purpose, document_kind=document_kind)
+        logger.info(
+            'quality check purpose=%s kind=%s passed=%s blur=%.1f/%.0f found=%s width=%s frame=%dx%d failures=%s',
+            purpose, result.get('documentKind'), result['passed'], result['blurScore'],
+            result.get('blurThreshold') or 0, result.get('documentFound'), result.get('documentWidthPx'),
+            image.shape[1], image.shape[0], result['failures'],
+        )
+        if _debug_enabled():
+            _save_quality_debug(image, {**result, 'frame': [image.shape[1], image.shape[0]]}, purpose)
 
         return jsonify({
             'passed': result['passed'],
             'failures': result['failures'],
+            'warnings': result.get('warnings', []),
             'blurScore': result['blurScore'],
             'brightnessScore': result['brightnessScore'],
             'contrastScore': result['contrastScore'],
+            'blurThreshold': result.get('blurThreshold'),
+            'documentKind': result.get('documentKind'),
+            'documentFound': result.get('documentFound'),
+            'documentWidthPx': result.get('documentWidthPx'),
             'purpose': purpose,
         }), 200
 

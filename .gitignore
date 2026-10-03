@@ -29,3 +29,10 @@ Thumbs.db
 ai-service/silent_face/.git/
 **/.insightface/
 ai-service/debug/
+
+# Isolated KYC experiment environment
+.venv-kyc/
+
+# Passkey browser test artifacts
+frontend/test-results/
+frontend/playwright-report/

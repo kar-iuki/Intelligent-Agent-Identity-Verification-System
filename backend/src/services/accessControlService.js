@@ -1,17 +1,109 @@
+import { getSVMDecision } from './verificationService.js'
+import { logAction, ACTIONS, OUTCOMES } from '../utils/auditLogger.js'
+
+/**
+ * Accept camelCase (API) or snake_case (verification_scores row) score objects.
+ */
+function normaliseScores(scores) {
+  const fields = {
+    faceMatchScore: ['face_match_score', 100],
+    livenessScore: ['liveness_score', 1],
+    ocrConfidenceScore: ['ocr_confidence_score', 1],
+    blurScore: ['blur_score', Infinity],
+    brightnessScore: ['brightness_score', 255],
+    contrastScore: ['contrast_score', 127.5],
+  }
+  return Object.fromEntries(Object.entries(fields).map(([name, [alias, maximum]]) => {
+    const value = scores?.[name] ?? scores?.[alias]
+    if (typeof value !== 'number' || !Number.isFinite(value) || value < 0 || value > maximum) {
+      throw new Error(`Missing or invalid verification score: ${name}`)
+    }
+    return [name, value]
+  }))
+}
+
+const DECISION_LABELS = { verified: 'Verified', review: 'Manual Review', rejected: 'Rejected' }
+
+function isValidSVMPrediction(result) {
+  const probabilities = ['verifiedProbability', 'reviewProbability', 'rejectedProbability']
+    .map((key) => result?.[key])
+  return (
+    result &&
+    result.decisionBasis === 'svm_model' &&
+    ['verified', 'review', 'rejected'].includes(result.finalDecision) &&
+    probabilities.every((value) => typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= 1) &&
+    Math.abs(probabilities.reduce((sum, value) => sum + value, 0) - 1) < 1e-5
+  )
+}
+
+/**
+ * Module 12 KYC decision: the trained SVM classifier, falling back to the
+ * Module 8 placeholder thresholds when the SVM is unavailable.
+ *
+ * @param {object} scores six verification scores (camelCase or snake_case)
+ * @param {{ agentID?: string|null, requestID?: string|null }} [context] used for the fallback audit entry
+ */
+export async function makeKYCDecision(scores, context = {}) {
+  const normalised = normaliseScores(scores)
+
+  let fallbackReason
+  try {
+    const svm = await getSVMDecision(normalised)
+    if (svm.available && isValidSVMPrediction(svm)) {
+      const probabilities = {
+        verified: Number(svm.verifiedProbability),
+        review: Number(svm.reviewProbability),
+        rejected: Number(svm.rejectedProbability),
+      }
+      const confidence = (probabilities[svm.finalDecision] * 100).toFixed(1)
+      return {
+        finalDecision: svm.finalDecision,
+        verifiedProbability: probabilities.verified,
+        reviewProbability: probabilities.review,
+        rejectedProbability: probabilities.rejected,
+        decisionBasis: 'svm_model',
+        modelVersion: svm.modelVersion || null,
+        reasons: [
+          `SVM classifier v${svm.modelVersion || 'unknown'} predicted ${DECISION_LABELS[svm.finalDecision]} with ${confidence}% probability`,
+        ],
+        scores: normalised,
+      }
+    }
+    fallbackReason = svm.available ? 'SVM returned an invalid prediction' : svm.reason
+  } catch (err) {
+    fallbackReason = err.message
+  }
+
+  console.warn(`[KYC] SVM unavailable — placeholder threshold used: ${fallbackReason}`)
+  await logAction({
+    agentID: context.agentID ?? null,
+    requestID: context.requestID ?? null,
+    action: ACTIONS.KYC_DECISION_MADE,
+    outcome: OUTCOMES.REVIEW,
+    performedBy: 'system',
+    details: {
+      warning: 'SVM unavailable — placeholder threshold used',
+      svmFallback: true,
+      reason: fallbackReason,
+    },
+  })
+
+  return applyPlaceholderDecision(normalised)
+}
+
 /**
  * Placeholder threshold access-control rules (Module 8).
- * Replaced by the trained SVM classifier in Module 12.
+ * Used only as the fallback when the SVM classifier is unavailable.
  */
-
 export function applyPlaceholderDecision(scores) {
-  const faceMatchScore = Number(scores.faceMatchScore ?? scores.face_match_score ?? 0)
-  const livenessScore = Number(scores.livenessScore ?? scores.liveness_score ?? 0)
-  const ocrConfidenceScore = Number(
-    scores.ocrConfidenceScore ?? scores.ocr_confidence_score ?? 0
-  )
-  const blurScore = Number(scores.blurScore ?? scores.blur_score ?? 0)
-  const brightnessScore = Number(scores.brightnessScore ?? scores.brightness_score ?? 0)
-  const contrastScore = Number(scores.contrastScore ?? scores.contrast_score ?? 0)
+  const {
+    faceMatchScore,
+    livenessScore,
+    ocrConfidenceScore,
+    blurScore,
+    brightnessScore,
+    contrastScore,
+  } = normaliseScores(scores)
 
   const reasons = []
 

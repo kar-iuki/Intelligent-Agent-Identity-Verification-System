@@ -13,8 +13,20 @@
     </div>
 
     <div v-if="mode === 'camera'" class="camera-block">
-      <video v-show="!previewUrl" ref="videoRef" class="media" autoplay playsinline muted />
-      <img v-if="previewUrl" :src="previewUrl" alt="Captured document" class="media" />
+      <!-- frame keeps the stream's aspect ratio so what you see is exactly what is captured -->
+      <div class="media-frame" :style="{ aspectRatio: streamAspect }">
+        <video
+          v-show="!previewUrl"
+          ref="videoRef"
+          class="media"
+          autoplay
+          playsinline
+          muted
+          @loadedmetadata="updateStreamAspect"
+          @resize="updateStreamAspect"
+        />
+        <img v-if="previewUrl" :src="previewUrl" alt="Captured document" class="media" />
+      </div>
       <canvas ref="canvasRef" class="hidden" />
 
       <div class="actions">
@@ -42,6 +54,9 @@
     <ul v-if="failures.length" class="failures">
       <li v-for="(item, idx) in failures" :key="idx">{{ item }}</li>
     </ul>
+    <ul v-if="warnings.length" class="warnings">
+      <li v-for="(item, idx) in warnings" :key="idx">{{ item }}</li>
+    </ul>
     <p v-if="passed" class="ok">Image quality looks good for OCR.</p>
 
     <div class="footer-actions">
@@ -67,6 +82,8 @@ const props = defineProps({
   title: { type: String, required: true },
   hint: { type: String, default: 'Make sure the document fills the frame and text is readable.' },
   initialFile: { type: File, default: null },
+  /** national_id | passport | drivers_licence — picks the sharpness limit for the quality check */
+  documentKind: { type: String, default: 'national_id' },
 })
 
 const emit = defineEmits(['back', 'passed'])
@@ -74,6 +91,15 @@ const emit = defineEmits(['back', 'passed'])
 const mode = ref('camera')
 const videoRef = ref(null)
 const canvasRef = ref(null)
+// CSS aspect-ratio of the live stream (portrait on a phone held upright)
+const streamAspect = ref('4 / 3')
+
+function updateStreamAspect() {
+  const video = videoRef.value
+  if (video?.videoWidth && video?.videoHeight) {
+    streamAspect.value = `${video.videoWidth} / ${video.videoHeight}`
+  }
+}
 const streamActive = ref(false)
 const previewUrl = ref(null)
 const cameraError = ref('')
@@ -81,6 +107,7 @@ const selectedFile = ref(null)
 const checking = ref(false)
 const passed = ref(false)
 const failures = ref([])
+const warnings = ref([])
 const busy = ref(false)
 
 let mediaStream = null
@@ -124,12 +151,19 @@ async function startCamera() {
   cameraError.value = ''
   try {
     stopCamera()
+    // Ask for a high-resolution stream: without this browsers default to
+    // 640x480, leaving the card ~300px wide, too small for OCR of dates/ID digits.
     mediaStream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: { ideal: 'environment' } },
+      video: {
+        facingMode: { ideal: 'environment' },
+        width: { ideal: 1920 },
+        height: { ideal: 1080 },
+      },
       audio: false,
     })
     if (videoRef.value) {
       videoRef.value.srcObject = mediaStream
+      updateStreamAspect()
     }
     streamActive.value = true
   } catch {
@@ -199,7 +233,8 @@ async function runQualityCheck() {
   busy.value = true
   failures.value = []
   try {
-    const result = await checkImageQuality(selectedFile.value, 'document')
+    const result = await checkImageQuality(selectedFile.value, 'document', props.documentKind)
+    warnings.value = result.warnings || []
     if (result.passed) {
       passed.value = true
       emit('passed', selectedFile.value)
@@ -255,12 +290,25 @@ async function runQualityCheck() {
   color: #fff;
 }
 
-.media {
+.media-frame {
+  position: relative;
   width: 100%;
-  max-height: 320px;
-  object-fit: cover;
+  max-width: 520px;
+  max-height: 70vh;
+  margin: 0 auto;
+  aspect-ratio: 4 / 3;
   border-radius: 12px;
+  overflow: hidden;
   background: #0f172a;
+}
+
+.media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* letterbox rather than crop, so the full captured frame is always visible */
+  object-fit: contain;
 }
 
 .hidden { display: none; }
@@ -300,6 +348,13 @@ async function runQualityCheck() {
   margin: 0;
   padding-left: 1.1rem;
   color: #c53030;
+}
+
+.warnings {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: #92400e;
+  font-size: 0.85rem;
 }
 
 .ok { color: #276749; margin: 0; }

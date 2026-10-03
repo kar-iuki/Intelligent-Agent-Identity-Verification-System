@@ -3,7 +3,7 @@
     <div class="auth-card">
       <h1>Complete Your Profile</h1>
       <p class="subtitle">
-        Signed in as <strong>{{ email }}</strong>. Add your phone number, national ID,
+        Signed in as <strong>{{ email }}</strong>. Confirm your name, phone number, national ID,
         and date of birth to finish registration.
       </p>
 
@@ -15,11 +15,11 @@
             v-model="form.fullName"
             type="text"
             placeholder="John Doe"
-            :readonly="nameLocked"
-            :class="{ readonly: nameLocked }"
+            autocomplete="name"
+            aria-describedby="fullNameHint"
             required
           />
-          <span v-if="nameLocked" class="hint">Taken from your account / Google profile</span>
+          <span id="fullNameHint" class="hint">Enter your names as they appear on your ID, driving licence, or passport. You can edit the name suggested by Google.</span>
           <span v-if="errors.fullName" class="field-error">{{ errors.fullName }}</span>
         </div>
 
@@ -36,12 +36,12 @@
         </div>
 
         <div class="form-group">
-          <label for="nationalID">National ID</label>
+          <label for="nationalID">National ID/ Passport</label>
           <input
             id="nationalID"
             v-model="form.nationalID"
             type="text"
-            placeholder="Your national ID number"
+            placeholder="Your national ID/ Passport number"
             required
           />
           <span v-if="errors.nationalID" class="field-error">{{ errors.nationalID }}</span>
@@ -83,7 +83,7 @@ const loading = ref(false)
 const suggestedName = ref(localStorage.getItem('suggested_full_name') || '')
 
 const form = reactive({
-  fullName: '',
+  fullName: suggestedName.value,
   phoneNumber: '',
   nationalID: '',
   dateOfBirth: '',
@@ -103,9 +103,8 @@ const maxDateOfBirth = computed(() => {
   return d.toISOString().slice(0, 10)
 })
 
-const nameLocked = computed(() => Boolean(suggestedName.value?.trim()))
-
 onMounted(async () => {
+  const initialName = form.fullName
   try {
     const data = await fetchCurrentUser()
     if (data?.email) {
@@ -116,7 +115,7 @@ onMounted(async () => {
       suggestedName.value = data.suggestedFullName
       localStorage.setItem('suggested_full_name', data.suggestedFullName)
     }
-    if (suggestedName.value) {
+    if (suggestedName.value && form.fullName === initialName) {
       form.fullName = suggestedName.value
     }
     if (data && !data.needsProfile && data.role) {
@@ -236,11 +235,6 @@ input {
   border-radius: 8px;
   font-size: 0.9375rem;
   transition: border-color 0.2s;
-}
-
-input.readonly {
-  background: #f7fafc;
-  color: #243b53;
 }
 
 input:focus {

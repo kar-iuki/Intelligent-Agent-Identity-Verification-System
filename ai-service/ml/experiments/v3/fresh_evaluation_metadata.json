@@ -1,0 +1,250 @@
+{
+  "configuration": {
+    "seed": 2684470948,
+    "class_counts": {
+      "Verified": 900,
+      "Manual Review": 300,
+      "Rejected": 300
+    },
+    "provenance": "Benchmark moments are computed from existing local measured CSVs. Scenario mixtures, borderline distributions, quality shifts and measurement variation are modelling assumptions, not benchmark results or real fraud prevalence.",
+    "face_borderline": [
+      45,
+      16
+    ],
+    "face_difficult_impostor": [
+      32,
+      18
+    ],
+    "live_borderline": [
+      0.65,
+      0.17
+    ],
+    "live_difficult_attack": [
+      0.43,
+      0.24
+    ],
+    "ocr_borderline": [
+      0.53,
+      0.19
+    ],
+    "ocr_mismatch": [
+      0.22,
+      0.17
+    ],
+    "clear_ocr_quantile": 0.5,
+    "poor_quality_shift": [
+      -0.65,
+      -20,
+      -7
+    ],
+    "quality_observation_noise": [
+      0.12,
+      4,
+      2
+    ],
+    "face_measurement_sd": 3,
+    "live_measurement_sd": 0.025,
+    "ocr_measurement_sd": 0.04,
+    "ocr_quality_penalty": 0.16,
+    "quality_logblur_reference": 3.4,
+    "quality_contrast_reference": 25,
+    "scenarios": {
+      "Verified": [
+        [
+          "consistent_genuine",
+          0.7,
+          "genuine",
+          "real",
+          "clear",
+          false
+        ],
+        [
+          "genuine_reading_variation",
+          0.2,
+          "genuine",
+          "real",
+          "borderline",
+          false
+        ],
+        [
+          "genuine_face_variation",
+          0.1,
+          "borderline",
+          "real",
+          "clear",
+          false
+        ]
+      ],
+      "Manual Review": [
+        [
+          "uncertain_face",
+          0.2,
+          "borderline",
+          "real",
+          "clear",
+          false
+        ],
+        [
+          "uncertain_document",
+          0.2,
+          "genuine",
+          "real",
+          "borderline",
+          false
+        ],
+        [
+          "uncertain_presentation",
+          0.2,
+          "genuine",
+          "borderline",
+          "clear",
+          false
+        ],
+        [
+          "recapture_needed",
+          0.25,
+          "genuine",
+          "real",
+          "clear",
+          true
+        ],
+        [
+          "multiple_uncertainties",
+          0.15,
+          "borderline",
+          "borderline",
+          "borderline",
+          false
+        ]
+      ],
+      "Rejected": [
+        [
+          "identity_mismatch",
+          0.25,
+          "impostor",
+          "real",
+          "clear",
+          false
+        ],
+        [
+          "photo_attack",
+          0.25,
+          "genuine",
+          "attack",
+          "clear",
+          false
+        ],
+        [
+          "document_mismatch",
+          0.2,
+          "genuine",
+          "real",
+          "mismatch",
+          false
+        ],
+        [
+          "difficult_identity_mismatch",
+          0.15,
+          "difficult_impostor",
+          "real",
+          "clear",
+          false
+        ],
+        [
+          "difficult_presentation_attack",
+          0.15,
+          "genuine",
+          "difficult_attack",
+          "clear",
+          false
+        ]
+      ]
+    }
+  },
+  "measured_sources": {
+    "lfw_face_match": {
+      "rows": 1000,
+      "sha256": "ed82a85dfb6ab74ab338c1d396eb3cb66439a7a10784c12449f408ed5db9f86c"
+    },
+    "nuaa_liveness": {
+      "rows": 1200,
+      "sha256": "bbecefd0c98140ec54a8c230c1c4abf1fc57c9faf129056a4d3957e066787e5f"
+    },
+    "midv_image_quality": {
+      "rows": 500,
+      "sha256": "c39f918cdc086f0bb02dd4f8406f049121788c03487379a38f025e1e28250326"
+    },
+    "midv_ocr": {
+      "rows": 480,
+      "sha256": "5b13defefbef0ddf92df071b0c933e04a1e2ae81cff4542269cdd184da2c25f1"
+    }
+  },
+  "measured_parameters": {
+    "face": {
+      "genuine": [
+        64.81733419999999,
+        16.47402134717157
+      ],
+      "impostor": [
+        2.2927294000000003,
+        3.5656385254627487
+      ]
+    },
+    "liveness": {
+      "photo_attack": [
+        0.0199725,
+        0.07516618512376493
+      ],
+      "real": [
+        0.9689096666666668,
+        0.07043918443874983
+      ]
+    },
+    "ocr_clear_conditional": [
+      0.76895625,
+      0.1489445240948629
+    ],
+    "ocr_all": [
+      0.45190208333333337,
+      0.35222573712218497
+    ],
+    "quality_transformed_mean": [
+      3.7200620127901636,
+      171.70002240000002,
+      43.2495346
+    ],
+    "quality_transformed_covariance": [
+      [
+        0.7211578661338847,
+        11.38622734783699,
+        0.4879691908211453
+      ],
+      [
+        11.38622734783699,
+        2172.433061105429,
+        -275.16620785919343
+      ],
+      [
+        0.4879691908211453,
+        -275.16620785919343,
+        288.27221128831945
+      ]
+    ]
+  },
+  "scenario_counts": {
+    "consistent_genuine": 660,
+    "genuine_reading_variation": 164,
+    "genuine_face_variation": 76,
+    "uncertain_face": 51,
+    "uncertain_document": 55,
+    "uncertain_presentation": 49,
+    "recapture_needed": 91,
+    "multiple_uncertainties": 54,
+    "identity_mismatch": 75,
+    "photo_attack": 73,
+    "document_mismatch": 63,
+    "difficult_identity_mismatch": 42,
+    "difficult_presentation_attack": 47
+  },
+  "caveat": "Truncated normals approximate benchmark moments; resulting moments differ after truncation. Joint KYC labels and cross-modality dependencies are assumptions. No benchmark is a joint KYC ground-truth dataset."
+}

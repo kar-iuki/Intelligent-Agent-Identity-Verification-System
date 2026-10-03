@@ -1,0 +1,27 @@
+{
+  "status": "passed",
+  "python_api_tests": 5,
+  "python_experiment_tests": 2,
+  "node_contract_tests": 2,
+  "checks": [
+    "Actual serialized SVM/scaler reload prediction and probability parity",
+    "Canonical and legacy API inputs and class mapping",
+    "Probability mapping with deliberately reordered classes_",
+    "Missing/non-numeric/boolean/non-finite/huge/out-of-range/unknown/duplicate-alias inputs rejected",
+    "Unavailable model returns 503",
+    "Dataset regeneration matches saved 10000 rows",
+    "Split manifest reproduces exactly and saved scaler fits only 7000 training rows",
+    "Node incomplete inputs fail before network/fallback",
+    "Node preserves decision enums and svm_model basis"
+  ],
+  "not_executed": [
+    "Remote Hugging Face deployment",
+    "Live Supabase writes",
+    "Full image-processing service integration"
+  ],
+  "visual_review": [
+    "Full SVM confusion matrix",
+    "SVM permutation importance",
+    "Blur distribution"
+  ]
+}

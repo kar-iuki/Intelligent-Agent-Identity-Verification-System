@@ -1,0 +1,41 @@
+{
+  "seed": 42,
+  "class_counts": {"Verified": 6000, "Manual Review": 2000, "Rejected": 2000},
+  "provenance": "Benchmark moments are computed from existing local measured CSVs. Scenario mixtures, borderline distributions, quality shifts and measurement variation are modelling assumptions, not benchmark results or real fraud prevalence.",
+  "face_borderline": [45, 16],
+  "face_difficult_impostor": [32, 18],
+  "live_borderline": [0.65, 0.17],
+  "live_difficult_attack": [0.43, 0.24],
+  "ocr_borderline": [0.53, 0.19],
+  "ocr_mismatch": [0.22, 0.17],
+  "clear_ocr_quantile": 0.5,
+  "poor_quality_shift": [-0.65, -20, -7],
+  "quality_observation_noise": [0.12, 4, 2],
+  "face_measurement_sd": 3,
+  "live_measurement_sd": 0.025,
+  "ocr_measurement_sd": 0.04,
+  "ocr_quality_penalty": 0.16,
+  "quality_logblur_reference": 3.4,
+  "quality_contrast_reference": 25,
+  "scenarios": {
+    "Verified": [
+      ["consistent_genuine", 0.7, "genuine", "real", "clear", false],
+      ["genuine_reading_variation", 0.2, "genuine", "real", "borderline", false],
+      ["genuine_face_variation", 0.1, "borderline", "real", "clear", false]
+    ],
+    "Manual Review": [
+      ["uncertain_face", 0.2, "borderline", "real", "clear", false],
+      ["uncertain_document", 0.2, "genuine", "real", "borderline", false],
+      ["uncertain_presentation", 0.2, "genuine", "borderline", "clear", false],
+      ["recapture_needed", 0.25, "genuine", "real", "clear", true],
+      ["multiple_uncertainties", 0.15, "borderline", "borderline", "borderline", false]
+    ],
+    "Rejected": [
+      ["identity_mismatch", 0.25, "impostor", "real", "clear", false],
+      ["photo_attack", 0.25, "genuine", "attack", "clear", false],
+      ["document_mismatch", 0.2, "genuine", "real", "mismatch", false],
+      ["difficult_identity_mismatch", 0.15, "difficult_impostor", "real", "clear", false],
+      ["difficult_presentation_attack", 0.15, "genuine", "difficult_attack", "clear", false]
+    ]
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "shared_components": [
+    {
+      "observable_component": [
+        "genuine",
+        "real",
+        "borderline",
+        false
+      ],
+      "class_probability_masses": {
+        "Verified": 0.12,
+        "Manual Review": 0.04000000000000001
+      },
+      "unavoidable_error_mass": 0.04000000000000001
+    },
+    {
+      "observable_component": [
+        "borderline",
+        "real",
+        "clear",
+        false
+      ],
+      "class_probability_masses": {
+        "Verified": 0.06,
+        "Manual Review": 0.04000000000000001
+      },
+      "unavoidable_error_mass": 0.04000000000000001
+    }
+  ],
+  "minimum_population_error_from_identical_components": 0.08000000000000002,
+  "maximum_expected_accuracy_bound_from_identical_components": 0.9199999999999999,
+  "interpretation": "An upper bound under the configured mixture distribution, not an attainable target or a bound on every finite test realization. Other overlapping components can lower achievable performance further."
+}
