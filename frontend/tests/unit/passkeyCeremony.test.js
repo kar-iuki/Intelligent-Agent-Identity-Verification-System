@@ -2,11 +2,19 @@ import { beforeEach, it, expect, vi } from 'vitest'
 const mocks = vi.hoisted(() => ({ post:vi.fn(), authentication:vi.fn(), registration:vi.fn(), cancel:vi.fn() }))
 vi.mock('../../src/services/api.js', () => ({ default:{ post:mocks.post } }))
 vi.mock('@simplewebauthn/browser', () => ({ startAuthentication:mocks.authentication, startRegistration:mocks.registration, WebAuthnAbortService:{ cancelCeremony:mocks.cancel } }))
-import { registerPasskey, loginWithPasskey, cancelPasskeyCeremony } from '../../src/services/passkeyService.js'
+import { registerPasskey, loginWithPasskey, cancelPasskeyCeremony, passkeyErrorMessage } from '../../src/services/passkeyService.js'
 import { registered, markRegistered } from '../../src/utils/passkeyStorage.js'
 beforeEach(() => { vi.resetAllMocks(); localStorage.clear(); cancelPasskeyCeremony() })
 const options = { data:{ options:{ challenge:'random' }, challengeId:'id' } }
 const expired = { response:{ data:{ code:'CHALLENGE_EXPIRED' } } }
+it('distinguishes deployment errors from connection failures without displaying server internals', () => {
+  expect(passkeyErrorMessage({ response:{ status:503, data:{ code:'PASSKEY_NOT_CONFIGURED' } } }, 'Network error')).toContain('not been configured')
+  expect(passkeyErrorMessage({ response:{ status:403, data:{ code:'PASSKEY_ORIGIN_NOT_ALLOWED' } } }, 'Network error')).toContain('configured address')
+  expect(passkeyErrorMessage({ response:{ status:503 } }, 'Network error')).toContain('temporarily unavailable')
+  expect(passkeyErrorMessage({ response:{ status:429 } }, 'Network error')).toContain('wait a few minutes')
+  expect(passkeyErrorMessage({ response:{ status:500, data:{ error:'internal secret' } } }, 'Try again')).toBe('Try again')
+  expect(passkeyErrorMessage(new Error('Offline'), 'Network error')).toBe('Network error')
+})
 it('automatically restarts an expired login exactly once', async () => {
   mocks.post.mockResolvedValueOnce(options).mockRejectedValueOnce(expired).mockResolvedValueOnce(options).mockResolvedValueOnce({ data:{ user:{ user_id:'one' }, credentialId:'key' } })
   mocks.authentication.mockResolvedValue({ id:'key' })

@@ -1,6 +1,6 @@
 <template>
   <main class="passkeys-page workspace">
-    <router-link to="/agent/dashboard">Back to dashboard</router-link>
+    <p class="workspace-eyebrow">ACCOUNT / SECURITY</p>
     <h1>Manage Passkeys</h1>
     <p>Passkeys let your device verify you. Your password and Google sign-in remain available.</p>
     <button v-if="supported" class="primary" :disabled="busy || loading" @click="add"><Fingerprint :size="20" aria-hidden="true" /> Add a passkey</button>
@@ -37,7 +37,7 @@ import PasskeyDialog from '../components/PasskeyDialog.vue'
 import { usePasskeySupport } from '../composables/usePasskeySupport.js'
 import { useAuthStore } from '../stores/authStore.js'
 import { registered, removeLocal, optedIn } from '../utils/passkeyStorage.js'
-import { registerPasskey, isCancelled, isAborted, cancelPasskeyCeremony, signalRemoved } from '../services/passkeyService.js'
+import { registerPasskey, isCancelled, isAborted, cancelPasskeyCeremony, signalRemoved, passkeyErrorMessage } from '../services/passkeyService.js'
 import api from '../services/api.js'
 const { state } = useAuthStore()
 const { supported } = usePasskeySupport()
@@ -51,14 +51,14 @@ async function load() {
     if (!active) return
     passkeys.value = data.passkeys; rpId = data.rpId; refreshLocal()
     if (localCredential.value && !passkeys.value.some(p => p.credential_id === localCredential.value)) { removeLocal(`passkey_registered:${userId()}`); refreshLocal() }
-  } catch { message.value = 'Could not load passkeys. Please reload to try again.' }
+  } catch (error) { message.value = passkeyErrorMessage(error, 'Could not load passkeys. Please reload to try again.') }
   finally { loading.value = false }
 }
 async function add() {
   if (busy.value) return
   busy.value = true; message.value = ''; optedIn(userId())
   try { const result = await registerPasskey(userId(), true); message.value = result.message; await load() }
-  catch (error) { if (!isCancelled(error) && !isAborted(error)) message.value = 'Could not add your passkey. Please try again.' }
+  catch (error) { if (!isCancelled(error) && !isAborted(error)) message.value = passkeyErrorMessage(error, 'Could not add your passkey. Please try again.') }
   finally { busy.value = false }
 }
 async function rename(key) {

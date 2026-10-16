@@ -12,20 +12,20 @@ export function createPasskeyRouter({ database = db, authenticate = authMiddlewa
 const router = Router();
 router.use(async (req, res, next) => {
   res.set('Cache-Control', 'no-store');
-  try { req.passkeyConfig = readConfig(); } catch { return res.status(503).json({ error: 'Passkeys are not available yet.' }); }
+  try { req.passkeyConfig = readConfig(); } catch { return res.status(503).json({ code: 'PASSKEY_NOT_CONFIGURED', error: 'Passkeys are not available yet.' }); }
   // Tokens are explicit Bearer headers, never ambient cookies. Also require an
   // allowed Origin on all passkey requests, including unauthenticated ceremonies.
   // Same-origin GETs commonly omit Origin. The read-only list still requires
   // Bearer authentication below; all writes require an explicit allowed Origin.
   const sameOriginRead = req.method === 'GET' && !req.get('Origin');
-  if (!sameOriginRead && !req.passkeyConfig.origins.includes(req.get('Origin'))) return res.status(403).json({ error: 'Request not allowed.' });
+  if (!sameOriginRead && !req.passkeyConfig.origins.includes(req.get('Origin'))) return res.status(403).json({ code: 'PASSKEY_ORIGIN_NOT_ALLOWED', error: 'Open the app at its configured address to use passkeys.' });
   try {
     const bucket = createHash('sha256').update(`${req.ip}:passkeys`).digest('hex');
     const { data, error } = await database.rpc('passkey_rate_limit', { rate_bucket: bucket, max_attempts: 60 });
     if (error) throw error;
     if (!data) return res.status(429).set('Retry-After', '300').json({ error: 'Please wait a few minutes and try again.' });
     next();
-  } catch { res.status(503).json({ error: 'Passkeys are temporarily unavailable. Please try again.' }); }
+  } catch { res.status(503).json({ code: 'PASSKEY_UNAVAILABLE', error: 'Passkeys are temporarily unavailable. Please try again.' }); }
 });
 
 function service(req) {

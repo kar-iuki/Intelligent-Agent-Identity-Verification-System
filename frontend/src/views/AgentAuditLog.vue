@@ -6,10 +6,7 @@
         <h1>My audit trail</h1>
         <p class="subtitle">Read-only history of actions on your account</p>
       </div>
-      <div class="header-actions">
-        <router-link class="btn ghost" to="/agent/dashboard">Back to dashboard</router-link>
-        <button class="btn-logout" @click="handleLogout">Sign Out</button>
-      </div>
+
     </header>
 
     <main class="content">

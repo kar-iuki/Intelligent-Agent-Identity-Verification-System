@@ -2,7 +2,6 @@
   <div class="model-page workspace">
     <header class="model-header">
       <div>
-        <router-link to="/admin/dashboard" class="back-link">← Admin Dashboard</router-link>
         <p class="workspace-eyebrow">INTELLIGENCE / MODEL PERFORMANCE</p>
         <h1>Model Evaluation</h1>
         <p class="subtitle">SVM KYC classifier — held-out test set performance</p>

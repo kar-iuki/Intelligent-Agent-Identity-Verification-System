@@ -4,29 +4,29 @@
       <div>
         <p class="workspace-eyebrow">AGENT PORTAL / WORKSPACE</p>
         <h1>Agent Platform</h1>
-        <p class="subtitle">Placeholder workspace for verified agents</p>
+        <p class="subtitle">Your identity, activity, and account security in one place.</p>
       </div>
-      <div class="actions">
-        <router-link class="link" to="/agent/passkeys">Manage Passkeys</router-link>
-        <router-link class="link" to="/agent/dashboard">Back to dashboard</router-link>
-        <button class="btn-logout" @click="handleLogout">Sign Out</button>
-      </div>
+
     </header>
 
     <PasskeyPrompt :ready="true" />
     <main class="platform-content">
-      <section class="card">
-        <h2>Welcome</h2>
-        <p>
-          Your identity has been verified. This is a placeholder for the main
-          agent onboarding platform area. Feature modules can be added here later.
-        </p>
+      <section class="card workspace-welcome">
+        <p class="workspace-eyebrow">YOUR NEXT STEP</p>
+        <h2>A workspace built around your identity</h2>
+        <p>Keep your verification up to date, review your account activity, and manage how you sign in.</p>
       </section>
+      <div class="platform-grid">
+        <router-link class="platform-link" to="/agent/dashboard"><ShieldCheck :size="26" /><h2>Identity overview</h2><p>Follow your registration progress and check your verification status.</p><span>View your identity →</span></router-link>
+        <router-link class="platform-link" to="/agent/audit"><History :size="26" /><h2>Activity history</h2><p>See a chronological record of actions and outcomes on your account.</p><span>Explore activity →</span></router-link>
+        <router-link class="platform-link" to="/agent/passkeys"><Fingerprint :size="26" /><h2>Account security</h2><p>Add and manage passkeys for a simpler way to sign in with your device.</p><span>Manage passkeys →</span></router-link>
+      </div>
     </main>
   </div>
 </template>
 
 <script setup>
+import { ShieldCheck, History, Fingerprint } from '@lucide/vue'
 import PasskeyPrompt from '../components/PasskeyPrompt.vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore.js'

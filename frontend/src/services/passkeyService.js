@@ -3,6 +3,14 @@ import api from './api.js'
 import { markRegistered, clearStaleCredential } from '../utils/passkeyStorage.js'
 
 export const FALLBACK_MESSAGE = 'No passkey found on this browser. You can sign in with your password or a one-time code, or use a passkey from your phone.'
+export function passkeyErrorMessage(error, fallback) {
+  const code = error?.response?.data?.code
+  if (code === 'PASSKEY_NOT_CONFIGURED') return 'Passkeys have not been configured on the server yet. Please sign in another way.'
+  if (code === 'PASSKEY_ORIGIN_NOT_ALLOWED') return 'Open the app at its configured address to set up or use a passkey.'
+  if (error?.response?.status === 503) return 'The passkey service is temporarily unavailable. Please try again shortly.'
+  if (error?.response?.status === 429) return 'Please wait a few minutes before trying your passkey again.'
+  return fallback
+}
 export const isCancelled = error => error?.name === 'NotAllowedError' || error?.cause?.name === 'NotAllowedError'
 export const isAborted = error => error?.name === 'AbortError' || error?.cause?.name === 'AbortError'
 const isDuplicate = error => error?.name === 'InvalidStateError' || error?.cause?.name === 'InvalidStateError'

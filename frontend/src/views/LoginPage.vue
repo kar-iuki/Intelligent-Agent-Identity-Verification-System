@@ -1,13 +1,10 @@
 <template>
   <div class="auth-page">
     <div class="auth-card">
-      <h1>Sign In</h1>
-      <p class="subtitle">Intelligent Agent Identity Verification System</p>
+      <p class="auth-eyebrow">WELCOME BACK</p>
+      <h1>Sign in to your workspace</h1>
+      <p class="subtitle">Continue your verification journey.</p>
 
-      <template v-if="supported && promotePasskey">
-        <PasskeyButton prominent :busy="passkeyBusy || loading" @click="handlePasskey(false)" />
-        <div class="divider"><span>or</span></div>
-      </template>
       <form @submit.prevent="handleLogin">
         <div class="form-group">
           <label for="email">Email</label>
@@ -35,15 +32,14 @@
 
         <p v-if="error || oauthError" class="error">{{ error || oauthError }}</p>
 
+        <div class="signin-actions">
         <button type="submit" class="btn btn-primary" :disabled="loading || passkeyBusy">
           {{ loading ? 'Signing in...' : 'Sign In' }}
         </button>
+        <PasskeyButton v-if="supported" icon-only :busy="passkeyBusy || loading" @click="handlePasskey(false)" />
+        </div>
       </form>
 
-      <template v-if="supported && !promotePasskey">
-        <div class="divider"><span>or</span></div>
-        <PasskeyButton :busy="passkeyBusy || loading" @click="handlePasskey(false)" />
-      </template>
       <p v-if="supported && passkeyMessage" class="passkey-message" role="status">{{ passkeyMessage }}</p>
       <p v-if="supported" class="footer-link"><a href="#email" @click.prevent="focusPasswordLogin">Lost access to your passkey? Sign in another way</a></p>
 
@@ -71,17 +67,14 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore.js'
 import PasskeyButton from '../components/PasskeyButton.vue'
 import { usePasskeySupport } from '../composables/usePasskeySupport.js'
-import { readLocal } from '../utils/passkeyStorage.js'
-import { loginWithPasskey, cancelPasskeyCeremony, isCancelled, isAborted, FALLBACK_MESSAGE } from '../services/passkeyService.js'
+import { loginWithPasskey, cancelPasskeyCeremony, isCancelled, isAborted, FALLBACK_MESSAGE, passkeyErrorMessage } from '../services/passkeyService.js'
 
 const router = useRouter()
 const { state, login, loginWithOAuth, handleOAuthCallback, getDashboardRoute, acceptPasskeySession } = useAuthStore()
 const { supported, conditionalUI } = usePasskeySupport()
-const promotePasskey = ref(readLocal('passkey_registered_any') === true)
 const passkeyBusy = ref(false), passkeyMessage = ref('')
 let disposed = false, explicitStarted = false
 function focusPasswordLogin() { document.getElementById('email')?.focus(); document.getElementById('email')?.scrollIntoView({ block: 'center', behavior: 'instant' }) }
-function refreshPromotion() { promotePasskey.value = readLocal('passkey_registered_any') === true }
 async function handlePasskey(conditional) {
   if (!conditional && (passkeyBusy.value || loading.value)) return
   if (!conditional) { explicitStarted = true; passkeyBusy.value = true; passkeyMessage.value = '' }
@@ -94,15 +87,14 @@ async function handlePasskey(conditional) {
     if (disposed || isAborted(err)) return
     if (conditional && explicitStarted) return
     passkeyMessage.value = isCancelled(err) || err.response?.data?.code === 'PASSKEY_FAILED'
-      ? FALLBACK_MESSAGE : 'Could not connect to sign in. Please try again.'
+      ? FALLBACK_MESSAGE : passkeyErrorMessage(err, 'Could not connect to sign in. Please try again.')
     if (!conditional) focusPasswordLogin()
   } finally { if (!conditional) passkeyBusy.value = false }
 }
 watch(() => [supported.value, conditionalUI.value], ([support, conditional]) => {
   if (support && conditional && !explicitStarted && !new URLSearchParams(window.location.search).has('code')) handlePasskey(true)
 })
-onMounted(() => window.addEventListener('storage', refreshPromotion))
-onBeforeUnmount(() => { disposed = true; cancelPasskeyCeremony(); window.removeEventListener('storage', refreshPromotion) })
+onBeforeUnmount(() => { disposed = true; cancelPasskeyCeremony() })
 
 const email = ref('')
 const password = ref('')

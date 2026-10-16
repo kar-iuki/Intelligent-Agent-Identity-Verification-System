@@ -17,7 +17,7 @@ import PasskeyDialog from './PasskeyDialog.vue'
 import { usePasskeySupport } from '../composables/usePasskeySupport.js'
 import { useAuthStore } from '../stores/authStore.js'
 import { shouldPrompt, skipPrompt, dismissPrompt, registered, readLocal } from '../utils/passkeyStorage.js'
-import { registerPasskey, isCancelled, isAborted, cancelPasskeyCeremony } from '../services/passkeyService.js'
+import { registerPasskey, isCancelled, isAborted, cancelPasskeyCeremony, passkeyErrorMessage } from '../services/passkeyService.js'
 import api from '../services/api.js'
 const props = defineProps({ ready: Boolean })
 const { state, claimPasskeyPrompt } = useAuthStore()
@@ -56,7 +56,7 @@ async function setup() {
     timer = setTimeout(close, 1800)
   } catch (error) {
     if (isCancelled(error) || isAborted(error)) close()
-    else message.value = 'Could not set up your passkey. Please try again.'
+    else message.value = passkeyErrorMessage(error, 'Could not set up your passkey. Please try again.')
   } finally { busy.value = false }
 }
 watch(() => [props.ready, supported.value, state.passkeyPromptEligible, state.user?.user_id], () => { if (!props.ready || !state.user) close(); check() })

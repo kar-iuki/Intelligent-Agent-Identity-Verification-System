@@ -18,7 +18,6 @@
           <span v-else-if="modelStatus.modelLoaded">SVM Model Active v{{ modelStatus.modelVersion }}</span>
           <span v-else>Fallback Mode — Threshold Rules</span>
         </router-link>
-        <button class="btn-logout" @click="handleLogout">Sign Out</button>
       </div>
     </header>
 
@@ -37,35 +36,35 @@
       <!-- Stats bar -->
       <section class="stats-bar">
         <article class="stat-card">
-          <div class="stat-icon total" aria-hidden="true">TA</div>
+          <div class="stat-icon total" aria-hidden="true"><Users :size="17" /></div>
           <div>
             <p class="stat-label">Total Agents</p>
             <p class="stat-value">{{ stats.totalAgents }}</p>
           </div>
         </article>
         <button type="button" class="stat-card clickable amber" @click="goToPending">
-          <div class="stat-icon amber" aria-hidden="true">AR</div>
+          <div class="stat-icon amber" aria-hidden="true"><Clock3 :size="17" /></div>
           <div>
             <p class="stat-label">Awaiting Review</p>
             <p class="stat-value">{{ stats.awaitingReview }}</p>
           </div>
         </button>
         <article class="stat-card green">
-          <div class="stat-icon green" aria-hidden="true">VT</div>
+          <div class="stat-icon green" aria-hidden="true"><ShieldCheck :size="17" /></div>
           <div>
             <p class="stat-label">Verified Today</p>
             <p class="stat-value">{{ stats.verifiedToday }}</p>
           </div>
         </article>
         <article class="stat-card red">
-          <div class="stat-icon red" aria-hidden="true">RT</div>
+          <div class="stat-icon red" aria-hidden="true"><CircleX :size="17" /></div>
           <div>
             <p class="stat-label">Rejected Today</p>
             <p class="stat-value">{{ stats.rejectedToday }}</p>
           </div>
         </article>
         <article class="stat-card grey">
-          <div class="stat-icon grey" aria-hidden="true">PV</div>
+          <div class="stat-icon grey" aria-hidden="true"><ScanFace :size="17" /></div>
           <div>
             <p class="stat-label">Pending Verification</p>
             <p class="stat-value">{{ stats.pendingVerification }}</p>
@@ -73,13 +72,7 @@
         </article>
       </section>
 
-      <nav class="tabs" aria-label="Agent views">
-        <button :class="{ active: tab === 'pending' }" @click="switchTab('pending')">Pending review</button>
-        <button :class="{ active: tab === 'agents' }" @click="switchTab('agents')">All agents</button>
-        <button :class="{ active: tab === 'recent' }" @click="switchTab('recent')">Last 3 business days</button>
-        <button :class="{ active: tab === 'flagged' }" @click="switchTab('flagged')">Flagged registrations</button>
-        <button :class="{ active: tab === 'audit' }" @click="switchTab('audit')">Audit log</button>
-      </nav>
+
 
       <p v-if="error" class="error">{{ error }}</p>
       <p v-if="loading" class="muted">Loading...</p>
@@ -559,8 +552,9 @@
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
+import { Users, Clock3, ShieldCheck, CircleX, ScanFace } from '@lucide/vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore.js'
 import Lightbox from '../components/Lightbox.vue'
 import ScoreBar from '../components/ScoreBar.vue'
@@ -583,9 +577,12 @@ import {
 import { connectAdminSocket, disconnectAdminSocket } from '../services/socket.js'
 
 const router = useRouter()
+const route = useRoute()
+const validViews = ['agents', 'pending', 'recent', 'flagged', 'audit']
+const routeView = () => validViews.includes(route.query.view) ? route.query.view : 'agents'
 const { state, logout } = useAuthStore()
 
-const tab = ref('agents')
+const tab = ref(routeView())
 const loading = ref(false)
 const error = ref('')
 const pendingCases = ref([])
@@ -727,8 +724,8 @@ const lightboxImages = computed(() => {
 })
 
 onMounted(async () => {
-  tab.value = 'agents'
-  await Promise.all([loadStats(), loadRecentActivity(), loadAgents()])
+  switchTab(routeView())
+  await Promise.all([loadStats(), loadRecentActivity()])
   activityTimer = setInterval(() => {
     loadRecentActivity()
     loadStats()
@@ -774,13 +771,15 @@ function viewToastCase() {
 }
 
 function goToPending() {
-  tab.value = 'pending'
-  loadPending()
+  switchTab('pending')
   document.getElementById('pending-section')?.scrollIntoView({ behavior: 'smooth' })
 }
 
+watch(() => route.query.view, () => switchTab(routeView()))
+
 function switchTab(next) {
   tab.value = next
+  if (routeView() !== next) router.replace({ query: { ...route.query, view: next } })
   if (next === 'pending') loadPending()
   if (next === 'agents' || next === 'recent') {
     agents.value = []

@@ -6,11 +6,7 @@
         <h1>Agent Registration</h1>
         <p class="welcome">Welcome, {{ displayName }}</p>
       </div>
-      <div class="header-actions">
-        <router-link class="btn-link" to="/agent/passkeys">Manage Passkeys</router-link>
-        <router-link class="btn-link" to="/agent/audit">My audit trail</router-link>
-        <button class="btn-logout" @click="handleLogout">Sign Out</button>
-      </div>
+
     </header>
 
     <PasskeyPrompt :ready="!bootLoading && currentStep === 4 && verificationPhase !== 'loading'" />
