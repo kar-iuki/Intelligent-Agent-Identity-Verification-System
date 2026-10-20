@@ -26,7 +26,11 @@ test('options have random 32-byte challenges, discoverable login, UV, opaque han
   const first = await service.loginOptions(), second = await service.loginOptions();
   assert.notEqual(first.options.challenge, second.options.challenge);
   assert.ok(Buffer.from(first.options.challenge,'base64url').length >= 32);
-  assert.deepEqual(first.options.allowCredentials, []); assert.equal(first.options.userVerification,'required');
+  assert.deepEqual(first.options.allowCredentials, []); assert.equal(first.options.userVerification,'preferred');
+  const hinted = await service.loginOptions({ email:' Agent@Example.Test ', credentialIds:['missing'] });
+  assert.deepEqual(hinted.options.allowCredentials, [{ id:'Y3JlZGVudGlhbA', type:'public-key' }]);
+  const stored = await service.loginOptions({ credentialIds:['Y3JlZGVudGlhbA'] });
+  assert.deepEqual(stored.options.allowCredentials, [{ id:'Y3JlZGVudGlhbA', type:'public-key' }]);
   assert.equal(db.tables.passkey_challenges[0].user_id,null);
   const prompt = (await service.registerOptions(user)).options;
   assert.equal(prompt.authenticatorSelection.residentKey,'required'); assert.equal(prompt.authenticatorSelection.userVerification,'required');
@@ -58,6 +62,9 @@ test('expired, wrong-user and wrong-purpose challenges fail; userHandle binds th
   await assert.rejects(service.registerVerify({ id:'different' }, { challengeId:registration.challengeId, response }));
   const wrongPurpose = await service.registerOptions(user); await assert.rejects(service.loginVerify({ challengeId:wrongPurpose.challengeId, response }));
   const wrongUser = await service.loginOptions(); await assert.rejects(service.loginVerify({ challengeId:wrongUser.challengeId, response:{ ...response, response:{ userHandle:'wrong' } } }));
+  const omitted = fixture();
+  await omitted.service.loginVerify({ challengeId:(await omitted.service.loginOptions()).challengeId, response:{ id:omitted.response.id, response:{} } });
+  assert.equal(omitted.sessions.length,1);
 });
 test('counter regression rejects and logs; synced zero counters work', async () => {
   const { service, db, response, events } = fixture(); db.tables.passkeys[0].counter = 5;
@@ -84,4 +91,15 @@ test('management scopes rename/delete and protects last method', async () => {
   assert.equal((await service.rename(user.id,id,'My laptop')).label,'My laptop');
   db.tables.users[0].recovery = false; await assert.rejects(service.remove(user.id,id), { code:'LAST_LOGIN_METHOD' });
   db.tables.users[0].recovery = true; await service.remove(user.id,id); assert.equal(db.tables.passkeys.length,0);
+});
+test('an email or Google identity can remove a passkey the database still treats as the last method', async () => {
+  const { service, db, user } = fixture(); const id = db.tables.passkeys[0].id;
+  db.tables.users[0].recovery = false;
+  db.auth = { admin:{ getUserById:async () => ({ data:{ user:{ identities:[{ provider:'email' }] } } }) } };
+  await service.remove(user.id,id); assert.equal(db.tables.passkeys.length,0);
+  const blocked = fixture();
+  blocked.db.rpc = async () => ({ data:null, error:{ message:'permission denied for table users' } });
+  blocked.db.auth = db.auth;
+  await blocked.service.remove(blocked.user.id, blocked.db.tables.passkeys[0].id);
+  assert.equal(blocked.db.tables.passkeys.length,0);
 });

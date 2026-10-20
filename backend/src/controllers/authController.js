@@ -7,6 +7,7 @@ import {
   getLatestVerificationStatus,
 } from '../middleware/fraudGuardrailsMiddleware.js'
 import { validateDateOfBirth } from '../utils/validateDateOfBirth.js'
+import { createCaptcha, verifyCaptcha } from '../utils/captcha.js'
 
 async function resolveAgentIdForUser(userId) {
   if (!userId) return null
@@ -151,14 +152,38 @@ export async function resendVerificationEmail(req, res) {
   })
 }
 
+export function issueCaptcha(_req, res) {
+  const captcha = createCaptcha()
+  res.set('Cache-Control', 'no-store')
+  return res.json({ id: captcha.id, svg: captcha.svg })
+}
+
 export async function login(req, res) {
-  const { email, password } = req.body
+  const { email, password, captchaId, captchaAnswer } = req.body
 
   if (!email || !password) {
     return res.status(400).json({ error: 'Email and password are required' })
   }
 
-  const { data, error } = await supabaseAnon.auth.signInWithPassword({ email, password })
+  if (!captchaId || !String(captchaAnswer || '').trim()) {
+    return res.status(400).json({
+      error: 'Type the characters shown to confirm you are human.',
+      code: 'CAPTCHA_REQUIRED',
+    })
+  }
+
+  if (!verifyCaptcha(captchaId, captchaAnswer)) {
+    return res.status(400).json({
+      error: 'Those characters did not match. Type the new ones shown.',
+      code: 'CAPTCHA_FAILED',
+    })
+  }
+
+  const normalizedEmail = String(email).trim().toLowerCase()
+  const { data, error } = await supabaseAnon.auth.signInWithPassword({
+    email: normalizedEmail,
+    password,
+  })
 
   if (error) {
     await logAction({
@@ -167,9 +192,97 @@ export async function login(req, res) {
       outcome: OUTCOMES.FAILED,
       performedBy: 'system',
       ipAddress: req.clientIP,
-      details: { email, reason: error.message },
+      details: { email: normalizedEmail, reason: error.message },
     })
-    return res.status(401).json({ error: error.message })
+    if (/email not confirmed/i.test(error.message)) {
+      return res.status(403).json({
+        error: 'Confirm your email before signing in. Check your inbox for the confirmation link.',
+        code: 'EMAIL_NOT_CONFIRMED',
+      })
+    }
+    const invalid = /invalid login credentials/i.test(error.message)
+    return res.status(401).json({
+      error: invalid ? 'Invalid email or password' : error.message,
+    })
+  }
+
+  return res.json(await buildAuthSession(data, req))
+}
+
+export async function forgotPassword(req, res) {
+  const email = String(req.body?.email || '').trim().toLowerCase()
+
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return res.status(400).json({ error: 'Enter a valid email address' })
+  }
+
+  const { error } = await supabaseAnon.auth.resetPasswordForEmail(email, {
+    redirectTo: `${frontendUrl()}/reset-password`,
+  })
+
+  if (error) {
+    const message = error.message || ''
+    const hiddenAddress = /not found|signups not allowed for otp/i.test(message)
+    if (!hiddenAddress) {
+      console.error('forgot-password:', message)
+      if (/rate|once every|security purposes|too many/i.test(message)) {
+        return res.status(429).json({
+          error: 'Please wait a moment before requesting another reset email.',
+        })
+      }
+      if (/redirect/i.test(message)) {
+        return res.status(400).json({
+          error: 'Password reset is not available from this address yet. Add this site to the allowed redirect URLs and try again.',
+        })
+      }
+      return res.status(400).json({ error: 'Could not send the reset email. Try again in a moment.' })
+    }
+  }
+
+  await logAction({
+    agentID: null,
+    action: ACTIONS.PASSWORD_RESET_REQUESTED,
+    outcome: OUTCOMES.SUCCESS,
+    performedBy: 'system',
+    ipAddress: req.clientIP,
+    details: { email },
+  })
+
+  return res.json({
+    message: 'If an account exists for that email, a password reset link is on its way.',
+  })
+}
+
+export async function resetPassword(req, res) {
+  const password = String(req.body?.password || '')
+
+  if (password.length < 8) {
+    return res.status(400).json({ error: 'Password must be at least 8 characters' })
+  }
+
+  const { error: updateError } = await supabase.auth.admin.updateUserById(req.user.id, { password })
+
+  if (updateError) {
+    return res.status(400).json({ error: updateError.message })
+  }
+
+  const email = req.user.email
+  const { data, error: signInError } = await supabaseAnon.auth.signInWithPassword({ email, password })
+
+  await logAction({
+    agentID: await resolveAgentIdForUser(req.user.id),
+    action: ACTIONS.PASSWORD_RESET,
+    outcome: signInError ? OUTCOMES.FAILED : OUTCOMES.SUCCESS,
+    performedBy: req.user.id,
+    ipAddress: req.clientIP,
+    details: { email },
+  })
+
+  if (signInError || !data?.session) {
+    return res.json({
+      passwordUpdated: true,
+      message: 'Password updated. Sign in with your new password.',
+    })
   }
 
   return res.json(await buildAuthSession(data, req))

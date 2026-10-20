@@ -56,15 +56,16 @@ const run = fn => async (req, res) => {
   catch (error) {
     if (req.path === '/passkey/login/verify') await logger({ action: 'PASSKEY_LOGIN_FAILED', outcome: 'FAILED', performedBy: 'system', ipAddress: req.clientIP });
     const known = error instanceof PasskeyError;
-    res.status(known ? error.status : 400).json({ code: known ? error.code : 'PASSKEY_FAILED', error: messages[error.code] || 'Could not complete passkey sign-in or setup. Please try again.' });
+    const fallback = req.method === 'DELETE' ? 'Could not remove this passkey. Please try again.' : 'Could not complete passkey sign-in or setup. Please try again.';
+    res.status(known ? error.status : 400).json({ code: known ? error.code : 'PASSKEY_FAILED', error: messages[error.code] || fallback });
   }
 };
-router.post('/passkey/login/options', run(async (_req, res, s) => res.json(await s.loginOptions())));
+router.post('/passkey/login/options', run(async (req, res, s) => res.json(await s.loginOptions(req.body || {}))));
 router.post('/passkey/login/verify', run(async (req, res, s) => res.json(await s.loginVerify(req.body))));
 router.use(authenticate, requireCompleteProfile);
 router.post('/passkey/register/options', run(async (req, res, s) => res.json(await s.registerOptions(req.user, req.body?.manage === true))));
 router.post('/passkey/register/verify', run(async (req, res, s) => res.status(201).json(await s.registerVerify(req.user, req.body, req.get('User-Agent')))));
-router.get('/passkeys', run(async (req, res, s) => res.json({ passkeys: await s.list(req.user.id), rpId: req.passkeyConfig.rpID })));
+router.get('/passkeys', run(async (req, res, s) => res.json({ passkeys: await s.list(req.user.id), rpId: req.passkeyConfig.rpID, ...(await s.account(req.user.id)) })));
 router.patch('/passkeys/:id', run(async (req, res, s) => res.json(await s.rename(req.user.id, req.params.id, req.body?.label))));
 router.delete('/passkeys/:id', run(async (req, res, s) => { await s.remove(req.user.id, req.params.id); res.sendStatus(204); }));
 return router;

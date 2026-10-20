@@ -9,7 +9,7 @@
     <p v-else-if="!passkeys.length">{{ supported ? 'No passkeys yet. Add one to sign in with Face ID or fingerprint.' : 'No passkeys yet.' }}</p>
     <ul v-else>
       <li v-for="key in passkeys" :key="key.id">
-        <form v-if="editing === key.id && supported" @submit.prevent="rename(key)">
+        <form v-if="editing === key.id" @submit.prevent="rename(key)">
           <label :for="`label-${key.id}`">Passkey name</label>
           <input :id="`label-${key.id}`" v-model="label" maxlength="100" required />
           <button :disabled="busy">Save</button><button type="button" @click="editing = null">Cancel</button>
@@ -17,16 +17,16 @@
         <h2 v-else>{{ key.label }}</h2>
         <p>{{ key.device_name }} — {{ key.browser }} <span v-if="localCredential === key.credential_id" class="badge">This device</span> <span v-if="key.backed_up" class="badge">Synced</span></p>
         <p>Added <time :datetime="key.created_at" :title="fullDate(key.created_at)">{{ relative(key.created_at) }}</time> · <span v-if="!key.last_used_at">Never used</span><span v-else>Last used <time :datetime="key.last_used_at" :title="fullDate(key.last_used_at)">{{ relative(key.last_used_at) }}</time></span></p>
-        <div v-if="supported" class="row-actions">
-          <button :disabled="busy" @click="editing = key.id; label = key.label">Rename</button>
-          <button :disabled="busy" @click="removing = key">Remove</button>
+        <div class="row-actions">
+          <button type="button" :disabled="busy" @click="editing = key.id; label = key.label">Rename</button>
+          <button type="button" :disabled="busy" @click="removing = key">Remove</button>
         </div>
       </li>
     </ul>
     <PasskeyDialog v-if="removing" title="Remove this passkey?" @dismiss="removing = null">
       <p>You won't be able to sign in with it anymore.</p>
       <p role="status">{{ removeError }}</p>
-      <div class="passkey-actions"><button :disabled="busy" @click="remove">Remove passkey</button><button @click="removing = null">Cancel</button></div>
+      <div class="passkey-actions"><button type="button" :disabled="busy" @click="remove">Remove passkey</button><button type="button" @click="removing = null">Cancel</button></div>
     </PasskeyDialog>
   </main>
 </template>
@@ -37,7 +37,7 @@ import PasskeyDialog from '../components/PasskeyDialog.vue'
 import { usePasskeySupport } from '../composables/usePasskeySupport.js'
 import { useAuthStore } from '../stores/authStore.js'
 import { registered, removeLocal, optedIn } from '../utils/passkeyStorage.js'
-import { registerPasskey, isCancelled, isAborted, cancelPasskeyCeremony, signalRemoved, passkeyErrorMessage } from '../services/passkeyService.js'
+import { registerPasskey, isCancelled, isAborted, cancelPasskeyCeremony, signalRemoved, signalAcceptedPasskeys, passkeyErrorMessage } from '../services/passkeyService.js'
 import api from '../services/api.js'
 const { state } = useAuthStore()
 const { supported } = usePasskeySupport()
@@ -49,7 +49,7 @@ async function load() {
   try {
     const { data } = await api.get('/api/auth/passkeys')
     if (!active) return
-    passkeys.value = data.passkeys; rpId = data.rpId; refreshLocal()
+    passkeys.value = data.passkeys; rpId = data.rpId; refreshLocal(); signalAcceptedPasskeys(data)
     if (localCredential.value && !passkeys.value.some(p => p.credential_id === localCredential.value)) { removeLocal(`passkey_registered:${userId()}`); refreshLocal() }
   } catch (error) { message.value = passkeyErrorMessage(error, 'Could not load passkeys. Please reload to try again.') }
   finally { loading.value = false }

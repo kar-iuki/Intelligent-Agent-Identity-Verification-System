@@ -39,7 +39,9 @@ button:disabled { cursor:not-allowed; opacity:.55; }
 .icon-button { width:38px; height:38px; display:grid; place-items:center; border:1px solid var(--line); border-radius:8px; background:#fff; color:#5a6e61; }
 .breadcrumb { display:flex; align-items:center; gap:13px; color:#829086; font-size:12px; }
 .breadcrumb strong { color:#405348; font-weight:500; }
-.topbar-account { margin-left:auto; display:flex; gap:8px; align-items:center; color:#617269; font-size:11px; }
+.topbar-spacer { margin-left:auto; }
+.theme-toggle { flex-shrink:0; }
+.topbar-account { margin-left:10px; display:flex; gap:8px; align-items:center; color:#617269; font-size:11px; }
 .account-dot { width:6px; height:6px; border-radius:50%; background:#468362; }
 .workspace-footer { display:flex; justify-content:space-between; padding:22px 38px; border-top:1px solid var(--line); color:#7b887e; font-size:11px; }
 .skip-link { position:fixed; top:-100px; left:280px; z-index:100; padding:12px; background:white; color:var(--accent); }
@@ -181,3 +183,59 @@ button:disabled { cursor:not-allowed; opacity:.55; }
 #app .workspace .matrix { display:grid; grid-template-columns:minmax(70px,1.1fr) repeat(3,minmax(0,1fr)); max-width:100%; }
 #app .workspace .matrix > * { min-width:0; overflow-wrap:anywhere; }
 .shell-body { transition:none; }
+
+/* Light and dark workspace theme, shared by admin and agent accounts. */
+html[data-theme="dark"] {
+  --ink:#e7f0ea;
+  --muted:#a8b8ae;
+  --line:#2c4036;
+  --accent:#3d9a72;
+  --canvas:#101c17;
+  --passkey-background:#17261f;
+  --passkey-color:#e7f0ea;
+  color-scheme:dark;
+}
+html[data-theme="dark"] body { background:#101c17; color:#e7f0ea; }
+html[data-theme="dark"] .app-sidebar { background:#0c1914; }
+html[data-theme="dark"] .shell-topbar { background:#12241c; border-bottom-color:#2c4036; }
+html[data-theme="dark"] .icon-button { background:#1b3127; color:#d5e6da; border-color:#345244; }
+html[data-theme="dark"] .breadcrumb { color:#8fa798; }
+html[data-theme="dark"] .breadcrumb strong { color:#d5e6da; }
+html[data-theme="dark"] .topbar-account { color:#c5d5c8; }
+html[data-theme="dark"] .workspace-footer { border-top-color:#2c4036; color:#8fa798; }
+html[data-theme="dark"] .skip-link { background:#17261f; color:#d5e6da; }
+html[data-theme="dark"] #app .workspace { color:#e7f0ea; background:#101c17; }
+html[data-theme="dark"] #app .workspace > header h1,
+html[data-theme="dark"] #app .workspace :is(h1,h2,h3,h4) { color:#e7f0ea; }
+html[data-theme="dark"] #app .workspace > header :is(.welcome,.subtitle),
+html[data-theme="dark"] #app .workspace :is(.muted,.panel-copy,.metric-note,.field-hint,.time,.footnote,.activity-time,.audit-state,.workspace-eyebrow) { color:#a8b8ae; }
+html[data-theme="dark"] #app .workspace :is(.panel,.card,.metric-card,.stat-card,.modal,.drawer,.platform-link,.progress li) {
+  background:#17261f; color:#e7f0ea; border-color:#2c4036;
+}
+html[data-theme="dark"] #app .workspace .stat-card.clickable:hover,
+html[data-theme="dark"] #app .workspace tr.clickable:hover,
+html[data-theme="dark"] #app .workspace .platform-link:hover { background:#1c3328; border-color:#3d6b56; }
+html[data-theme="dark"] #app .workspace .stat-label { color:#9db3a6; }
+html[data-theme="dark"] #app .workspace .stat-value,
+html[data-theme="dark"] #app .workspace .metric-value { color:#e7f0ea; }
+html[data-theme="dark"] #app .workspace .stat-icon { background:#24382e; color:#c5d99e; }
+html[data-theme="dark"] #app .workspace :is(input,select,textarea) {
+  background:#0f1c17; color:#e7f0ea; border-color:#3a5346;
+}
+html[data-theme="dark"] #app .workspace input::placeholder { color:#8fa798; }
+html[data-theme="dark"] #app .workspace th { background:#12241c; color:#9db3a6; border-bottom-color:#2c4036; }
+html[data-theme="dark"] #app .workspace td { color:#d5e4da; border-bottom-color:#24382e; }
+html[data-theme="dark"] #app .workspace :is(.btn.ghost,.btn-secondary) { background:#1b3127; color:#d7e7dc; border-color:#3a5346; }
+html[data-theme="dark"] #app .workspace .progress li { color:#a8b8ae; }
+html[data-theme="dark"] #app .workspace .progress li.active { background:#1d3a2c; border-color:#3d6b56; color:#d7ead0; }
+html[data-theme="dark"] #app .workspace .progress li.done { background:#163024; color:#b7d7b8; border-color:#2f5340; }
+html[data-theme="dark"] #app .workspace .activity-list li { background:#12241c; border-color:#2c4036; color:#d5e4da; }
+html[data-theme="dark"] #app .workspace :is(.activity-time,.activity-name,.activity-action,.activity-outcome) { color:#d5e4da; }
+html[data-theme="dark"] #app .workspace .linkish { color:#8dccab; }
+html[data-theme="dark"] #app .workspace .empty { color:#a8b8ae; }
+html[data-theme="dark"] #app .workspace .drawer > header,
+html[data-theme="dark"] #app .workspace .info-grid dd,
+html[data-theme="dark"] #app .workspace .drawer-section h4 { color:#e7f0ea; }
+html[data-theme="dark"] #app .workspace .info-grid dt { color:#a8b8ae; }
+html[data-theme="dark"] #app .passkeys-page li { border-color:#2c4036; background:#17261f; color:#e7f0ea; }
+html[data-theme="dark"] .nav-scrim { background:#06110d99; }

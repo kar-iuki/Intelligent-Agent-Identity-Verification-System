@@ -13,6 +13,9 @@ const supabaseAnon = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     autoRefreshToken: false,
     persistSession: false,
+    // Email confirmation and password-reset links must work in any browser.
+    // PKCE would store the code verifier on this server, not in the user's browser.
+    flowType: 'implicit',
   },
 })
 

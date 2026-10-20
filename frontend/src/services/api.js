@@ -9,7 +9,8 @@ const api = axios.create({
 
 api.interceptors.request.use((config) => {
   const token = getAuthToken()
-  if (token) {
+  const hasAuthorization = config.headers?.Authorization || config.headers?.authorization
+  if (token && !hasAuthorization) {
     config.headers.Authorization = `Bearer ${token}`
   }
 
@@ -43,7 +44,8 @@ api.interceptors.response.use(
 
       const { default: router } = await import('../router')
       const currentRoute = router.currentRoute.value
-      if (currentRoute.name !== 'login' && currentRoute.name !== 'register') {
+      const stayOnPage = ['login', 'register', 'forgot-password', 'reset-password', 'check-email']
+      if (!stayOnPage.includes(currentRoute.name)) {
         router.push('/login')
       }
     }

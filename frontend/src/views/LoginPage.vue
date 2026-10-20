@@ -19,7 +19,10 @@
         </div>
 
         <div class="form-group">
-          <label for="password">Password</label>
+          <div class="password-label">
+            <label for="password">Password</label>
+            <router-link to="/forgot-password">Forgot password?</router-link>
+          </div>
           <input
             id="password"
             v-model="password"
@@ -30,10 +33,42 @@
           />
         </div>
 
+        <div class="form-group">
+          <label for="captcha">Human check</label>
+          <div class="captcha-row">
+            <img v-if="captchaImage" class="captcha-image" :src="captchaImage" alt="Distorted characters to type" />
+            <span v-else class="captcha-image captcha-pending">Loading characters...</span>
+            <button type="button" class="captcha-refresh" :disabled="captchaLoading" aria-label="Show different characters" title="Show different characters" @click="loadCaptcha">
+              <RefreshCw :size="18" />
+            </button>
+          </div>
+          <input
+            id="captcha"
+            v-model="captchaAnswer"
+            type="text"
+            autocomplete="off"
+            autocapitalize="characters"
+            spellcheck="false"
+            maxlength="5"
+            placeholder="Type the characters"
+            required
+          />
+        </div>
+
         <p v-if="error || oauthError" class="error">{{ error || oauthError }}</p>
+        <button
+          v-if="unconfirmed"
+          type="button"
+          class="btn btn-oauth resend"
+          :disabled="resending || !email"
+          @click="handleResend"
+        >
+          {{ resending ? 'Sending...' : 'Resend confirmation email' }}
+        </button>
+        <p v-if="info" class="info">{{ info }}</p>
 
         <div class="signin-actions">
-        <button type="submit" class="btn btn-primary" :disabled="loading || passkeyBusy">
+        <button type="submit" class="btn btn-primary" :disabled="loading || passkeyBusy || !captchaId">
           {{ loading ? 'Signing in...' : 'Sign In' }}
         </button>
         <PasskeyButton v-if="supported" icon-only :busy="passkeyBusy || loading" @click="handlePasskey(false)" />
@@ -65,21 +100,29 @@
 import { ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore.js'
+import { RefreshCw } from '@lucide/vue'
 import PasskeyButton from '../components/PasskeyButton.vue'
+import api from '../services/api.js'
 import { usePasskeySupport } from '../composables/usePasskeySupport.js'
-import { loginWithPasskey, cancelPasskeyCeremony, isCancelled, isAborted, FALLBACK_MESSAGE, passkeyErrorMessage } from '../services/passkeyService.js'
+import { loginWithPasskey, primePasskeyLogin, cancelPasskeyCeremony, isCancelled, isAborted, FALLBACK_MESSAGE, passkeyErrorMessage } from '../services/passkeyService.js'
+import { localCredentialIds } from '../utils/passkeyStorage.js'
 
 const router = useRouter()
-const { state, login, loginWithOAuth, handleOAuthCallback, getDashboardRoute, acceptPasskeySession } = useAuthStore()
+const { state, login, loginWithOAuth, handleOAuthCallback, resendVerificationEmail, getDashboardRoute, acceptPasskeySession } = useAuthStore()
 const { supported, conditionalUI } = usePasskeySupport()
 const passkeyBusy = ref(false), passkeyMessage = ref('')
-let disposed = false, explicitStarted = false
+let disposed = false, explicitStarted = false, primeTimer
+function passkeyRequestHints() { return { email: email.value, credentialIds: localCredentialIds() } }
+function schedulePasskeyChallenge() {
+  clearTimeout(primeTimer)
+  primeTimer = setTimeout(() => { primePasskeyLogin(passkeyRequestHints()).catch(() => {}) }, email.value ? 400 : 0)
+}
 function focusPasswordLogin() { document.getElementById('email')?.focus(); document.getElementById('email')?.scrollIntoView({ block: 'center', behavior: 'instant' }) }
 async function handlePasskey(conditional) {
   if (!conditional && (passkeyBusy.value || loading.value)) return
   if (!conditional) { explicitStarted = true; passkeyBusy.value = true; passkeyMessage.value = '' }
   try {
-    const data = await loginWithPasskey(conditional)
+    const data = await loginWithPasskey(conditional, conditional ? {} : passkeyRequestHints())
     if (disposed) return
     acceptPasskeySession(data)
     router.push(getDashboardRoute(data.role))
@@ -92,33 +135,92 @@ async function handlePasskey(conditional) {
   } finally { if (!conditional) passkeyBusy.value = false }
 }
 watch(() => [supported.value, conditionalUI.value], ([support, conditional]) => {
-  if (support && conditional && !explicitStarted && !new URLSearchParams(window.location.search).has('code')) handlePasskey(true)
+  const hash = window.location.hash
+  const returningFromEmail = hash.includes('access_token') || hash.includes('error')
+  if (support && conditional && !explicitStarted && !returningFromEmail && !new URLSearchParams(window.location.search).has('code')) handlePasskey(true)
 })
-onBeforeUnmount(() => { disposed = true; cancelPasskeyCeremony() })
+onBeforeUnmount(() => { disposed = true; clearTimeout(primeTimer); cancelPasskeyCeremony() })
 
 const email = ref('')
+watch(email, schedulePasskeyChallenge)
 const password = ref('')
+const captchaId = ref('')
+const captchaSvg = ref('')
+const captchaAnswer = ref('')
+const captchaLoading = ref(false)
+const captchaImage = computed(() => captchaSvg.value ? `data:image/svg+xml;charset=utf-8,${encodeURIComponent(captchaSvg.value)}` : '')
 const error = ref('')
+const info = ref('')
+const unconfirmed = ref(false)
+const resending = ref(false)
 const loading = ref(false)
 
 const oauthError = computed(() => state.error)
 
+function continueAfterSession(userData) {
+  if (!userData) return
+  if (userData.recovery) {
+    router.replace('/reset-password')
+    return
+  }
+  if (userData.needsProfile) {
+    if (userData.suggestedFullName) {
+      localStorage.setItem('suggested_full_name', userData.suggestedFullName)
+    }
+    router.push('/complete-profile')
+    return
+  }
+  if (userData.role) {
+    router.push(getDashboardRoute(userData.role))
+  }
+}
+
+async function loadCaptcha() {
+  captchaLoading.value = true
+  captchaAnswer.value = ''
+  try {
+    const { data } = await api.get('/api/auth/captcha')
+    captchaId.value = data.id
+    captchaSvg.value = data.svg
+  } catch {
+    captchaId.value = ''
+    captchaSvg.value = ''
+    error.value = 'The human check could not be loaded. Try again.'
+  } finally {
+    captchaLoading.value = false
+  }
+}
+
 async function handleLogin() {
   cancelPasskeyCeremony()
   error.value = ''
+  info.value = ''
+  unconfirmed.value = false
   loading.value = true
 
   try {
-    const data = await login(email.value, password.value)
-    if (data.needsProfile) {
-      router.push('/complete-profile')
-      return
-    }
-    router.push(getDashboardRoute(data.role))
+    const data = await login(email.value, password.value, { id: captchaId.value, answer: captchaAnswer.value })
+    continueAfterSession(data)
   } catch (err) {
+    unconfirmed.value = err.response?.data?.code === 'EMAIL_NOT_CONFIRMED'
     error.value = err.response?.data?.error || 'Invalid email or password'
+    await loadCaptcha()
   } finally {
     loading.value = false
+  }
+}
+
+async function handleResend() {
+  info.value = ''
+  error.value = ''
+  resending.value = true
+  try {
+    const data = await resendVerificationEmail(email.value.trim().toLowerCase())
+    info.value = data.message || 'Confirmation email sent.'
+  } catch (err) {
+    error.value = err.response?.data?.error || 'Could not resend the confirmation email.'
+  } finally {
+    resending.value = false
   }
 }
 
@@ -135,23 +237,13 @@ async function handleGoogleLogin() {
 }
 
 onMounted(async () => {
+  schedulePasskeyChallenge()
   loading.value = true
+  const captchaPromise = loadCaptcha()
   try {
-    const userData = await handleOAuthCallback()
-    if (!userData) return
-
-    if (userData.needsProfile) {
-      if (userData.suggestedFullName) {
-        localStorage.setItem('suggested_full_name', userData.suggestedFullName)
-      }
-      router.push('/complete-profile')
-      return
-    }
-
-    if (userData.role) {
-      router.push(getDashboardRoute(userData.role))
-    }
+    continueAfterSession(await handleOAuthCallback())
   } finally {
+    await captchaPromise
     loading.value = false
   }
 })
@@ -198,6 +290,71 @@ label {
   font-weight: 500;
   color: #334e68;
   margin-bottom: 0.375rem;
+}
+
+.password-label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.password-label label {
+  margin-bottom: 0.375rem;
+}
+
+.password-label a {
+  color: #286848;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.password-label a:hover {
+  text-decoration: underline;
+}
+
+.info {
+  color: #276749;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+.resend {
+  margin-bottom: 1rem;
+}
+
+.captcha-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.captcha-image {
+  width: 210px;
+  height: 68px;
+  border: 1px solid #d5ded4;
+  border-radius: 8px;
+  background: #f3f7f1;
+}
+
+.captcha-pending {
+  display: grid;
+  place-items: center;
+  color: #6c757d;
+  font-size: 0.75rem;
+}
+
+.captcha-refresh {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #d5ded4;
+  border-radius: 8px;
+  background: #fff;
+  color: #176b55;
 }
 
 input {

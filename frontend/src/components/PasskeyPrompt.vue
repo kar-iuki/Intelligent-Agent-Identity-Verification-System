@@ -17,7 +17,7 @@ import PasskeyDialog from './PasskeyDialog.vue'
 import { usePasskeySupport } from '../composables/usePasskeySupport.js'
 import { useAuthStore } from '../stores/authStore.js'
 import { shouldPrompt, skipPrompt, dismissPrompt, registered, readLocal } from '../utils/passkeyStorage.js'
-import { registerPasskey, isCancelled, isAborted, cancelPasskeyCeremony, passkeyErrorMessage } from '../services/passkeyService.js'
+import { registerPasskey, isCancelled, isAborted, cancelPasskeyCeremony, signalAcceptedPasskeys, passkeyErrorMessage } from '../services/passkeyService.js'
 import api from '../services/api.js'
 const props = defineProps({ ready: Boolean })
 const { state, claimPasskeyPrompt } = useAuthStore()
@@ -37,6 +37,7 @@ async function check() {
     await new Promise(resolve => { setTimeout(resolve, 350) })
     if (!active || owner !== userId() || !eligible()) return
     hasPasskeys.value = data.passkeys.length > 0
+    signalAcceptedPasskeys(data)
     if (claimPasskeyPrompt()) open.value = true
   } catch { /* Optional setup never blocks the app. */ }
   finally { checking = false }

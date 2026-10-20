@@ -1,5 +1,6 @@
 import { reactive, readonly } from 'vue'
 import api from '../services/api.js'
+import { syncPasskeyHints } from '../services/passkeyService.js'
 import { setAuthToken, getAuthToken } from '../utils/authToken.js'
 import supabase from '../services/supabase.js'
 
@@ -101,12 +102,17 @@ export function useAuthStore() {
     return data
   }
 
-  async function login(email, password) {
+  async function login(email, password, captcha = {}) {
     state.loading = true
     state.error = null
 
     try {
-      const { data } = await api.post('/api/auth/login', { email, password })
+      const { data } = await api.post('/api/auth/login', {
+        email: String(email || '').trim().toLowerCase(),
+        password,
+        captchaId: captcha.id,
+        captchaAnswer: captcha.answer,
+      })
       state.passkeyPromptEligible = true
       state.passkeyPromptShown = false
 
@@ -120,6 +126,7 @@ export function useAuthStore() {
       }
 
       persistSession(data.token, data.user, data.role, data.agent)
+      syncPasskeyHints().catch(() => {})
       return data
     } catch (err) {
       state.error = err.response?.data?.error || 'Login failed'
@@ -162,6 +169,7 @@ export function useAuthStore() {
       }
 
       persistSession(state.token, data.user, data.role, data.agent)
+      syncPasskeyHints().catch(() => {})
       return data
     } catch (err) {
       clearSession()
@@ -185,6 +193,7 @@ export function useAuthStore() {
       })
       persistSession(state.token, data.user, data.role, data.agent)
       state.passkeyPromptEligible = true
+      syncPasskeyHints().catch(() => {})
       return data
     } catch (err) {
       state.error = err.response?.data?.error || 'Failed to complete profile'
@@ -217,48 +226,118 @@ export function useAuthStore() {
     }
   }
 
-  function clearOAuthUrlParams() {
+  const RECOVERY_KEY = 'recovery_access_token'
+
+  function setRecoveryToken(token) {
+    try { window.sessionStorage.setItem(RECOVERY_KEY, token) } catch { /* Optional persistence. */ }
+  }
+
+  function hasRecoverySession() {
+    try { return !!window.sessionStorage.getItem(RECOVERY_KEY) } catch { return false }
+  }
+
+  function clearRecoveryToken() {
+    try { window.sessionStorage.removeItem(RECOVERY_KEY) } catch { /* Optional persistence. */ }
+  }
+
+  function clearAuthRedirectFromUrl() {
     const url = new URL(window.location.href)
-    if (!url.searchParams.has('code') && !url.searchParams.has('error')) return
-    window.history.replaceState({}, '', url.pathname)
+    for (const key of ['code', 'error', 'error_code', 'error_description', 'token_hash', 'type']) {
+      url.searchParams.delete(key)
+    }
+    url.hash = ''
+    const search = url.searchParams.toString()
+    window.history.replaceState({}, '', url.pathname + (search ? `?${search}` : ''))
+  }
+
+  function redirectErrorMessage(query, hash) {
+    const code = hash.get('error_code') || query.get('error_code')
+    const raw = hash.get('error_description') || query.get('error_description') || hash.get('error') || query.get('error')
+    if (!raw && !code) return ''
+    if (code === 'otp_expired') {
+      return 'This email link has expired. Request a new confirmation or password reset email.'
+    }
+    return raw || 'The email link could not be opened. Request a new one and try again.'
+  }
+
+  async function finishRedirectSession(accessToken) {
+    persistSession(accessToken, null, null)
+    try {
+      const user = await fetchCurrentUser()
+      state.passkeyPromptEligible = true
+      state.passkeyPromptShown = false
+      syncPasskeyHints().catch(() => {})
+      return user
+    } catch (err) {
+      state.error = err.response?.data?.error || err.message || 'Could not finish sign-in from the email link'
+      clearSession()
+      return null
+    }
   }
 
   async function handleOAuthCallback() {
-    const params = new URLSearchParams(window.location.search)
-    const code = params.get('code')
-    const oauthError = params.get('error_description') || params.get('error')
+    const query = new URLSearchParams(window.location.search)
+    const hash = new URLSearchParams(window.location.hash.replace(/^#/, ''))
+    const redirectError = redirectErrorMessage(query, hash)
 
-    if (oauthError) {
-      state.error = oauthError
-      clearOAuthUrlParams()
+    if (redirectError) {
+      state.error = redirectError
+      clearAuthRedirectFromUrl()
       return null
     }
 
-    // Not an OAuth return — leave existing sessions alone for normal login page loads
-    if (!code) {
-      return null
+    const accessToken = hash.get('access_token') || query.get('access_token')
+    const type = (hash.get('type') || query.get('type') || '').toLowerCase()
+    const tokenHash = query.get('token_hash') || hash.get('token_hash')
+
+    if (accessToken) {
+      clearAuthRedirectFromUrl()
+      const openedResetLink = window.location.pathname === '/reset-password' && type !== 'signup' && type !== 'email'
+      if (type === 'recovery' || openedResetLink) {
+        setRecoveryToken(accessToken)
+        return { recovery: true }
+      }
+      return finishRedirectSession(accessToken)
     }
+
+    if (tokenHash && type) {
+      const { data, error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type })
+      clearAuthRedirectFromUrl()
+      if (error || !data?.session) {
+        state.error = error?.message || 'The email link could not be confirmed. Request a new one and try again.'
+        return null
+      }
+      if (type === 'recovery') {
+        setRecoveryToken(data.session.access_token)
+        return { recovery: true }
+      }
+      return finishRedirectSession(data.session.access_token)
+    }
+
+    const code = query.get('code')
+    if (!code) return null
 
     const startedOrigin = safeStorage.getItem('oauth_started_origin')
     if (startedOrigin && startedOrigin !== window.location.origin) {
       state.error =
         `Google sent you back to ${window.location.origin}, but sign-in started on ${startedOrigin}. ` +
         'Open the app with one URL only (your ngrok https link), add that exact URL to Supabase Redirect URLs, then try Continue with Google again.'
-      clearOAuthUrlParams()
+      clearAuthRedirectFromUrl()
       return null
     }
 
     const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)
-    clearOAuthUrlParams()
+    clearAuthRedirectFromUrl()
     safeStorage.removeItem('oauth_started_origin')
     safeStorage.removeItem('oauth_redirect_to')
 
     if (exchangeError) {
       const msg = exchangeError.message || ''
       if (/verifier|PKCE/i.test(msg)) {
-        state.error =
-          'Google sign-in could not finish (login session was lost). ' +
-          'Use the same browser and the same ngrok URL for the whole flow — do not switch between localhost and ngrok. Tap Continue with Google again.'
+        state.error = startedOrigin
+          ? 'Google sign-in could not finish (login session was lost). ' +
+            'Use the same browser and the same ngrok URL for the whole flow — do not switch between localhost and ngrok. Tap Continue with Google again.'
+          : 'This email link could not be completed in this browser. Request a new confirmation or password reset email and open it here.'
       } else {
         state.error = msg
       }
@@ -267,21 +346,51 @@ export function useAuthStore() {
 
     const session = data?.session
     if (!session) {
-      state.error = 'Google sign-in did not return a session. Please try again.'
+      state.error = 'Sign-in did not return a session. Please try again.'
       return null
     }
 
-    persistSession(session.access_token, null, null)
+    return finishRedirectSession(session.access_token)
+  }
 
+  async function forgotPassword(email) {
+    const { data } = await api.post('/api/auth/forgot-password', { email: String(email || '').trim().toLowerCase() })
+    return data
+  }
+
+  async function resetPassword(password) {
+    let token = null
+    try { token = window.sessionStorage.getItem(RECOVERY_KEY) } catch { token = null }
+    if (!token) {
+      const error = new Error('Open the reset link from your email, then choose a new password.')
+      state.error = error.message
+      throw error
+    }
+
+    state.loading = true
+    state.error = null
     try {
-      const user = await fetchCurrentUser()
-      state.passkeyPromptEligible = true
-      state.passkeyPromptShown = false
-      return user
+      const { data } = await api.post('/api/auth/reset-password', { password }, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      clearRecoveryToken()
+
+      if (data.needsProfile && data.token) {
+        persistSession(data.token, null, null)
+        if (data.email) safeStorage.setItem('oauth_email', data.email)
+        if (data.suggestedFullName) safeStorage.setItem('suggested_full_name', data.suggestedFullName)
+        return data
+      }
+
+      if (data.token && data.role) {
+        persistSession(data.token, data.user, data.role, data.agent)
+      }
+      return data
     } catch (err) {
-      state.error = err.response?.data?.error || err.message || 'Could not finish Google sign-in'
-      clearSession()
-      return null
+      state.error = err.response?.data?.error || 'Could not update your password'
+      throw err
+    } finally {
+      state.loading = false
     }
   }
 
@@ -293,6 +402,7 @@ export function useAuthStore() {
     persistSession(data.token, data.user, data.role, data.agent)
     state.passkeyPromptEligible = false
     state.passkeyPromptShown = true
+    syncPasskeyHints().catch(() => {})
   }
 
   function claimPasskeyPrompt() {
@@ -311,6 +421,9 @@ export function useAuthStore() {
     completeProfile,
     loginWithOAuth,
     handleOAuthCallback,
+    forgotPassword,
+    resetPassword,
+    hasRecoverySession,
     isAuthenticated,
     getDashboardRoute,
     clearSession,

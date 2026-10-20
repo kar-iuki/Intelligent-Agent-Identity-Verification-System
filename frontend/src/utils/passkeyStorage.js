@@ -28,6 +28,14 @@ export function shouldPrompt({ userId, supported, eligible, shown, ready }) {
     && readLocal(`passkey_prompt_dismissed:${userId}`) !== true
     && Number(readLocal(`passkey_prompt_skip_count:${userId}`, 0)) < MAX_SKIPS_BEFORE_PERMANENT_DISMISS)
 }
+export function localCredentialIds() {
+  try {
+    return [...new Set(Object.keys(window.localStorage)
+      .filter(key => key.startsWith('passkey_registered:'))
+      .map(key => readLocal(key)?.credentialId)
+      .filter(id => typeof id === 'string' && id))]
+  } catch { return [] }
+}
 export function clearStaleCredential(credentialId) {
   if (!credentialId) return
   try {

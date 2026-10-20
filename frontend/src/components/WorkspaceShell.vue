@@ -20,6 +20,11 @@
       <header class="shell-topbar">
         <button ref="menuButton" class="icon-button" :aria-expanded="mobile ? mobileOpen : !collapsed" aria-controls="workspace-navigation" :aria-label="mobile ? 'Open navigation' : collapsed ? 'Expand sidebar' : 'Collapse sidebar'" @click="toggleNavigation"><PanelLeft :size="20" /></button>
         <span class="breadcrumb">{{ admin ? 'Administration' : 'Agent workspace' }}<ChevronRight :size="14" /><strong>{{ currentLabel }}</strong></span>
+        <span class="topbar-spacer"></span>
+        <button type="button" class="icon-button theme-toggle" :aria-pressed="isDark" :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'" :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'" @click="toggleTheme">
+          <Sun v-if="isDark" :size="18" />
+          <Moon v-else :size="18" />
+        </button>
         <span class="topbar-account"><span class="account-dot" />{{ admin ? 'Admin' : 'Agent' }} portal</span>
       </header>
       <div id="workspace-main" tabindex="-1"><slot /></div>
@@ -30,10 +35,13 @@
 <script setup>
 import { computed, ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ShieldCheck, LayoutDashboard, Fingerprint, History, BriefcaseBusiness, ChartNoAxesCombined, Users, Clock3, Flag, ChevronRight, PanelLeft, LogOut } from '@lucide/vue'
+import { ShieldCheck, LayoutDashboard, Fingerprint, History, BriefcaseBusiness, ChartNoAxesCombined, Users, Clock3, Flag, ChevronRight, PanelLeft, LogOut, Sun, Moon } from '@lucide/vue'
 import { useAuthStore } from '../stores/authStore.js'
+import { useTheme } from '../composables/useTheme.js'
 const route = useRoute(), router = useRouter()
 const { state, logout } = useAuthStore()
+const { theme, toggleTheme } = useTheme()
+const isDark = computed(() => theme.value === 'dark')
 const collapsed = ref(false), mobileOpen = ref(false), mobile = ref(false), signingOut = ref(false), menuButton = ref(null)
 const sidebar = ref(null)
 try { collapsed.value = localStorage.getItem('sidebar-collapsed') === 'true' } catch {}

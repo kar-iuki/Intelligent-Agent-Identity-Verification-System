@@ -2,9 +2,9 @@ import { beforeEach, it, expect, vi } from 'vitest'
 const mocks = vi.hoisted(() => ({ post:vi.fn(), authentication:vi.fn(), registration:vi.fn(), cancel:vi.fn() }))
 vi.mock('../../src/services/api.js', () => ({ default:{ post:mocks.post } }))
 vi.mock('@simplewebauthn/browser', () => ({ startAuthentication:mocks.authentication, startRegistration:mocks.registration, WebAuthnAbortService:{ cancelCeremony:mocks.cancel } }))
-import { registerPasskey, loginWithPasskey, cancelPasskeyCeremony, passkeyErrorMessage } from '../../src/services/passkeyService.js'
+import { registerPasskey, loginWithPasskey, primePasskeyLogin, clearPreparedPasskey, cancelPasskeyCeremony, passkeyErrorMessage } from '../../src/services/passkeyService.js'
 import { registered, markRegistered } from '../../src/utils/passkeyStorage.js'
-beforeEach(() => { vi.resetAllMocks(); localStorage.clear(); cancelPasskeyCeremony() })
+beforeEach(() => { vi.resetAllMocks(); localStorage.clear(); clearPreparedPasskey(); cancelPasskeyCeremony() })
 const options = { data:{ options:{ challenge:'random' }, challengeId:'id' } }
 const expired = { response:{ data:{ code:'CHALLENGE_EXPIRED' } } }
 it('distinguishes deployment errors from connection failures without displaying server internals', () => {
@@ -40,6 +40,15 @@ it('cancellation while fetching options cannot start a late navigator request', 
   mocks.post.mockImplementationOnce(() => new Promise(r => { resolve = r }))
   const ceremony = loginWithPasskey(true); cancelPasskeyCeremony(); resolve(options)
   await expect(ceremony).rejects.toMatchObject({ name:'AbortError' }); expect(mocks.authentication).not.toHaveBeenCalled()
+})
+it('starts a prepared passkey prompt before asking the server again', async () => {
+  const hints = { email: 'agent@example.test', credentialIds: ['key'] }
+  mocks.post.mockResolvedValueOnce(options).mockResolvedValueOnce({ data: { user: { user_id: 'one' }, credentialId: 'key' } })
+  mocks.authentication.mockResolvedValue({ id: 'key' })
+  await primePasskeyLogin(hints)
+  await loginWithPasskey(false, hints)
+  expect(mocks.authentication).toHaveBeenCalledWith({ optionsJSON: options.data.options, useBrowserAutofill: false })
+  expect(mocks.post.mock.calls.map(call => call[0])).toEqual(['/api/auth/passkey/login/options', '/api/auth/passkey/login/verify'])
 })
 it('failed known credential clears only its stale hint', async () => {
   markRegistered('one','key'); markRegistered('two','other')

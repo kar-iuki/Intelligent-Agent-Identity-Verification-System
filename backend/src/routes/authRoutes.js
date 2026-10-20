@@ -5,6 +5,9 @@ import {
   registerAgent,
   resendVerificationEmail,
   login,
+  issueCaptcha,
+  forgotPassword,
+  resetPassword,
   logout,
   getMe,
   completeOAuthProfile,
@@ -14,7 +17,10 @@ const router = Router()
 
 router.post('/register', registerAgent)
 router.post('/resend-verification', resendVerificationEmail)
+router.get('/captcha', issueCaptcha)
 router.post('/login', login)
+router.post('/forgot-password', forgotPassword)
+router.post('/reset-password', authMiddleware, resetPassword)
 router.post('/logout', authMiddleware, logout)
 router.get('/me', authMiddleware, getMe)
 router.post('/complete-profile', authMiddleware, completeOAuthProfile)

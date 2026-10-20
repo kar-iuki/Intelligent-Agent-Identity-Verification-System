@@ -48,18 +48,28 @@ BEGIN
   RETURN used <= max_attempts;
 END;
 $$;
--- Lock the user to serialize concurrent removals; auth.users is the password source
--- of truth (public.users.password_hash is not used by this application).
+-- Lock the user to serialize concurrent removals. A password hash or any auth
+-- identity (email/password or Google) is another way to sign in. Email identities
+-- count: this app creates them only for accounts that have a password, and the
+-- password column is not always readable to this function.
 CREATE OR REPLACE FUNCTION public.remove_passkey(owner_id uuid, passkey_id uuid)
 RETURNS text LANGUAGE plpgsql SECURITY DEFINER SET search_path = '' AS $$
-DECLARE remaining integer; recovery boolean;
+DECLARE remaining integer; has_password boolean := false; has_identity boolean := false;
 BEGIN
   PERFORM 1 FROM public.users WHERE user_id = owner_id FOR UPDATE;
   IF NOT EXISTS(SELECT 1 FROM public.passkeys WHERE id = passkey_id AND user_id = owner_id) THEN RETURN 'not_found'; END IF;
   SELECT count(*) INTO remaining FROM public.passkeys WHERE user_id = owner_id;
-  SELECT EXISTS(SELECT 1 FROM auth.users WHERE id = owner_id AND coalesce(encrypted_password, '') <> '')
-    OR EXISTS(SELECT 1 FROM auth.identities WHERE user_id = owner_id AND provider <> 'email') INTO recovery;
-  IF remaining <= 1 AND NOT recovery THEN RETURN 'last_method'; END IF;
+  BEGIN
+    SELECT EXISTS(SELECT 1 FROM auth.users WHERE id = owner_id AND coalesce(encrypted_password, '') <> '') INTO has_password;
+  EXCEPTION WHEN OTHERS THEN
+    has_password := false;
+  END;
+  BEGIN
+    SELECT EXISTS(SELECT 1 FROM auth.identities WHERE user_id = owner_id) INTO has_identity;
+  EXCEPTION WHEN OTHERS THEN
+    has_identity := false;
+  END;
+  IF remaining <= 1 AND NOT (has_password OR has_identity) THEN RETURN 'last_method'; END IF;
   DELETE FROM public.passkeys WHERE id = passkey_id AND user_id = owner_id;
   RETURN 'removed';
 END;

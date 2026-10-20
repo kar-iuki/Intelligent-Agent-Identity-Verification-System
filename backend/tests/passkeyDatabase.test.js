@@ -36,6 +36,12 @@ test('PostgreSQL migration enforces replay, privileges, rate limits, uniqueness,
     const googleKey = (await db.query(insert,[two,'credential-two'])).rows[0].id;
     await db.query("INSERT INTO auth.identities VALUES ($1,'google')",[two]);
     assert.equal((await db.query('SELECT remove_passkey($1,$2) AS result',[two,googleKey])).rows[0].result,'removed');
+    const three = '33333333-3333-3333-3333-333333333333';
+    await db.query("INSERT INTO public.users(user_id,email) VALUES ($1,'three@example.test')",[three]);
+    await db.query('INSERT INTO auth.users(id) VALUES ($1)',[three]);
+    await db.query("INSERT INTO auth.identities VALUES ($1,'email')",[three]);
+    const emailKey = (await db.query(insert,[three,'credential-three'])).rows[0].id;
+    assert.equal((await db.query('SELECT remove_passkey($1,$2) AS result',[three,emailKey])).rows[0].result,'removed');
     for (const role of ['anon','authenticated']) {
       const privileges = (await db.query(`SELECT has_table_privilege($1,'public.passkeys','SELECT') AS read,
         has_table_privilege($1,'public.passkey_challenges','INSERT') AS write,

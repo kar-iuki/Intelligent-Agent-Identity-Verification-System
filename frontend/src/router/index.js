@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { getAuthToken } from '../utils/authToken.js'
 import { useAuthStore } from '../stores/authStore.js'
 import LoginPage from '../views/LoginPage.vue'
+import ForgotPasswordPage from '../views/ForgotPasswordPage.vue'
+import ResetPasswordPage from '../views/ResetPasswordPage.vue'
 import RegisterPage from '../views/RegisterPage.vue'
 import CheckEmailPage from '../views/CheckEmailPage.vue'
 import PendingVerificationPage from '../views/PendingVerificationPage.vue'
@@ -21,13 +23,31 @@ const routes = [
   },
   {
     path: '/',
-    redirect: '/login',
+    redirect: (to) => {
+      const hashParams = new URLSearchParams(to.hash.replace(/^#/, ''))
+      const type = (hashParams.get('type') || to.query.type || '').toString().toLowerCase()
+      const path = (hashParams.get('access_token') || to.query.access_token) && type === 'recovery'
+        ? '/reset-password'
+        : '/login'
+      return { path, hash: to.hash, query: to.query }
+    },
   },
   {
     path: '/login',
     name: 'login',
     component: LoginPage,
     meta: { guest: true },
+  },
+  {
+    path: '/forgot-password',
+    name: 'forgot-password',
+    component: ForgotPasswordPage,
+    meta: { guest: true },
+  },
+  {
+    path: '/reset-password',
+    name: 'reset-password',
+    component: ResetPasswordPage,
   },
   {
     path: '/register',

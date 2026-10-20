@@ -12,8 +12,10 @@ export function memoryDb() {
       const query = {
         select() { return query; }, order() { return query; },
         eq(key, value) { filters.push(row => row[key] === value); return query; },
+        in(key, values) { const allowed = new Set(values); filters.push(row => allowed.has(row[key])); return query; },
         insert(value) { action = 'insert'; payload = value; return query; },
         update(value) { action = 'update'; payload = value; return query; },
+        delete() { action = 'delete'; return query; },
         single() { single = true; return query; }, maybeSingle() { single = true; return query; },
         then(resolve) {
           let rows = tables[table].filter(row => filters.every(f => f(row)));
@@ -23,6 +25,12 @@ export function memoryDb() {
             tables[table].push(row); rows = [row];
           }
           if (action === 'update') rows.forEach(row => Object.assign(row, payload));
+          if (action === 'delete') {
+            const kept = [];
+            rows = [];
+            for (const row of tables[table]) (filters.every(f => f(row)) ? rows : kept).push(row);
+            tables[table] = kept;
+          }
           return Promise.resolve({ data:structuredClone(single ? rows[0] || null : rows), error:null }).then(resolve);
         },
       };
