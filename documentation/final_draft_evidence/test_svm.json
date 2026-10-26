@@ -1,0 +1,11 @@
+{
+  "suite": "test_svm",
+  "command": [
+    "C:\\Users\\ikari\\Desktop\\School Work\\Intelligent-Agent-Identity-Verification-System\\.venv-kyc\\Scripts\\python.exe",
+    "-X",
+    "utf8",
+    "ai-service/tests/test_svm.py"
+  ],
+  "exit_code": 0,
+  "output": "test_class_probability_order_is_not_assumed (__main__.SVMContractTests.test_class_probability_order_is_not_assumed) ... ok\ntest_rejects_missing_malformed_nonfinite_out_of_range (__main__.SVMContractTests.test_rejects_missing_malformed_nonfinite_out_of_range) ... ok\ntest_saved_artifact_prediction_parity_and_legacy_contract (__main__.SVMContractTests.test_saved_artifact_prediction_parity_and_legacy_contract) ... ok\ntest_saved_review_policy_is_honored_without_rewriting_probabilities (__main__.SVMContractTests.test_saved_review_policy_is_honored_without_rewriting_probabilities) ... ok\ntest_sharp_image_valid_without_assumed_decision (__main__.SVMContractTests.test_sharp_image_valid_without_assumed_decision) ... ok\ntest_unavailable_has_no_silent_prediction (__main__.SVMContractTests.test_unavailable_has_no_silent_prediction) ... ok\n\n----------------------------------------------------------------------\nRan 6 tests in 0.299s\n\nOK\n"
+}

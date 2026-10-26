@@ -1,0 +1,26 @@
+X [ERROR] Cannot read directory "../../../..": Access is denied.
+
+X [ERROR] Could not resolve "C:\\Users\\ikari\\Desktop\\School Work\\Intelligent-Agent-Identity-Verification-System\\frontend\\vitest.config.js"
+
+failed to load config from C:\Users\ikari\Desktop\School Work\Intelligent-Agent-Identity-Verification-System\frontend\vitest.config.js
+
+⎯⎯⎯⎯⎯⎯⎯ Startup Error ⎯⎯⎯⎯⎯⎯⎯⎯
+Error: Build failed with 2 errors:
+error: Cannot read directory "../../../..": Access is denied.
+error: Could not resolve "C:\\Users\\ikari\\Desktop\\School Work\\Intelligent-Agent-Identity-Verification-System\\frontend\\vitest.config.js"
+    at failureErrorWithLog (C:\Users\ikari\Desktop\School Work\Intelligent-Agent-Identity-Verification-System\frontend\node_modules\esbuild\lib\main.js:1467:15)
+    at C:\Users\ikari\Desktop\School Work\Intelligent-Agent-Identity-Verification-System\frontend\node_modules\esbuild\lib\main.js:926:25
+    at runOnEndCallbacks (C:\Users\ikari\Desktop\School Work\Intelligent-Agent-Identity-Verification-System\frontend\node_modules\esbuild\lib\main.js:1307:45)
+    at buildResponseToResult (C:\Users\ikari\Desktop\School Work\Intelligent-Agent-Identity-Verification-System\frontend\node_modules\esbuild\lib\main.js:924:7)
+    at C:\Users\ikari\Desktop\School Work\Intelligent-Agent-Identity-Verification-System\frontend\node_modules\esbuild\lib\main.js:951:16
+    at responseCallbacks.<computed> (C:\Users\ikari\Desktop\School Work\Intelligent-Agent-Identity-Verification-System\frontend\node_modules\esbuild\lib\main.js:603:9)
+    at handleIncomingPacket (C:\Users\ikari\Desktop\School Work\Intelligent-Agent-Identity-Verification-System\frontend\node_modules\esbuild\lib\main.js:658:12)
+    at Socket.readFromStdout (C:\Users\ikari\Desktop\School Work\Intelligent-Agent-Identity-Verification-System\frontend\node_modules\esbuild\lib\main.js:581:7)
+    at Socket.emit (node:events:509:28)
+    at addChunk (node:internal/streams/readable:563:12) {
+  errors: [Getter/Setter],
+  warnings: [Getter/Setter]
+}
+
+
+

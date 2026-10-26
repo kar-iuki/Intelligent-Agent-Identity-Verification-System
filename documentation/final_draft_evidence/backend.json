@@ -1,0 +1,14 @@
+{
+  "suite": "backend",
+  "command": [
+    "C:\\Users\\ikari\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+    "--test",
+    "backend/tests/kycDecision.test.js",
+    "backend/tests/documentRetention.test.js",
+    "backend/tests/passkeys.test.js",
+    "backend/tests/passkeyRoutes.test.js",
+    "backend/tests/passkeyDatabase.test.js"
+  ],
+  "exit_code": 0,
+  "output": "\u2714 three full Nairobi business days skip weekends and cross months (12.3686ms)\n\u2714 window uses successful decision time and closes exactly at expiry (1.0733ms)\n\u2714 purges expired and superseded images while preserving metadata and newer uploads (3.0108ms)\n\u2714 does not delete files inside the window or for pending/review/rejected requests (0.4756ms)\n\u2714 failed storage deletion preserves file references for retry (0.8565ms)\n\u2714 Incomplete scores fail before inference or threshold fallback (7.155ms)\n\u2714 Model prediction preserves database enums and decision basis (71.2427ms)\n\u2714 PostgreSQL migration enforces replay, privileges, rate limits, uniqueness, scoping and last-method protection (4047.405ms)\n[fraudConfig] Missing env vars (using defaults): FRAUD_MAX_FAILED_ATTEMPTS_PER_IP, FRAUD_MAX_FAILED_ATTEMPTS_PER_DEVICE, FRAUD_LOOKBACK_HOURS\n\u2714 HTTP endpoints enforce origin, auth, complete profile, generic failures and rate limits (1308.7031ms)\n(node:4916) ExperimentalWarning: The supports Web Crypto API method is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:4916) ExperimentalWarning: The ML-DSA-44 Web Crypto API algorithm is an experimental feature and might change at any time\n\u2714 origin config fails closed and allows only HTTPS or localhost (4.1288ms)\n\u2714 options have random 32-byte challenges, discoverable login, UV, opaque handle, exclusion and attachment policy (15.9953ms)\n\u2714 successful login consumes challenge, checks verifier arguments, updates counter and issues normal session (2.4725ms)\n\u2714 failed assertions consume challenges and never issue sessions (6.436ms)\n\u2714 expired, wrong-user and wrong-purpose challenges fail; userHandle binds the account (3.2783ms)\n\u2714 counter regression rejects and logs; synced zero counters work (1.3265ms)\n\u2714 registration stores only verified credentials, parses UA, and rejects duplicate and replay (19.0603ms)\n\u2714 management scopes rename/delete and protects last method (1.2398ms)\n\u2714 an email or Google identity can remove a passkey the database still treats as the last method (1.4398ms)\n\u2139 tests 18\n\u2139 suites 0\n\u2139 pass 18\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 12403.3747\n"
+}

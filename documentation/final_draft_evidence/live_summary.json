@@ -1,0 +1,158 @@
+{
+  "source_files": [
+    "Supabase Snippet Untitled query.csv",
+    "Supabase Snippet Untitled query (1).csv",
+    "Supabase Snippet Untitled query (2).csv"
+  ],
+  "request_count": 12,
+  "unique_agents": 8,
+  "score_count": 12,
+  "decision_count": 9,
+  "request_status": {
+    "verified": 7,
+    "rejected": 2,
+    "pending": 3
+  },
+  "decision_status": {
+    "verified": 7,
+    "rejected": 2
+  },
+  "decision_basis": {
+    "svm_model": 5,
+    "placeholder_threshold": 4
+  },
+  "request_date_range": [
+    "2026-09-20 22:48:25.916221+00",
+    "2026-10-03 09:52:25.018259+00"
+  ],
+  "decision_date_range": [
+    "2026-09-20 22:58:52.975+00",
+    "2026-10-03 09:53:12.975+00"
+  ],
+  "requests_without_decisions": 3,
+  "all_requests_have_scores": true,
+  "orphan_decisions": 0,
+  "status_matches": 9,
+  "zero_score_rows": 0,
+  "nonzero_score_rows": 12,
+  "probability_sums_valid": true,
+  "anonymized_decisions": [
+    {
+      "case": 1,
+      "final_decision": "verified",
+      "basis": "svm_model",
+      "scores": [
+        "22.0025",
+        "0.9941",
+        "1",
+        "293.4472",
+        "160.449",
+        "55.449"
+      ]
+    },
+    {
+      "case": 2,
+      "final_decision": "rejected",
+      "basis": "svm_model",
+      "scores": [
+        "38.6509",
+        "1",
+        "0.1111",
+        "60.12",
+        "172.4109",
+        "32.7058"
+      ]
+    },
+    {
+      "case": 3,
+      "final_decision": "verified",
+      "basis": "svm_model",
+      "scores": [
+        "69.0711",
+        "0.9832",
+        "1",
+        "30.953",
+        "151.1958",
+        "50.163"
+      ]
+    },
+    {
+      "case": 4,
+      "final_decision": "verified",
+      "basis": "placeholder_threshold",
+      "scores": [
+        "71.2233",
+        "0.9993",
+        "1",
+        "133.4403",
+        "174.1388",
+        "56.9895"
+      ]
+    },
+    {
+      "case": 5,
+      "final_decision": "verified",
+      "basis": "placeholder_threshold",
+      "scores": [
+        "55.5091",
+        "0.9853",
+        "1",
+        "92.6757",
+        "162.6252",
+        "36.0968"
+      ]
+    },
+    {
+      "case": 6,
+      "final_decision": "rejected",
+      "basis": "placeholder_threshold",
+      "scores": [
+        "59.376",
+        "0.9999",
+        "1",
+        "27.7065",
+        "172.4101",
+        "49.5776"
+      ]
+    },
+    {
+      "case": 7,
+      "final_decision": "verified",
+      "basis": "svm_model",
+      "scores": [
+        "28.2329",
+        "1",
+        "1",
+        "90.5744",
+        "156.4394",
+        "50.2763"
+      ]
+    },
+    {
+      "case": 8,
+      "final_decision": "verified",
+      "basis": "svm_model",
+      "scores": [
+        "46.453",
+        "0.9999",
+        "1",
+        "209.7952",
+        "152.0512",
+        "44.3273"
+      ]
+    },
+    {
+      "case": 9,
+      "final_decision": "verified",
+      "basis": "placeholder_threshold",
+      "scores": [
+        "55.5091",
+        "0.9853",
+        "1",
+        "92.6757",
+        "162.6252",
+        "36.0968"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "suite": "test_kyc_experiment",
+  "command": [
+    "C:\\Users\\ikari\\Desktop\\School Work\\Intelligent-Agent-Identity-Verification-System\\.venv-kyc\\Scripts\\python.exe",
+    "-X",
+    "utf8",
+    "ai-service/tests/test_kyc_experiment.py"
+  ],
+  "exit_code": 0,
+  "output": "test_saved_dataset_is_reproducible_and_has_no_hidden_predictors (__main__.ExperimentTests.test_saved_dataset_is_reproducible_and_has_no_hidden_predictors) ... ok\ntest_split_manifest_and_scaler_only_fit_training (__main__.ExperimentTests.test_split_manifest_and_scaler_only_fit_training) ... ok\n\n----------------------------------------------------------------------\nRan 2 tests in 0.590s\n\nOK\n"
+}

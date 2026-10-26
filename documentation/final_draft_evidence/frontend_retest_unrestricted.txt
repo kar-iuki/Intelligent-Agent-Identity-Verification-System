@@ -1,0 +1,9 @@
+
+ RUN  v5.0.3 C:/Users/ikari/Desktop/School Work/Intelligent-Agent-Identity-Verification-System/frontend
+
+
+ Test Files  2 passed (2)
+      Tests  16 passed (16)
+   Start at  06:52:28
+   Duration  27.02s (environment 99%, import 1%, transform 1%)
+

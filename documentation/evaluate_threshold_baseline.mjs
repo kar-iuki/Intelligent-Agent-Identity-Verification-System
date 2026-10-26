@@ -1,0 +1,11 @@
+import fs from 'node:fs';
+process.env.SUPABASE_URL='https://example.supabase.co';
+process.env.SUPABASE_SERVICE_ROLE_KEY='local-test-placeholder';
+globalThis.fetch=()=>{throw new Error('Network disabled for offline evaluation')};
+const {applyPlaceholderDecision}=await import('../backend/src/services/accessControlService.js');
+const text=fs.readFileSync('ai-service/ml/experiments/v3/fresh_evaluation_1500.csv','utf8').trim().split(/\r?\n/);
+const headers=text.shift().split(',');
+const labels={verified:'Verified',review:'Manual Review',rejected:'Rejected'};
+const results=text.map(line=>{const v=line.split(',');const row=Object.fromEntries(headers.map((h,i)=>[h,h==='target'?v[i]:Number(v[i])]));return {actual:row.target,predicted:labels[applyPlaceholderDecision(row).finalDecision]}});
+fs.writeFileSync('documentation/final_draft_evidence/threshold_predictions.json',JSON.stringify(results));
+console.log(`Evaluated existing unchanged threshold function on ${results.length} saved fresh cases.`);

@@ -1,0 +1,11 @@
+{
+  "suite": "test_kyc_improvement",
+  "command": [
+    "C:\\Users\\ikari\\Desktop\\School Work\\Intelligent-Agent-Identity-Verification-System\\.venv-kyc\\Scripts\\python.exe",
+    "-X",
+    "utf8",
+    "ai-service/tests/test_kyc_improvement.py"
+  ],
+  "exit_code": 0,
+  "output": "test_native_boundary_can_differ_from_probability_argmax (__main__.ImprovementTests.test_native_boundary_can_differ_from_probability_argmax) ... ok\ntest_probability_column_order_and_margin (__main__.ImprovementTests.test_probability_column_order_and_margin) ... ok\ntest_quality_transform_preserves_identity_columns_and_fitted_state (__main__.ImprovementTests.test_quality_transform_preserves_identity_columns_and_fitted_state) ... ok\ntest_review_policy_changes_decision_without_changing_probability (__main__.ImprovementTests.test_review_policy_changes_decision_without_changing_probability) ... ok\n\n----------------------------------------------------------------------\nRan 4 tests in 0.192s\n\nOK\n"
+}

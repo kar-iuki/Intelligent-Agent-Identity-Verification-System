@@ -1,4 +1,15 @@
-const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:5000'
+const AI_SERVICE_URL = (process.env.AI_SERVICE_URL || 'http://localhost:5000').replace(/\/+$/, '')
+
+function fetchAI(url, options = {}) {
+  const key = process.env.VERITY_API_KEY || ''
+  const hostname = new URL(AI_SERVICE_URL).hostname
+  if (!['localhost', '127.0.0.1', '[::1]'].includes(hostname) && key.length < 32) {
+    throw new Error('Set VERITY_API_KEY in backend/.env to the Azure API secret (at least 32 characters)')
+  }
+  const headers = new Headers(options.headers)
+  if (key) headers.set('X-API-Key', key)
+  return fetch(url, { ...options, headers, redirect: 'error' })
+}
 
 /**
  * Send document + selfie buffers to the Python AI quality endpoint.
@@ -30,7 +41,7 @@ export async function assessImageQuality(documentFileBuffer, selfieFileBuffer, o
 
   let response
   try {
-    response = await fetch(`${AI_SERVICE_URL}/api/quality/assess`, {
+    response = await fetchAI(`${AI_SERVICE_URL}/api/quality/assess`, {
       method: 'POST',
       body: form,
     })
@@ -63,7 +74,7 @@ export async function assessSingleImageQuality(imageBuffer, options = {}) {
 
   let response
   try {
-    response = await fetch(`${AI_SERVICE_URL}/api/quality/assess-single`, {
+    response = await fetchAI(`${AI_SERVICE_URL}/api/quality/assess-single`, {
       method: 'POST',
       body: form,
     })
@@ -114,7 +125,7 @@ export async function verifyDocumentOCR(documentFileBuffer, registeredDetails, o
 
   let response
   try {
-    response = await fetch(`${AI_SERVICE_URL}/api/ocr/verify`, {
+    response = await fetchAI(`${AI_SERVICE_URL}/api/ocr/verify`, {
       method: 'POST',
       body: form,
     })
@@ -160,7 +171,7 @@ export async function verifyFaceMatch(documentFileBuffer, selfieFileBuffer, opti
 
   let response
   try {
-    response = await fetch(`${AI_SERVICE_URL}/api/face/verify`, {
+    response = await fetchAI(`${AI_SERVICE_URL}/api/face/verify`, {
       method: 'POST',
       body: form,
     })
@@ -197,7 +208,7 @@ export async function detectLiveness(selfieFileBuffer, options = {}) {
 
   let response
   try {
-    response = await fetch(`${AI_SERVICE_URL}/api/liveness/detect`, {
+    response = await fetchAI(`${AI_SERVICE_URL}/api/liveness/detect`, {
       method: 'POST',
       body: form,
     })
@@ -232,7 +243,7 @@ const SVM_FEATURES = [
 export async function getSVMStatus() {
   let response
   try {
-    response = await fetch(`${AI_SERVICE_URL}/api/svm/status`, {
+    response = await fetchAI(`${AI_SERVICE_URL}/api/svm/status`, {
       signal: AbortSignal.timeout(SVM_TIMEOUT_MS),
     })
   } catch (err) {
@@ -278,7 +289,7 @@ export async function getSVMDecision(scores) {
 
   let response
   try {
-    response = await fetch(`${AI_SERVICE_URL}/api/svm/predict`, {
+    response = await fetchAI(`${AI_SERVICE_URL}/api/svm/predict`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
