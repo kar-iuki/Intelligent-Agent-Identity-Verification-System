@@ -130,6 +130,7 @@
             :hint="frontCaptureHint"
             :initial-file="documentFrontFile"
             :document-kind="documentKind"
+            :camera-only="documentCameraRequired"
             @back="onDocumentFrontBack"
             @passed="onFrontPassed"
           />
@@ -140,6 +141,7 @@
             hint="Capture the back of your national ID. The ID number must be readable so it can be matched to the front."
             :initial-file="documentBackFile"
             :document-kind="documentKind"
+            :camera-only="documentCameraRequired"
             @back="docSubstep = 'front'"
             @passed="onBackPassed"
           />
@@ -354,6 +356,8 @@ const documentKind = ref('national_id') // national_id | passport | drivers_lice
 const docSubstep = ref('choose') // choose | front | back
 const documentFrontFile = ref(null)
 const documentBackFile = ref(null)
+// Fail closed until the persisted attempt history has loaded.
+const documentCameraRequired = ref(true)
 
 const frontCaptureTitle = computed(() => {
   if (documentKind.value === 'passport') return 'Passport bio-data page'
@@ -472,12 +476,16 @@ onMounted(async () => {
     await fetchCurrentUser()
     email.value = state.user?.email || ''
 
-    const [{ status }, profile] = await Promise.all([
+    const [{ status, documentCameraRequired: cameraRequired }, profile] = await Promise.all([
       getRegistrationStatus(),
       getProfile(),
     ])
 
+    documentCameraRequired.value = cameraRequired !== false
+
     email.value = profile.email || email.value
+    const savedDocument = profile.documents?.find(doc => ['id_front', 'passport', 'drivers_licence'].includes(doc.document_type))
+    if (savedDocument) documentKind.value = savedDocument.document_type === 'id_front' ? 'national_id' : savedDocument.document_type
 
     if (profile.agent) {
       personalForm.fullName = profile.agent.full_name || ''
@@ -765,6 +773,7 @@ async function handleProceedToVerification() {
 
   try {
     const result = await initiateVerification(getDeviceFingerprint())
+    documentCameraRequired.value = true
 
     if (!result.overallPassed) {
       verificationPhase.value = 'failed'
@@ -807,6 +816,7 @@ function handleRetryVerification() {
 }
 
 function handleReupload() {
+  documentCameraRequired.value = true
   const needsDocument = failedImages.value.includes('document')
   const needsSelfie = failedImages.value.includes('selfie')
   verificationError.value = ''

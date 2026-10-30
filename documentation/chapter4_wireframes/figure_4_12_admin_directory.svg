@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="700" viewBox="0 0 1000 700">
+<rect width="1000" height="700" fill="white"/>
+<style>text{font-family:Arial,sans-serif;fill:#202020} .label{font-size:20px} .small{font-size:18px}</style>
+<rect x="10" y="10" width="980" height="680" rx="3" fill="white" stroke="#555" stroke-width="1.5"/>
+<rect x="10" y="10" width="180" height="680" rx="3" fill="#f1f1f1" stroke="#555" stroke-width="1.5"/>
+<text x="28" y="51" font-size="27" font-weight="bold">VERITY</text>
+<text x="28" y="78" font-size="16">Identity workspace</text>
+<rect x="20" y="99" width="160" height="40" rx="3" fill="#d9d9d9" stroke="#555" stroke-width="1.5"/>
+<text x="28" y="127" font-size="17" font-weight="bold">Agent directory</text>
+<text x="28" y="180" font-size="17">Review queue</text>
+<text x="28" y="233" font-size="17">Recently verified</text>
+<text x="28" y="286" font-size="17">Flagged attempts</text>
+<text x="28" y="339" font-size="17">Audit log</text>
+<text x="28" y="392" font-size="17">Model report</text>
+<text x="28" y="622" font-size="18">Administrator</text>
+<rect x="25" y="642" width="147" height="42" rx="3" fill="#fff" stroke="#555" stroke-width="1.5"/>
+<text x="39" y="670" font-size="20">Sign out</text>
+<rect x="190" y="10" width="800" height="65" rx="3" fill="#fafafa" stroke="#555" stroke-width="1.5"/>
+<text x="213" y="51" font-size="22">Administration / Agent directory</text>
+<text x="213" y="120" font-size="28" font-weight="bold">Identity control center</text>
+<rect x="214" y="145" width="176" height="81" rx="3" fill="#f7f7f7" stroke="#555" stroke-width="1.5"/>
+<text x="224" y="174" font-size="17" font-weight="bold">Total agents</text>
+<text x="224" y="210" font-size="23">[ count ]</text>
+<rect x="403" y="145" width="176" height="81" rx="3" fill="#f7f7f7" stroke="#555" stroke-width="1.5"/>
+<text x="413" y="174" font-size="17" font-weight="bold">Awaiting review</text>
+<text x="413" y="210" font-size="23">[ count ]</text>
+<rect x="592" y="145" width="176" height="81" rx="3" fill="#f7f7f7" stroke="#555" stroke-width="1.5"/>
+<text x="602" y="174" font-size="17" font-weight="bold">Verified today</text>
+<text x="602" y="210" font-size="23">[ count ]</text>
+<rect x="781" y="145" width="176" height="81" rx="3" fill="#f7f7f7" stroke="#555" stroke-width="1.5"/>
+<text x="791" y="174" font-size="17" font-weight="bold">Rejected today</text>
+<text x="791" y="210" font-size="23">[ count ]</text>
+<text x="220" y="263" font-size="20">Agent directory</text>
+<rect x="220" y="273" width="455" height="42" rx="3" fill="white" stroke="#555" stroke-width="1.5"/>
+<text x="232" y="301" font-size="19">Search name or national ID</text>
+<rect x="695" y="273" width="255" height="42" rx="3" fill="#fff" stroke="#555" stroke-width="1.5"/>
+<text x="709" y="301" font-size="20">All statuses</text>
+<rect x="220" y="344" width="730" height="45" rx="3" fill="#e8e8e8" stroke="#555" stroke-width="1.5"/>
+<text x="232" y="373" font-size="19" font-weight="bold">Agent</text>
+<text x="421" y="373" font-size="19" font-weight="bold">Status</text>
+<text x="580" y="373" font-size="19" font-weight="bold">Audit deadline</text>
+<text x="817" y="373" font-size="19" font-weight="bold">Action</text>
+<rect x="220" y="389" width="730" height="61" rx="3" fill="white" stroke="#555" stroke-width="1.5"/>
+<text x="232" y="426" font-size="19">[ name ]</text>
+<text x="421" y="426" font-size="19">[ status ]</text>
+<text x="580" y="426" font-size="19">[ date / time ]</text>
+<rect x="817" y="399" width="112" height="42" rx="3" fill="#fff" stroke="#555" stroke-width="1.5"/>
+<text x="831" y="427" font-size="20">View</text>
+<rect x="220" y="450" width="730" height="61" rx="3" fill="white" stroke="#555" stroke-width="1.5"/>
+<text x="232" y="487" font-size="19">[ name ]</text>
+<text x="421" y="487" font-size="19">[ status ]</text>
+<text x="580" y="487" font-size="19">[ date / time ]</text>
+<rect x="817" y="460" width="112" height="42" rx="3" fill="#fff" stroke="#555" stroke-width="1.5"/>
+<text x="831" y="488" font-size="20">View</text>
+<rect x="220" y="511" width="730" height="61" rx="3" fill="white" stroke="#555" stroke-width="1.5"/>
+<text x="232" y="548" font-size="19">[ name ]</text>
+<text x="421" y="548" font-size="19">[ status ]</text>
+<text x="580" y="548" font-size="19">[ date / time ]</text>
+<rect x="817" y="521" width="112" height="42" rx="3" fill="#fff" stroke="#555" stroke-width="1.5"/>
+<text x="831" y="549" font-size="20">View</text>
+<text x="220" y="607" font-size="22" font-weight="bold">Recent activity</text>
+<text x="220" y="642" font-size="19">[ timestamp ]  [ action ]  [ outcome ]</text>
+<rect x="581" y="90" width="369" height="43" rx="3" fill="#eee" stroke="#555" stroke-width="1.5"/>
+<text x="592" y="118" font-size="18">Model status: [ active / fallback ]</text>
+</svg>

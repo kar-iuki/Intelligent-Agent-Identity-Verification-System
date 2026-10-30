@@ -1,0 +1,87 @@
+[
+  {
+    "page": 1,
+    "start": "Chapter 5: System Implementation, Testing and Evaluation  Intelligent Agent Identity ",
+    "characters": 3104
+  },
+  {
+    "page": 2,
+    "start": "Layer Configuration Evidence  Model experiment Python 3.13, locked dependencies, save",
+    "characters": 2865
+  },
+  {
+    "page": 3,
+    "start": "1. Obtain the repository and record the source revision. Create a Supabase project, o",
+    "characters": 3357
+  },
+  {
+    "page": 4,
+    "start": "5.3.1 Deviations from the Approved Design  Table 5.3 compares the design choices stat",
+    "characters": 2728
+  },
+  {
+    "page": 5,
+    "start": "Table 5.4: Core database entities  Entity Important contents Purpose  users user_id, ",
+    "characters": 3634
+  },
+  {
+    "page": 6,
+    "start": "the Silent-Face anti-spoofing models. These were evidence signals: neither text agree",
+    "characters": 3240
+  },
+  {
+    "page": 7,
+    "start": "3. The agent uploaded the identity document and captured a selfie. Format and size we",
+    "characters": 3783
+  },
+  {
+    "page": 8,
+    "start": "Table 5.6: Data partitions used in the version 3 experiment  Partition Cases Function",
+    "characters": 3294
+  },
+  {
+    "page": 9,
+    "start": "The model manifest recorded the feature order, class names, library versions and arti",
+    "characters": 3083
+  },
+  {
+    "page": 10,
+    "start": "ID Traceability Scenario and expected result Result  TC03 FR-13, NFR-13 Saved artifac",
+    "characters": 2831
+  },
+  {
+    "page": 11,
+    "start": "status. These records show stored outputs, not classification accuracy: they contain ",
+    "characters": 3301
+  },
+  {
+    "page": 12,
+    "start": "Metric Saved v2 Selected v3 Decision Tree Threshold rules  Manual Review predicted Ve",
+    "characters": 1145
+  },
+  {
+    "page": 13,
+    "start": "  Figure 5.1: Version 3 confusion matrix on 1,500 fresh synthetic cases. Source: save",
+    "characters": 1817
+  },
+  {
+    "page": 14,
+    "start": "with further overlap adding more. This is a property of the simulation and not an est",
+    "characters": 2052
+  },
+  {
+    "page": 15,
+    "start": "20 October 2026. No release tags were present at that review. Those historical reposi",
+    "characters": 2337
+  },
+  {
+    "page": 16,
+    "start": "Objective Output and evidence Result  5. Test and validate  effectiveness  Tables 5.8",
+    "characters": 3313
+  },
+  {
+    "page": 17,
+    "start": "quality gates, fallback and administrator intervention. Completed hosting resolved th",
+    "characters": 1772
+  }
+]

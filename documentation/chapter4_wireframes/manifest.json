@@ -1,0 +1,16 @@
+{
+  "wireframes": [
+    "figure_4_07_authentication",
+    "figure_4_08_personal_details",
+    "figure_4_09_document_capture",
+    "figure_4_10_live_selfie",
+    "figure_4_11_verification_states",
+    "figure_4_12_admin_directory",
+    "figure_4_13_case_review",
+    "figure_4_14_audit_export",
+    "figure_4_15_passkey_management",
+    "figure_4_16_model_evaluation"
+  ],
+  "width": 1000,
+  "height": 700
+}

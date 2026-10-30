@@ -9,7 +9,7 @@ const options = { data:{ options:{ challenge:'random' }, challengeId:'id' } }
 const expired = { response:{ data:{ code:'CHALLENGE_EXPIRED' } } }
 it('distinguishes deployment errors from connection failures without displaying server internals', () => {
   expect(passkeyErrorMessage({ response:{ status:503, data:{ code:'PASSKEY_NOT_CONFIGURED' } } }, 'Network error')).toContain('not been configured')
-  expect(passkeyErrorMessage({ response:{ status:403, data:{ code:'PASSKEY_ORIGIN_NOT_ALLOWED' } } }, 'Network error')).toContain('configured address')
+  expect(passkeyErrorMessage({ response:{ status:403, data:{ code:'PASSKEY_ORIGIN_NOT_ALLOWED' } } }, 'Network error')).toContain('hosted passkey settings')
   expect(passkeyErrorMessage({ response:{ status:503 } }, 'Network error')).toContain('temporarily unavailable')
   expect(passkeyErrorMessage({ response:{ status:429 } }, 'Network error')).toContain('wait a few minutes')
   expect(passkeyErrorMessage({ response:{ status:500, data:{ error:'internal secret' } } }, 'Try again')).toBe('Try again')

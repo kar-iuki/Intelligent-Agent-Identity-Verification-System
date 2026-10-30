@@ -1,5 +1,5 @@
 <template>
-  <div class="live-selfie">
+  <div ref="captureRoot" class="live-selfie">
     <h3 class="title">Live selfie check</h3>
     <p class="hint">
       First we take a clear photo while your face is centred and still.
@@ -18,7 +18,7 @@
       all share one coordinate system. (object-fit: cover hid the top/bottom of
       portrait phone streams, so the oval sat below the real face.)
     -->
-    <div class="stage" :style="{ aspectRatio: streamAspect }">
+    <div class="stage" :style="{ '--stream-aspect': streamAspect }">
       <video
         v-show="phase !== 'success'"
         ref="videoRef"
@@ -89,15 +89,16 @@ import {
 const emit = defineEmits(['back', 'passed'])
 
 const videoRef = ref(null)
+const captureRoot = ref(null)
 const overlayRef = ref(null)
 const captureRef = ref(null)
 // CSS aspect-ratio of the live stream, e.g. '720 / 1280' on a phone held upright
-const streamAspect = ref('4 / 3')
+const streamAspect = ref(4 / 3)
 
 function updateStreamAspect() {
   const video = videoRef.value
   if (video?.videoWidth && video?.videoHeight) {
-    streamAspect.value = `${video.videoWidth} / ${video.videoHeight}`
+    streamAspect.value = video.videoWidth / video.videoHeight
   }
 }
 const loadingModel = ref(true)
@@ -158,6 +159,7 @@ const statusClass = computed(() => {
 })
 
 onMounted(async () => {
+  captureRoot.value?.scrollIntoView?.({ block: 'start' })
   pickChallenge()
   try {
     await initLandmarker()
@@ -435,6 +437,7 @@ function emitPassed() {
 
 <style scoped>
 .live-selfie {
+  scroll-margin-top: 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.85rem;
@@ -468,10 +471,9 @@ function emitPassed() {
 
 .stage {
   position: relative;
-  width: 100%;
-  max-width: 480px;
+  width: min(100%, 360px, calc(32svh * var(--stream-aspect)));
   margin: 0 auto;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: var(--stream-aspect);
   border-radius: 12px;
   overflow: hidden;
   background: #0f172a;

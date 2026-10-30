@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="700" viewBox="0 0 1000 700">
+<rect width="1000" height="700" fill="white"/>
+<style>text{font-family:Arial,sans-serif;fill:#202020} .label{font-size:20px} .small{font-size:18px}</style>
+<rect x="10" y="10" width="980" height="680" rx="3" fill="white" stroke="#555" stroke-width="1.5"/>
+<rect x="10" y="10" width="180" height="680" rx="3" fill="#f1f1f1" stroke="#555" stroke-width="1.5"/>
+<text x="28" y="51" font-size="27" font-weight="bold">VERITY</text>
+<text x="28" y="78" font-size="16">Identity workspace</text>
+<rect x="20" y="99" width="160" height="40" rx="3" fill="#d9d9d9" stroke="#555" stroke-width="1.5"/>
+<text x="28" y="127" font-size="17" font-weight="bold">Identity overview</text>
+<text x="28" y="180" font-size="17">My workspace</text>
+<text x="28" y="233" font-size="17">Activity history</text>
+<text x="28" y="286" font-size="17">Passkeys</text>
+<text x="28" y="622" font-size="18">Agent account</text>
+<rect x="25" y="642" width="147" height="42" rx="3" fill="#fff" stroke="#555" stroke-width="1.5"/>
+<text x="39" y="670" font-size="20">Sign out</text>
+<rect x="190" y="10" width="800" height="65" rx="3" fill="#fafafa" stroke="#555" stroke-width="1.5"/>
+<text x="213" y="51" font-size="22">Agent workspace / Identity overview</text>
+<text x="213" y="120" font-size="28" font-weight="bold">Verification progress and outcomes</text>
+<rect x="212" y="145" width="173" height="43" rx="3" fill="white" stroke="#555" stroke-width="1.5"/>
+<text x="222" y="173" font-size="19">1  Details</text>
+<rect x="400" y="145" width="173" height="43" rx="3" fill="white" stroke="#555" stroke-width="1.5"/>
+<text x="410" y="173" font-size="19">2  Document</text>
+<rect x="588" y="145" width="173" height="43" rx="3" fill="white" stroke="#555" stroke-width="1.5"/>
+<text x="598" y="173" font-size="19">3  Selfie</text>
+<rect x="776" y="145" width="173" height="43" rx="3" fill="#d9d9d9" stroke="#555" stroke-width="1.5"/>
+<text x="786" y="173" font-size="19" font-weight="bold">4  Verification</text>
+<text x="220" y="229" font-size="19" font-weight="bold">Image quality &gt; OCR &gt; Face match &gt; Liveness &gt; Decision</text>
+<rect x="220" y="252" width="354" height="170" rx="3" fill="#fafafa" stroke="#555" stroke-width="1.5"/>
+<text x="236" y="285" font-size="23" font-weight="bold">Processing</text>
+<text x="236" y="322" font-size="18">Checks are running.</text>
+<text x="236" y="350" font-size="18">[ progress and status ]</text>
+<rect x="596" y="252" width="354" height="170" rx="3" fill="#fafafa" stroke="#555" stroke-width="1.5"/>
+<text x="612" y="285" font-size="23" font-weight="bold">Verified</text>
+<text x="612" y="322" font-size="18">Identity verification complete.</text>
+<text x="612" y="350" font-size="18">Platform access is available.</text>
+<rect x="612" y="367" width="322" height="42" rx="3" fill="#fff" stroke="#555" stroke-width="1.5"/>
+<text x="626" y="395" font-size="20">Proceed to platform</text>
+<rect x="220" y="447" width="354" height="170" rx="3" fill="#fafafa" stroke="#555" stroke-width="1.5"/>
+<text x="236" y="480" font-size="23" font-weight="bold">Manual Review</text>
+<text x="236" y="517" font-size="18">An administrator must decide.</text>
+<text x="236" y="545" font-size="18">Platform access is withheld.</text>
+<rect x="596" y="447" width="354" height="170" rx="3" fill="#fafafa" stroke="#555" stroke-width="1.5"/>
+<text x="612" y="480" font-size="23" font-weight="bold">Rejected or recapture</text>
+<text x="612" y="517" font-size="18">[ reason and next action ]</text>
+<text x="612" y="545" font-size="18">Retry only when permitted.</text>
+<rect x="612" y="562" width="322" height="42" rx="3" fill="#fff" stroke="#555" stroke-width="1.5"/>
+<text x="626" y="590" font-size="20">Retake / try again</text>
+<text x="220" y="657" font-size="18">Alternative states are shown together for design review.</text>
+</svg>

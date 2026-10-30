@@ -1,5 +1,5 @@
 <template>
-  <div class="doc-capture">
+  <div ref="captureRoot" class="doc-capture">
     <h3 class="title">{{ title }}</h3>
     <p class="hint">{{ hint }}</p>
 
@@ -7,14 +7,15 @@
       <button type="button" class="chip" :class="{ active: mode === 'camera' }" @click="setMode('camera')">
         Take photo
       </button>
-      <button type="button" class="chip" :class="{ active: mode === 'upload' }" @click="setMode('upload')">
+      <button v-if="!cameraOnly" type="button" class="chip" :class="{ active: mode === 'upload' }" @click="setMode('upload')">
         Upload file
       </button>
     </div>
+    <p v-if="cameraOnly" class="hint">For this verification retry, take a new document photo. File uploads are disabled.</p>
 
     <div v-if="mode === 'camera'" class="camera-block">
       <!-- frame keeps the stream's aspect ratio so what you see is exactly what is captured -->
-      <div class="media-frame" :style="{ aspectRatio: streamAspect }">
+      <div class="media-frame" :style="{ '--stream-aspect': streamAspect }">
         <video
           v-show="!previewUrl"
           ref="videoRef"
@@ -30,10 +31,10 @@
       <canvas ref="canvasRef" class="hidden" />
 
       <div class="actions">
-        <button v-if="!previewUrl" type="button" class="btn" :disabled="!streamActive" @click="capture">
+        <button v-if="!previewUrl" type="button" class="btn" :disabled="!streamActive || busy" @click="capture">
           Capture
         </button>
-        <button v-else type="button" class="btn secondary" @click="clearPreview">Retake</button>
+        <button v-else type="button" class="btn secondary" :disabled="busy" @click="retake">Retake</button>
         <button v-if="!streamActive && !previewUrl" type="button" class="btn secondary" @click="startCamera">
           Open camera
         </button>
@@ -41,7 +42,7 @@
       <p v-if="cameraError" class="error">{{ cameraError }}</p>
     </div>
 
-    <div v-else>
+    <div v-else-if="!cameraOnly">
       <ImageUpload
         :label="title"
         accept="image/jpeg,image/png"
@@ -74,14 +75,16 @@
 </template>
 
 <script setup>
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import ImageUpload from './ImageUpload.vue'
 import { checkImageQuality } from '../services/agentService.js'
+import { markCameraCapture, documentCaptureSource } from '../utils/documentCaptureSource.js'
 
 const props = defineProps({
   title: { type: String, required: true },
   hint: { type: String, default: 'Make sure the document fills the frame and text is readable.' },
   initialFile: { type: File, default: null },
+  cameraOnly: { type: Boolean, default: false },
   /** national_id | passport | drivers_licence — picks the sharpness limit for the quality check */
   documentKind: { type: String, default: 'national_id' },
 })
@@ -89,15 +92,16 @@ const props = defineProps({
 const emit = defineEmits(['back', 'passed'])
 
 const mode = ref('camera')
+const captureRoot = ref(null)
 const videoRef = ref(null)
 const canvasRef = ref(null)
 // CSS aspect-ratio of the live stream (portrait on a phone held upright)
-const streamAspect = ref('4 / 3')
+const streamAspect = ref(4 / 3)
 
 function updateStreamAspect() {
   const video = videoRef.value
   if (video?.videoWidth && video?.videoHeight) {
-    streamAspect.value = `${video.videoWidth} / ${video.videoHeight}`
+    streamAspect.value = video.videoWidth / video.videoHeight
   }
 }
 const streamActive = ref(false)
@@ -111,16 +115,15 @@ const warnings = ref([])
 const busy = ref(false)
 
 let mediaStream = null
+let cameraGeneration = 0
 
 onMounted(() => {
-  if (props.initialFile) {
+  captureRoot.value?.scrollIntoView?.({ block: 'start' })
+  if (props.initialFile && (!props.cameraOnly || documentCaptureSource(props.initialFile) === 'camera')) {
     selectedFile.value = props.initialFile
     previewUrl.value = URL.createObjectURL(props.initialFile)
-    mode.value = 'upload'
-  } else if (navigator.mediaDevices?.getUserMedia) {
-    startCamera()
   } else {
-    mode.value = 'upload'
+    startCamera()
   }
 })
 
@@ -132,28 +135,37 @@ onBeforeUnmount(() => {
 watch(
   () => props.initialFile,
   (file) => {
-    if (file) {
+    clearPreview()
+    if (file && (!props.cameraOnly || documentCaptureSource(file) === 'camera')) {
+      stopCamera()
       selectedFile.value = file
       revokePreview()
       previewUrl.value = URL.createObjectURL(file)
-    }
+    } else if (mode.value === 'camera') startCamera()
   }
 )
 
-function setMode(next) {
+watch(() => props.cameraOnly, (required) => {
+  if (required && (mode.value === 'upload' || documentCaptureSource(selectedFile.value) === 'upload')) setMode('camera')
+})
+
+async function setMode(next) {
+  if (busy.value || (props.cameraOnly && next === 'upload')) return
   mode.value = next
   clearPreview()
+  stopCamera()
+  await nextTick()
   if (next === 'camera') startCamera()
-  else stopCamera()
 }
 
 async function startCamera() {
   cameraError.value = ''
+  stopCamera()
+  const generation = cameraGeneration
   try {
-    stopCamera()
     // Ask for a high-resolution stream: without this browsers default to
     // 640x480, leaving the card ~300px wide, too small for OCR of dates/ID digits.
-    mediaStream = await navigator.mediaDevices.getUserMedia({
+    const stream = await navigator.mediaDevices.getUserMedia({
       video: {
         facingMode: { ideal: 'environment' },
         width: { ideal: 1920 },
@@ -161,19 +173,27 @@ async function startCamera() {
       },
       audio: false,
     })
+    if (generation !== cameraGeneration) {
+      stream.getTracks().forEach(track => track.stop())
+      return
+    }
+    mediaStream = stream
     if (videoRef.value) {
       videoRef.value.srcObject = mediaStream
       updateStreamAspect()
     }
     streamActive.value = true
   } catch {
-    cameraError.value = 'Camera unavailable. Switch to Upload file.'
-    mode.value = 'upload'
+    if (generation !== cameraGeneration) return
+    cameraError.value = props.cameraOnly
+      ? 'Camera access is required for this retry. Allow camera permission and tap Open camera, or use a device with a camera.'
+      : 'Camera unavailable. Allow camera permission or choose Upload file.'
     streamActive.value = false
   }
 }
 
 function stopCamera() {
+  cameraGeneration += 1
   mediaStream?.getTracks().forEach((track) => track.stop())
   mediaStream = null
   streamActive.value = false
@@ -188,13 +208,19 @@ function clearPreview() {
   selectedFile.value = null
   passed.value = false
   failures.value = []
+  warnings.value = []
   revokePreview()
+}
+
+async function retake() {
+  clearPreview()
+  await startCamera()
 }
 
 async function capture() {
   const video = videoRef.value
   const canvas = canvasRef.value
-  if (!video || !canvas) return
+  if (!video || !canvas || !streamActive.value || !video.videoWidth || !video.videoHeight) return
 
   canvas.width = video.videoWidth || 1280
   canvas.height = video.videoHeight || 720
@@ -204,7 +230,7 @@ async function capture() {
   const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.92))
   if (!blob) return
 
-  const file = new File([blob], `document-${Date.now()}.jpg`, { type: 'image/jpeg' })
+  const file = markCameraCapture(new File([blob], `document-${Date.now()}.jpg`, { type: 'image/jpeg' }))
   selectedFile.value = file
   revokePreview()
   previewUrl.value = URL.createObjectURL(file)
@@ -214,6 +240,7 @@ async function capture() {
 }
 
 function onFileSelected(file) {
+  if (props.cameraOnly || busy.value) return
   selectedFile.value = file
   passed.value = false
   failures.value = []
@@ -222,7 +249,8 @@ function onFileSelected(file) {
 }
 
 async function runQualityCheck() {
-  if (!selectedFile.value) return
+  if (!selectedFile.value || busy.value) return
+  if (props.cameraOnly && documentCaptureSource(selectedFile.value) !== 'camera') return
 
   if (passed.value) {
     emit('passed', selectedFile.value)
@@ -255,6 +283,7 @@ async function runQualityCheck() {
 
 <style scoped>
 .doc-capture {
+  scroll-margin-top: 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.85rem;
@@ -292,11 +321,9 @@ async function runQualityCheck() {
 
 .media-frame {
   position: relative;
-  width: 100%;
-  max-width: 520px;
-  max-height: 70vh;
+  width: min(100%, 400px, calc(32svh * var(--stream-aspect)));
   margin: 0 auto;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: var(--stream-aspect);
   border-radius: 12px;
   overflow: hidden;
   background: #0f172a;

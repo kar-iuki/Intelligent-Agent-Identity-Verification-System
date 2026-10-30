@@ -1,0 +1,21 @@
+[
+  {
+    "body": "HTML received",
+    "status": 200,
+    "url": "https://intelligent-agent-identity-verifica.vercel.app"
+  },
+  {
+    "body": "{\"status\":\"ok\"}",
+    "status": 200,
+    "url": "https://verity-backend-gvbs.onrender.com/health"
+  },
+  {
+    "body": "{\"status\":\"ok\"}\n",
+    "status": 200,
+    "url": "https://verity-ai.greenpond-207a4102.southafricanorth.azurecontainerapps.io/health"
+  },
+  {
+    "url": "https://verity-ai.greenpond-207a4102.southafricanorth.azurecontainerapps.io/api/svm/status",
+    "error": "Response status code does not indicate success: 401 (Unauthorized)."
+  }
+]

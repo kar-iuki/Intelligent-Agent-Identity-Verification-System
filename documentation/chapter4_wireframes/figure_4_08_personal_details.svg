@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="700" viewBox="0 0 1000 700">
+<rect width="1000" height="700" fill="white"/>
+<style>text{font-family:Arial,sans-serif;fill:#202020} .label{font-size:20px} .small{font-size:18px}</style>
+<rect x="10" y="10" width="980" height="680" rx="3" fill="white" stroke="#555" stroke-width="1.5"/>
+<rect x="10" y="10" width="180" height="680" rx="3" fill="#f1f1f1" stroke="#555" stroke-width="1.5"/>
+<text x="28" y="51" font-size="27" font-weight="bold">VERITY</text>
+<text x="28" y="78" font-size="16">Identity workspace</text>
+<rect x="20" y="99" width="160" height="40" rx="3" fill="#d9d9d9" stroke="#555" stroke-width="1.5"/>
+<text x="28" y="127" font-size="17" font-weight="bold">Identity overview</text>
+<text x="28" y="180" font-size="17">My workspace</text>
+<text x="28" y="233" font-size="17">Activity history</text>
+<text x="28" y="286" font-size="17">Passkeys</text>
+<text x="28" y="622" font-size="18">Agent account</text>
+<rect x="25" y="642" width="147" height="42" rx="3" fill="#fff" stroke="#555" stroke-width="1.5"/>
+<text x="39" y="670" font-size="20">Sign out</text>
+<rect x="190" y="10" width="800" height="65" rx="3" fill="#fafafa" stroke="#555" stroke-width="1.5"/>
+<text x="213" y="51" font-size="22">Agent workspace / Identity overview</text>
+<text x="213" y="120" font-size="28" font-weight="bold">Agent registration</text>
+<rect x="212" y="145" width="173" height="43" rx="3" fill="#d9d9d9" stroke="#555" stroke-width="1.5"/>
+<text x="222" y="173" font-size="19" font-weight="bold">1  Details</text>
+<rect x="400" y="145" width="173" height="43" rx="3" fill="white" stroke="#555" stroke-width="1.5"/>
+<text x="410" y="173" font-size="19">2  Document</text>
+<rect x="588" y="145" width="173" height="43" rx="3" fill="white" stroke="#555" stroke-width="1.5"/>
+<text x="598" y="173" font-size="19">3  Selfie</text>
+<rect x="776" y="145" width="173" height="43" rx="3" fill="white" stroke="#555" stroke-width="1.5"/>
+<text x="786" y="173" font-size="19">4  Verification</text>
+<text x="220" y="229" font-size="25" font-weight="bold">Personal details</text>
+<text x="220" y="271" font-size="20">Email</text>
+<rect x="220" y="281" width="730" height="42" rx="3" fill="white" stroke="#555" stroke-width="1.5"/>
+<text x="232" y="309" font-size="19">[ account email - read only ]</text>
+<text x="220" y="360" font-size="20">Full name</text>
+<rect x="220" y="370" width="350" height="42" rx="3" fill="white" stroke="#555" stroke-width="1.5"/>
+<text x="232" y="398" font-size="19">[ enter value ]</text>
+<text x="602" y="360" font-size="20">Phone number</text>
+<rect x="602" y="370" width="348" height="42" rx="3" fill="white" stroke="#555" stroke-width="1.5"/>
+<text x="614" y="398" font-size="19">[ enter value ]</text>
+<text x="220" y="448" font-size="20">National ID number</text>
+<rect x="220" y="458" width="350" height="42" rx="3" fill="white" stroke="#555" stroke-width="1.5"/>
+<text x="232" y="486" font-size="19">[ enter value ]</text>
+<text x="602" y="448" font-size="20">Date of birth</text>
+<rect x="602" y="458" width="348" height="42" rx="3" fill="white" stroke="#555" stroke-width="1.5"/>
+<text x="614" y="486" font-size="19">[ date selector ]</text>
+<text x="220" y="535" font-size="20">Details must match the identity document.</text>
+<text x="220" y="575" font-size="20">[ field-specific validation message ]</text>
+<rect x="768" y="612" width="182" height="42" rx="3" fill="#dedede" stroke="#555" stroke-width="1.5"/>
+<text x="782" y="640" font-size="20" font-weight="bold">Next</text>
+</svg>

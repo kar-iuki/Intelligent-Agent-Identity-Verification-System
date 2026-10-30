@@ -1,0 +1,172 @@
+[
+  {
+    "page": 1,
+    "start": "41  Chapter 4 System Analysis and Design   4.1 Introduction  In this chapter, I prese",
+    "characters": 2274
+  },
+  {
+    "page": 2,
+    "start": "42  Table 4.1: Stakeholder needs used to organise the requirements  Stakeholder or ne",
+    "characters": 1496
+  },
+  {
+    "page": 3,
+    "start": "43  4.2.1 Functional Requirements  The functional requirements describe the actor, re",
+    "characters": 2809
+  },
+  {
+    "page": 4,
+    "start": "44  ID  Priority /  source  Requirement Verification plan  FR-11  H / A  The system s",
+    "characters": 2977
+  },
+  {
+    "page": 5,
+    "start": "45  ID  Priority /  source  Requirement Verification plan  FR-25  H / O  Each audit e",
+    "characters": 2542
+  },
+  {
+    "page": 6,
+    "start": "46  4.2.2 Non-Functional Requirements  The quality requirements cover performance mea",
+    "characters": 2823
+  },
+  {
+    "page": 7,
+    "start": "47  ID  Priority /  source  Requirement Verification plan   Interaction quality and h",
+    "characters": 2812
+  },
+  {
+    "page": 8,
+    "start": "48  4.2.3 Data Requirements  The transactional data comprise account references, agen",
+    "characters": 2944
+  },
+  {
+    "page": 9,
+    "start": "49  ID  Priority /  source  Requirement Verification plan  DR-10  H / R  Synthetic da",
+    "characters": 2434
+  },
+  {
+    "page": 10,
+    "start": "50  The generator uses stored local measurements from Labeled Faces in the Wild for f",
+    "characters": 3072
+  },
+  {
+    "page": 11,
+    "start": "51  4.2.4 Interface and Integration Requirements  The design separates the Vue presen",
+    "characters": 3021
+  },
+  {
+    "page": 12,
+    "start": "52  ID  Priority /  source  Requirement Verification plan  IR-03  H / O  Backend-to-A",
+    "characters": 1825
+  },
+  {
+    "page": 13,
+    "start": "53  4.3 System Analysis Diagrams  4.3.1 Use Case Diagram  The use case view identifie",
+    "characters": 912
+  },
+  {
+    "page": 14,
+    "start": "54  4.4 System Design Diagrams  4.4.1 Class Diagram  The class view organises the dom",
+    "characters": 966
+  },
+  {
+    "page": 15,
+    "start": "55  4.4.2 Entity Relationship Diagram  The entity relationship view describes the per",
+    "characters": 905
+  },
+  {
+    "page": 16,
+    "start": "56  4.4.3 System Architecture Diagram  The architecture view separates presentation, ",
+    "characters": 1043
+  },
+  {
+    "page": 17,
+    "start": "57  4.4.4 Sequence Diagram  The sequence view describes the progression from evidence",
+    "characters": 895
+  },
+  {
+    "page": 18,
+    "start": "58  4.4.5 Database Schema  The schema view presents th e persistent entities, while T",
+    "characters": 1210
+  },
+  {
+    "page": 19,
+    "start": "59  Table 4.7: Logical entity and integrity catalogue  Entity Important attributes Re",
+    "characters": 2215
+  },
+  {
+    "page": 20,
+    "start": "60  4.4.6 User Interface Design and Wireframes  I use grayscale wireframes to documen",
+    "characters": 1637
+  },
+  {
+    "page": 21,
+    "start": "61  4.4.6.2 Personal profile details  The profile wireframe is the first protected on",
+    "characters": 788
+  },
+  {
+    "page": 22,
+    "start": "62  4.4.6.3 Identity document capture  The document wireframe combines document-type ",
+    "characters": 910
+  },
+  {
+    "page": 23,
+    "start": "63  4.4.6.4 Live selfie and challenge  The selfie wireframe provides a live preview, ",
+    "characters": 819
+  },
+  {
+    "page": 24,
+    "start": "64  4.4.6.5 Verification progress and decision states  The verification wireframe pre",
+    "characters": 954
+  },
+  {
+    "page": 25,
+    "start": "65  4.4.6.6 Administrator directory  The administrator directory provides an overview",
+    "characters": 913
+  },
+  {
+    "page": 26,
+    "start": "66  4.4.6.7 Administrator case review  The case -review wireframe groups identity ima",
+    "characters": 928
+  },
+  {
+    "page": 27,
+    "start": "67  4.4.6.8 Audit history and export  The audit wireframe makes actions, outcomes and",
+    "characters": 788
+  },
+  {
+    "page": 28,
+    "start": "68  4.4.6.9 Passkey management  The passkey wireframe provides account -level enrolme",
+    "characters": 813
+  },
+  {
+    "page": 29,
+    "start": "69  4.4.6.10 Model evaluation interface  The evaluation wireframe presents the saved ",
+    "characters": 838
+  },
+  {
+    "page": 30,
+    "start": "70  Interface states and responsive behaviour  Each asynchronous screen distinguishes",
+    "characters": 1578
+  },
+  {
+    "page": 31,
+    "start": "71  4.5 Requirements Traceability and Verification Plan  I use the traceability matri",
+    "characters": 2347
+  },
+  {
+    "page": 32,
+    "start": "72  Requirement group Objective  and need Design reference Scenario  DR-10 and DR-11 ",
+    "characters": 2121
+  },
+  {
+    "page": 33,
+    "start": "73  Scenario Focus Required evidence  C4-T14 Passkeys Enrolment, signatures, challeng",
+    "characters": 2456
+  },
+  {
+    "page": 34,
+    "start": "74  References  ISO/IEC. (2023). Systems and software engineering - Systems and softw",
+    "characters": 548
+  }
+]

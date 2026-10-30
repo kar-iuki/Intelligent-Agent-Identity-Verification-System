@@ -3,6 +3,7 @@ import supabase from '../utils/supabaseClient.js'
 import { logAction, ACTIONS, OUTCOMES } from '../utils/auditLogger.js'
 import { assessSingleImageQuality } from '../services/verificationService.js'
 import { validateDateOfBirth } from '../utils/validateDateOfBirth.js'
+import { requiresDocumentCamera, documentCaptureError } from '../services/documentCapturePolicy.js'
 
 const BUCKET = 'agent-documents'
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png']
@@ -214,6 +215,12 @@ export async function uploadDocuments(req, res) {
     const selfieFile = req.files?.selfieImage?.[0]
     const selfieChallenge = req.body?.selfieChallenge || null
 
+    const cameraRequired = await requiresDocumentCamera(supabase, agent.agent_id)
+    const captureError = documentCaptureError(cameraRequired, { documentFront, documentBack, legacyDocument }, req.body)
+    if (captureError) {
+      return res.status(400).json({ code: 'DOCUMENT_CAMERA_REQUIRED', error: captureError })
+    }
+
     const updatingDocument = Boolean(documentFront)
     const updatingSelfie = Boolean(selfieFile)
 
@@ -351,6 +358,8 @@ export async function uploadDocuments(req, res) {
           backPath,
           selfiePath,
           selfieChallenge,
+          documentFrontSource: req.body?.documentFrontSource || null,
+          documentBackSource: req.body?.documentBackSource || null,
           partial: !(updatingDocument && updatingSelfie),
         },
       })
@@ -416,7 +425,12 @@ export async function getRegistrationStatus(req, res) {
 
   const status = await resolveRegistrationStatus(agent, documents || [])
 
-  return res.json({ status })
+  try {
+    const documentCameraRequired = await requiresDocumentCamera(supabase, agent.agent_id)
+    return res.json({ status, documentCameraRequired })
+  } catch (err) {
+    return res.status(503).json({ error: err.message })
+  }
 }
 
 export async function getAgentAuditLogs(req, res) {

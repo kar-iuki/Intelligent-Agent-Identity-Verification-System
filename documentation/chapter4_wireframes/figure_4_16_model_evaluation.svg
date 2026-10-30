@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="700" viewBox="0 0 1000 700">
+<rect width="1000" height="700" fill="white"/>
+<style>text{font-family:Arial,sans-serif;fill:#202020} .label{font-size:20px} .small{font-size:18px}</style>
+<rect x="10" y="10" width="980" height="680" rx="3" fill="white" stroke="#555" stroke-width="1.5"/>
+<rect x="10" y="10" width="180" height="680" rx="3" fill="#f1f1f1" stroke="#555" stroke-width="1.5"/>
+<text x="28" y="51" font-size="27" font-weight="bold">VERITY</text>
+<text x="28" y="78" font-size="16">Identity workspace</text>
+<text x="28" y="127" font-size="17">Agent directory</text>
+<text x="28" y="180" font-size="17">Review queue</text>
+<text x="28" y="233" font-size="17">Recently verified</text>
+<text x="28" y="286" font-size="17">Flagged attempts</text>
+<text x="28" y="339" font-size="17">Audit log</text>
+<rect x="20" y="364" width="160" height="40" rx="3" fill="#d9d9d9" stroke="#555" stroke-width="1.5"/>
+<text x="28" y="392" font-size="17" font-weight="bold">Model report</text>
+<text x="28" y="622" font-size="18">Administrator</text>
+<rect x="25" y="642" width="147" height="42" rx="3" fill="#fff" stroke="#555" stroke-width="1.5"/>
+<text x="39" y="670" font-size="20">Sign out</text>
+<rect x="190" y="10" width="800" height="65" rx="3" fill="#fafafa" stroke="#555" stroke-width="1.5"/>
+<text x="213" y="51" font-size="22">Administration / Model performance</text>
+<text x="213" y="120" font-size="28" font-weight="bold">Model evaluation</text>
+<rect x="220" y="150" width="233" height="88" rx="3" fill="#fafafa" stroke="#555" stroke-width="1.5"/>
+<text x="235" y="182" font-size="20" font-weight="bold">Accuracy</text>
+<text x="235" y="219" font-size="21">[ report value ]</text>
+<rect x="468" y="150" width="233" height="88" rx="3" fill="#fafafa" stroke="#555" stroke-width="1.5"/>
+<text x="483" y="182" font-size="20" font-weight="bold">Macro F1</text>
+<text x="483" y="219" font-size="21">[ report value ]</text>
+<rect x="716" y="150" width="233" height="88" rx="3" fill="#fafafa" stroke="#555" stroke-width="1.5"/>
+<text x="731" y="182" font-size="20" font-weight="bold">Weighted F1</text>
+<text x="731" y="219" font-size="21">[ report value ]</text>
+<text x="220" y="277" font-size="19">[ model version ]   [ training date ]   [ dataset size ]</text>
+<text x="220" y="321" font-size="23" font-weight="bold">Per-class performance</text>
+<rect x="220" y="340" width="402" height="228" rx="3" fill="white" stroke="#555" stroke-width="1.5"/>
+<text x="233" y="370" font-size="17" font-weight="bold">Class</text>
+<text x="356" y="370" font-size="17" font-weight="bold">Precision</text>
+<text x="466" y="370" font-size="17" font-weight="bold">Recall</text>
+<text x="565" y="370" font-size="17" font-weight="bold">F1</text>
+<text x="233" y="421" font-size="19">Verified</text>
+<text x="365" y="421" font-size="18">[ v ]</text>
+<text x="476" y="421" font-size="18">[ v ]</text>
+<text x="561" y="421" font-size="18">[ v ]</text>
+<text x="233" y="476" font-size="19">Review</text>
+<text x="365" y="476" font-size="18">[ v ]</text>
+<text x="476" y="476" font-size="18">[ v ]</text>
+<text x="561" y="476" font-size="18">[ v ]</text>
+<text x="233" y="531" font-size="19">Rejected</text>
+<text x="365" y="531" font-size="18">[ v ]</text>
+<text x="476" y="531" font-size="18">[ v ]</text>
+<text x="561" y="531" font-size="18">[ v ]</text>
+<text x="651" y="321" font-size="23" font-weight="bold">Confusion matrix</text>
+<rect x="651" y="340" width="99" height="76" rx="3" fill="#eee" stroke="#555" stroke-width="1.5"/>
+<text x="679" y="385" font-size="19">[ n ]</text>
+<rect x="750" y="340" width="99" height="76" rx="3" fill="#eee" stroke="#555" stroke-width="1.5"/>
+<text x="778" y="385" font-size="19">[ n ]</text>
+<rect x="849" y="340" width="99" height="76" rx="3" fill="#eee" stroke="#555" stroke-width="1.5"/>
+<text x="877" y="385" font-size="19">[ n ]</text>
+<rect x="651" y="416" width="99" height="76" rx="3" fill="#eee" stroke="#555" stroke-width="1.5"/>
+<text x="679" y="461" font-size="19">[ n ]</text>
+<rect x="750" y="416" width="99" height="76" rx="3" fill="#eee" stroke="#555" stroke-width="1.5"/>
+<text x="778" y="461" font-size="19">[ n ]</text>
+<rect x="849" y="416" width="99" height="76" rx="3" fill="#eee" stroke="#555" stroke-width="1.5"/>
+<text x="877" y="461" font-size="19">[ n ]</text>
+<rect x="651" y="492" width="99" height="76" rx="3" fill="#eee" stroke="#555" stroke-width="1.5"/>
+<text x="679" y="537" font-size="19">[ n ]</text>
+<rect x="750" y="492" width="99" height="76" rx="3" fill="#eee" stroke="#555" stroke-width="1.5"/>
+<text x="778" y="537" font-size="19">[ n ]</text>
+<rect x="849" y="492" width="99" height="76" rx="3" fill="#eee" stroke="#555" stroke-width="1.5"/>
+<text x="877" y="537" font-size="19">[ n ]</text>
+<text x="651" y="589" font-size="16">Rows actual / columns predicted</text>
+<text x="220" y="624" font-size="19">Recorded synthetic evaluation; not live applicant accuracy.</text>
+<text x="220" y="652" font-size="18">[ report unavailable or model fallback message ]</text>
+</svg>

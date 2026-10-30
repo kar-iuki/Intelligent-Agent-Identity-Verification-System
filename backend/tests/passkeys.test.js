@@ -21,6 +21,18 @@ test('origin config fails closed and allows only HTTPS or localhost', () => {
   for (const origins of ['http://example.com','https://evil.test','https://example.com/path']) assert.throws(() => getPasskeyConfig({ WEBAUTHN_RP_ID:'example.com', WEBAUTHN_RP_NAME:'Agents', WEBAUTHN_ORIGINS:origins }));
   assert.throws(() => getPasskeyConfig({}));
 });
+test('hosted settings can use the trusted frontend URL without accepting unrelated domains', () => {
+  const hosted = 'https://intelligent-agent-identity-verifica.vercel.app';
+  assert.deepEqual(getPasskeyConfig({ FRONTEND_URL:hosted }), {
+    rpID:'intelligent-agent-identity-verifica.vercel.app', rpName:'Agent Identity Verification', origins:[hosted],
+  });
+  assert.throws(() => getPasskeyConfig({ FRONTEND_URL:'https://one.example,https://two.example' }));
+  assert.throws(() => getPasskeyConfig({ FRONTEND_URL:'http://example.com' }));
+  // Explicit settings take precedence; stale localhost configuration must be
+  // replaced by the operator, never broadened using an incoming request.
+  assert.deepEqual(getPasskeyConfig({ FRONTEND_URL:hosted, WEBAUTHN_RP_ID:'localhost', WEBAUTHN_ORIGINS:'http://localhost:5173' }).origins, ['http://localhost:5173']);
+  assert.throws(() => getPasskeyConfig({ FRONTEND_URL:hosted, WEBAUTHN_RP_ID:'localhost' }));
+});
 test('options have random 32-byte challenges, discoverable login, UV, opaque handle, exclusion and attachment policy', async () => {
   const { service, user, db } = fixture();
   const first = await service.loginOptions(), second = await service.loginOptions();

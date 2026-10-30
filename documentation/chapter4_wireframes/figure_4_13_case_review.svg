@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="700" viewBox="0 0 1000 700">
+<rect width="1000" height="700" fill="white"/>
+<style>text{font-family:Arial,sans-serif;fill:#202020} .label{font-size:20px} .small{font-size:18px}</style>
+<rect x="10" y="10" width="980" height="680" rx="3" fill="white" stroke="#555" stroke-width="1.5"/>
+<rect x="10" y="10" width="180" height="680" rx="3" fill="#f1f1f1" stroke="#555" stroke-width="1.5"/>
+<text x="28" y="51" font-size="27" font-weight="bold">VERITY</text>
+<text x="28" y="78" font-size="16">Identity workspace</text>
+<text x="28" y="127" font-size="17">Agent directory</text>
+<rect x="20" y="152" width="160" height="40" rx="3" fill="#d9d9d9" stroke="#555" stroke-width="1.5"/>
+<text x="28" y="180" font-size="17" font-weight="bold">Review queue</text>
+<text x="28" y="233" font-size="17">Recently verified</text>
+<text x="28" y="286" font-size="17">Flagged attempts</text>
+<text x="28" y="339" font-size="17">Audit log</text>
+<text x="28" y="392" font-size="17">Model report</text>
+<text x="28" y="622" font-size="18">Administrator</text>
+<rect x="25" y="642" width="147" height="42" rx="3" fill="#fff" stroke="#555" stroke-width="1.5"/>
+<text x="39" y="670" font-size="20">Sign out</text>
+<rect x="190" y="10" width="800" height="65" rx="3" fill="#fafafa" stroke="#555" stroke-width="1.5"/>
+<text x="213" y="51" font-size="22">Administration / Review queue</text>
+<text x="213" y="120" font-size="28" font-weight="bold">Review case</text>
+<text x="220" y="161" font-size="20">[ agent ]   [ status ]   [ request reference ]</text>
+<rect x="220" y="186" width="230" height="143" rx="3" fill="#f5f5f5" stroke="#555" stroke-width="1.5" stroke-dasharray="7 5"/>
+<path d="M228 194 L442 321" stroke="#777" stroke-width="1.5"/>
+<path d="M442 194 L228 321" stroke="#777" stroke-width="1.5"/>
+<rect x="228" y="294" width="214" height="28" rx="3" fill="#fff" stroke="#555" stroke-width="1.5"/>
+<text x="236" y="315" font-size="18">Document front</text>
+<rect x="465" y="186" width="230" height="143" rx="3" fill="#f5f5f5" stroke="#555" stroke-width="1.5" stroke-dasharray="7 5"/>
+<path d="M473 194 L687 321" stroke="#777" stroke-width="1.5"/>
+<path d="M687 194 L473 321" stroke="#777" stroke-width="1.5"/>
+<rect x="473" y="294" width="214" height="28" rx="3" fill="#fff" stroke="#555" stroke-width="1.5"/>
+<text x="481" y="315" font-size="18">Document back</text>
+<rect x="710" y="186" width="230" height="143" rx="3" fill="#f5f5f5" stroke="#555" stroke-width="1.5" stroke-dasharray="7 5"/>
+<ellipse cx="825.0" cy="249.5" rx="41.4" ry="42.9" fill="none" stroke="#888" stroke-width="2"/>
+<rect x="718" y="294" width="214" height="28" rx="3" fill="#fff" stroke="#555" stroke-width="1.5"/>
+<text x="726" y="315" font-size="18">Selfie</text>
+<text x="220" y="367" font-size="22" font-weight="bold">Registered details and extracted document text</text>
+<rect x="220" y="383" width="720" height="83" rx="3" fill="#fafafa" stroke="#555" stroke-width="1.5"/>
+<text x="235" y="414" font-size="19">Name     [ registered ]     [ extracted ]     [ match ]</text>
+<text x="235" y="448" font-size="19">ID / DOB [ registered ]     [ extracted ]     [ match ]</text>
+<text x="220" y="505" font-size="22" font-weight="bold">Scores and decision</text>
+<text x="220" y="536" font-size="18">[ face ] [ liveness ] [ OCR ] [ blur ] [ brightness ] [ contrast ]</text>
+<text x="220" y="567" font-size="18">[ decision basis ]   [ probabilities ]   [ audit deadline ]</text>
+<rect x="220" y="610" width="170" height="42" rx="3" fill="#dedede" stroke="#555" stroke-width="1.5"/>
+<text x="234" y="638" font-size="20" font-weight="bold">Approve</text>
+<rect x="410" y="610" width="170" height="42" rx="3" fill="#fff" stroke="#555" stroke-width="1.5"/>
+<text x="424" y="638" font-size="20">Reject</text>
+<rect x="600" y="610" width="170" height="42" rx="3" fill="#fff" stroke="#555" stroke-width="1.5"/>
+<text x="614" y="638" font-size="20">Audit history</text>
+<rect x="790" y="610" width="150" height="42" rx="3" fill="#fff" stroke="#555" stroke-width="1.5"/>
+<text x="804" y="638" font-size="20">Close</text>
+</svg>

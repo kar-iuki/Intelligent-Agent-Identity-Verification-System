@@ -6,7 +6,7 @@ export const FALLBACK_MESSAGE = 'No passkey found on this browser. You can sign 
 export function passkeyErrorMessage(error, fallback) {
   const code = error?.response?.data?.code
   if (code === 'PASSKEY_NOT_CONFIGURED') return 'Passkeys have not been configured on the server yet. Please sign in another way.'
-  if (code === 'PASSKEY_ORIGIN_NOT_ALLOWED') return 'Open the app at its configured address to set up or use a passkey.'
+  if (code === 'PASSKEY_ORIGIN_NOT_ALLOWED') return 'Passkeys are not configured for this website address. Sign in with email or Google and ask the administrator to update the hosted passkey settings.'
   if (error?.response?.status === 503) return 'The passkey service is temporarily unavailable. Please try again shortly.'
   if (error?.response?.status === 429) return 'Please wait a few minutes before trying your passkey again.'
   return fallback

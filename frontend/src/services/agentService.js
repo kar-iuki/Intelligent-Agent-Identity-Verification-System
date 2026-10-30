@@ -1,5 +1,6 @@
 import api from './api.js'
 import { getDeviceFingerprint } from '../utils/deviceFingerprint.js'
+import { documentCaptureSource } from '../utils/documentCaptureSource.js'
 
 export async function submitPersonalDetails(data) {
   const { data: response } = await api.post('/api/agent/registration', {
@@ -37,9 +38,11 @@ export async function uploadDocuments(payload) {
   }
   if (payload.documentFront) {
     formData.append('documentFront', payload.documentFront, payload.documentFront.name || 'documentFront.jpg')
+    formData.append('documentFrontSource', documentCaptureSource(payload.documentFront))
   }
   if (payload.documentBack) {
     formData.append('documentBack', payload.documentBack, payload.documentBack.name || 'documentBack.jpg')
+    formData.append('documentBackSource', documentCaptureSource(payload.documentBack))
   }
   if (payload.selfieImage) {
     formData.append('selfieImage', payload.selfieImage, payload.selfieImage.name || 'selfie.jpg')

@@ -237,10 +237,30 @@ stored. Existing authentication and recovery methods remain available.
    trailing slashes. Origins must belong to that RP domain. Set `FRONTEND_URL`
    consistently for CORS. HTTPS is required except on localhost; HTTP LAN IPs
    do not work. Changing an ngrok hostname or RP domain requires new passkeys.
+   The current hosted frontend configuration is in
+   [`backend/.env.hosted.example`](backend/.env.hosted.example). Copy those four
+   settings into the **hosted backend's environment settings**, replacing the
+   old localhost values, then redeploy/restart the backend. Sign in using email
+   or Google on the hosted site and register a new passkey there. A localhost
+   passkey cannot be moved to the hosted domain.
+
+   If `WEBAUTHN_ORIGINS` is omitted, the backend uses `FRONTEND_URL`. If
+   `WEBAUTHN_RP_ID` is also omitted, it infers the RP ID only when all configured
+   origins have the same hostname. Explicit WebAuthn settings always take
+   precedence; stale localhost values must be replaced or removed. Request
+   headers never expand the trusted origins.
    If using a remote reverse proxy, configure `TRUST_PROXY` with its actual
    trusted IPs/CIDRs and prevent direct access that could bypass it.
 4. Install dependencies with `npm install --prefix backend` and
    `npm install --prefix frontend`, then restart both services.
+
+Document file selection is available before the first submitted verification.
+After any saved verification attempt (including a quality failure), document
+recapture requires the camera for ID front/back, passports, and driving licences.
+The server returns this requirement on registration status and rejects missing
+or upload source metadata on retries. Camera source metadata is a workflow
+restriction, not cryptographic proof of live capture; it does not guarantee that
+a modified client or a photographed forgery will be detected.
 
 The migration grants access only to the backend service role, not anonymous or
 authenticated browser clients. Keep `SUPABASE_SERVICE_ROLE_KEY` server-side.

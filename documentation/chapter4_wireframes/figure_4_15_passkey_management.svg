@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="700" viewBox="0 0 1000 700">
+<rect width="1000" height="700" fill="white"/>
+<style>text{font-family:Arial,sans-serif;fill:#202020} .label{font-size:20px} .small{font-size:18px}</style>
+<rect x="10" y="10" width="980" height="680" rx="3" fill="white" stroke="#555" stroke-width="1.5"/>
+<rect x="10" y="10" width="180" height="680" rx="3" fill="#f1f1f1" stroke="#555" stroke-width="1.5"/>
+<text x="28" y="51" font-size="27" font-weight="bold">VERITY</text>
+<text x="28" y="78" font-size="16">Identity workspace</text>
+<text x="28" y="127" font-size="17">Identity overview</text>
+<text x="28" y="180" font-size="17">My workspace</text>
+<text x="28" y="233" font-size="17">Activity history</text>
+<rect x="20" y="258" width="160" height="40" rx="3" fill="#d9d9d9" stroke="#555" stroke-width="1.5"/>
+<text x="28" y="286" font-size="17" font-weight="bold">Passkeys</text>
+<text x="28" y="622" font-size="18">Agent account</text>
+<rect x="25" y="642" width="147" height="42" rx="3" fill="#fff" stroke="#555" stroke-width="1.5"/>
+<text x="39" y="670" font-size="20">Sign out</text>
+<rect x="190" y="10" width="800" height="65" rx="3" fill="#fafafa" stroke="#555" stroke-width="1.5"/>
+<text x="213" y="51" font-size="22">Agent workspace / Passkeys &amp; security</text>
+<text x="213" y="120" font-size="28" font-weight="bold">Manage passkeys</text>
+<text x="220" y="161" font-size="22">Use a device credential to sign in.</text>
+<text x="220" y="193" font-size="20">Password and Google sign-in remain available.</text>
+<rect x="220" y="218" width="262" height="42" rx="3" fill="#dedede" stroke="#555" stroke-width="1.5"/>
+<text x="234" y="246" font-size="20" font-weight="bold">Add a passkey</text>
+<rect x="220" y="287" width="730" height="118" rx="3" fill="#fafafa" stroke="#555" stroke-width="1.5"/>
+<text x="239" y="318" font-size="23" font-weight="bold">[ passkey label ]</text>
+<text x="239" y="349" font-size="18">[ device / browser ]   [ added ]   [ last used ]</text>
+<rect x="239" y="358" width="153" height="42" rx="3" fill="#fff" stroke="#555" stroke-width="1.5"/>
+<text x="253" y="386" font-size="20">Rename</text>
+<rect x="410" y="358" width="155" height="42" rx="3" fill="#fff" stroke="#555" stroke-width="1.5"/>
+<text x="424" y="386" font-size="20">Remove</text>
+<rect x="220" y="423" width="730" height="118" rx="3" fill="#fafafa" stroke="#555" stroke-width="1.5"/>
+<text x="239" y="454" font-size="23" font-weight="bold">[ passkey label ]</text>
+<text x="239" y="485" font-size="18">[ device / browser ]   [ added ]   [ last used ]</text>
+<rect x="239" y="494" width="153" height="42" rx="3" fill="#fff" stroke="#555" stroke-width="1.5"/>
+<text x="253" y="522" font-size="20">Rename</text>
+<rect x="410" y="494" width="155" height="42" rx="3" fill="#fff" stroke="#555" stroke-width="1.5"/>
+<text x="424" y="522" font-size="20">Remove</text>
+<text x="220" y="591" font-size="18">[ unsupported browser / cancellation / error message ]</text>
+<text x="220" y="632" font-size="20">Removal uses a confirmation dialog.</text>
+</svg>

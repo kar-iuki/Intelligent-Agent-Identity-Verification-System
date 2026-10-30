@@ -1,0 +1,274 @@
+[
+  {
+    "page": 1,
+    "printed": 41,
+    "words": 320,
+    "start": "41  Chapter 4 System Analysis and Design   4.1 Introduction  In this chapter, I present the ana",
+    "figures": []
+  },
+  {
+    "page": 2,
+    "printed": 42,
+    "words": 420,
+    "start": "42  Requirement notation and worked example  I use the following codes to make each requirement",
+    "figures": [
+      "Figure 4.7 points to the diagram or wireframe that addresses the requirement."
+    ]
+  },
+  {
+    "page": 3,
+    "printed": 43,
+    "words": 405,
+    "start": "43  4.2.1 Functional Requirements  The functional requirements describe the actor, required beh",
+    "figures": []
+  },
+  {
+    "page": 4,
+    "printed": 44,
+    "words": 428,
+    "start": "44  ID  Priority /  source  Requirement Verification plan  FR-11  H / A  The system shall asses",
+    "figures": []
+  },
+  {
+    "page": 5,
+    "printed": 45,
+    "words": 365,
+    "start": "45  ID  Priority /  source  Requirement Verification plan  FR-25  H / O  Each audit entry shall",
+    "figures": []
+  },
+  {
+    "page": 6,
+    "printed": 46,
+    "words": 385,
+    "start": "46  4.2.2 Non Functional Requirements  The quality requirements cover performance measurement, ",
+    "figures": []
+  },
+  {
+    "page": 7,
+    "printed": 47,
+    "words": 387,
+    "start": "47  ID  Priority /  source  Requirement Verification plan   Interaction quality and human overs",
+    "figures": []
+  },
+  {
+    "page": 8,
+    "printed": 48,
+    "words": 398,
+    "start": "48  4.2.3 Data Requirements  The transactional data comprise account references, agent profiles",
+    "figures": []
+  },
+  {
+    "page": 9,
+    "printed": 49,
+    "words": 324,
+    "start": "49  ID  Priority /  source  Requirement Verification plan  DR-10  H / R  Synthetic data generat",
+    "figures": []
+  },
+  {
+    "page": 10,
+    "printed": 50,
+    "words": 450,
+    "start": "50  The generator uses stored local measurements from Labeled Faces in the Wild for fac e  matc",
+    "figures": []
+  },
+  {
+    "page": 11,
+    "printed": 51,
+    "words": 429,
+    "start": "51  4.2.4 Interface and Integration Requirements  The design separates the Vue presentation lay",
+    "figures": []
+  },
+  {
+    "page": 12,
+    "printed": 52,
+    "words": 250,
+    "start": "52  ID  Priority /  source  Requirement Verification plan  IR-03  H / O  Backend-to-AI calls sh",
+    "figures": []
+  },
+  {
+    "page": 13,
+    "printed": 53,
+    "words": 137,
+    "start": "53  4.3 System Analysis Diagrams  4.3.1 Use Case Diagram  The use case view identifies the agen",
+    "figures": [
+      "Figure 4.1: Use Case Diagram"
+    ]
+  },
+  {
+    "page": 14,
+    "printed": 54,
+    "words": 136,
+    "start": "54  4.4 System Design Diagrams  4.4.1 Class Diagram  The class view organises the domain concep",
+    "figures": [
+      "Figure 4.2: Class Diagram"
+    ]
+  },
+  {
+    "page": 15,
+    "printed": 55,
+    "words": 135,
+    "start": "55  4.4.2 Entity Relationship Diagram  The entity relationship view describes the persistent re",
+    "figures": [
+      "Figure 4.3: Entity Relationship Diagram"
+    ]
+  },
+  {
+    "page": 16,
+    "printed": 56,
+    "words": 131,
+    "start": "56  4.4.3 System Architecture Diagram  The architecture view separates presentation, applicatio",
+    "figures": [
+      "Figure 4.4: System Architecture Diagram"
+    ]
+  },
+  {
+    "page": 17,
+    "printed": 57,
+    "words": 127,
+    "start": "57  4.4.4 Sequence Diagram  The sequence view describes the progression from evidence submissio",
+    "figures": [
+      "Figure 4.5: Sequence Diagram"
+    ]
+  },
+  {
+    "page": 18,
+    "printed": 58,
+    "words": 163,
+    "start": "58  4.4.5 Database Schema  The schema view presents the persistent entities, while Table 4.7 pr",
+    "figures": [
+      "Figure 4.6: Database Schema"
+    ]
+  },
+  {
+    "page": 19,
+    "printed": 59,
+    "words": 272,
+    "start": "59  Table 4.7: Logical entity and integrity catalogue  Entity Important attributes Relationship",
+    "figures": []
+  },
+  {
+    "page": 20,
+    "printed": 60,
+    "words": 224,
+    "start": "60  4.4.6 User Interface Design and Wireframes  I use grayscale wireframes to document  the pri",
+    "figures": [
+      "Figure 4.7: Account registration and sign in wireframe"
+    ]
+  },
+  {
+    "page": 21,
+    "printed": 61,
+    "words": 118,
+    "start": "61  4.4.6.2 Personal profile details  The profile wireframe is the first protected onboarding s",
+    "figures": [
+      "Figure 4.8: Personal profile details wireframe"
+    ]
+  },
+  {
+    "page": 22,
+    "printed": 62,
+    "words": 127,
+    "start": "62  4.4.6.3 Identity document capture  The document wireframe combines document-type selection,",
+    "figures": [
+      "Figure 4.9: Identity document capture wireframe"
+    ]
+  },
+  {
+    "page": 23,
+    "printed": 63,
+    "words": 123,
+    "start": "63  4.4.6.4 Live selfie and challenge  The selfie wireframe provides a live preview, a face -po",
+    "figures": [
+      "Figure 4.10: Live selfie and challenge wireframe"
+    ]
+  },
+  {
+    "page": 24,
+    "printed": 64,
+    "words": 136,
+    "start": "64  4.4.6.5 Verification progress and decision states  The verification wireframe presents the ",
+    "figures": [
+      "Figure 4.11: Verification progress and decision states wireframe"
+    ]
+  },
+  {
+    "page": 25,
+    "printed": 65,
+    "words": 131,
+    "start": "65  4.4.6.6 Administrator directory  The administrator directory provides an overview of agents",
+    "figures": [
+      "Figure 4.12: Administrator directory wireframe"
+    ]
+  },
+  {
+    "page": 26,
+    "printed": 66,
+    "words": 131,
+    "start": "66  4.4.6.7 Administrator case review  The case -review wireframe groups identit y images, regi",
+    "figures": [
+      "Figure 4.13: Administrator case review wireframe"
+    ]
+  },
+  {
+    "page": 27,
+    "printed": 67,
+    "words": 115,
+    "start": "67  4.4.6.8 Audit history and export  The audit wireframe makes actions, outcomes and responsib",
+    "figures": [
+      "Figure 4.14: Audit history and export wireframe"
+    ]
+  },
+  {
+    "page": 28,
+    "printed": 68,
+    "words": 108,
+    "start": "68  4.4.6.9 Passkey management  The passkey wireframe provides account -level enrolment and cre",
+    "figures": [
+      "Figure 4.15: Passkey management wireframe"
+    ]
+  },
+  {
+    "page": 29,
+    "printed": 69,
+    "words": 120,
+    "start": "69  4.4.6.10 Model evaluation interface  The evaluation wireframe presents the saved model repo",
+    "figures": [
+      "Figure 4.16: Model evaluation interface wireframe"
+    ]
+  },
+  {
+    "page": 30,
+    "printed": 70,
+    "words": 210,
+    "start": "70  Interface states and responsive behaviour  Each asynchronous screen distinguishes loading, ",
+    "figures": []
+  },
+  {
+    "page": 31,
+    "printed": 71,
+    "words": 371,
+    "start": "71  4.5 Requirements Traceability and Verification Plan  I use the traceability  matrix to conn",
+    "figures": []
+  },
+  {
+    "page": 32,
+    "printed": 72,
+    "words": 263,
+    "start": "72  Requirement group Objective  and need Design reference Scenario  DR-10 and DR-11 O5; R 4.2.",
+    "figures": []
+  },
+  {
+    "page": 33,
+    "printed": 73,
+    "words": 290,
+    "start": "73  Scenario Focus Required evidence  C4-T14 Passkeys Enrolment, signatures, challenge expiry/r",
+    "figures": []
+  },
+  {
+    "page": 34,
+    "printed": 74,
+    "words": 182,
+    "start": "74  4.6 Chapter Summary  The design connects account registration and contr olled evidence capt",
+    "figures": []
+  }
+]

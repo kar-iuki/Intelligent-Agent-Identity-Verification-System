@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="700" viewBox="0 0 1000 700">
+<rect width="1000" height="700" fill="white"/>
+<style>text{font-family:Arial,sans-serif;fill:#202020} .label{font-size:20px} .small{font-size:18px}</style>
+<rect x="10" y="10" width="980" height="680" rx="3" fill="white" stroke="#555" stroke-width="1.5"/>
+<rect x="10" y="10" width="180" height="680" rx="3" fill="#f1f1f1" stroke="#555" stroke-width="1.5"/>
+<text x="28" y="51" font-size="27" font-weight="bold">VERITY</text>
+<text x="28" y="78" font-size="16">Identity workspace</text>
+<text x="28" y="127" font-size="17">Agent directory</text>
+<text x="28" y="180" font-size="17">Review queue</text>
+<text x="28" y="233" font-size="17">Recently verified</text>
+<text x="28" y="286" font-size="17">Flagged attempts</text>
+<rect x="20" y="311" width="160" height="40" rx="3" fill="#d9d9d9" stroke="#555" stroke-width="1.5"/>
+<text x="28" y="339" font-size="17" font-weight="bold">Audit log</text>
+<text x="28" y="392" font-size="17">Model report</text>
+<text x="28" y="622" font-size="18">Administrator</text>
+<rect x="25" y="642" width="147" height="42" rx="3" fill="#fff" stroke="#555" stroke-width="1.5"/>
+<text x="39" y="670" font-size="20">Sign out</text>
+<rect x="190" y="10" width="800" height="65" rx="3" fill="#fafafa" stroke="#555" stroke-width="1.5"/>
+<text x="213" y="51" font-size="22">Administration / Audit log</text>
+<text x="213" y="120" font-size="28" font-weight="bold">Audit log</text>
+<text x="233" y="165" font-size="18" font-weight="bold">Timestamp</text>
+<text x="377" y="165" font-size="18" font-weight="bold">Agent</text>
+<text x="511" y="165" font-size="18" font-weight="bold">Action</text>
+<text x="646" y="165" font-size="18" font-weight="bold">Outcome</text>
+<text x="788" y="165" font-size="18" font-weight="bold">Performed by</text>
+<rect x="220" y="185" width="730" height="65" rx="3" fill="white" stroke="#555" stroke-width="1.5"/>
+<text x="233" y="224" font-size="18">[ time ]</text>
+<text x="377" y="224" font-size="18">[ agent ]</text>
+<text x="511" y="224" font-size="18">[ action ]</text>
+<text x="646" y="224" font-size="18">[ result ]</text>
+<text x="788" y="224" font-size="18">[ actor ]</text>
+<rect x="220" y="250" width="730" height="65" rx="3" fill="#fafafa" stroke="#555" stroke-width="1.5"/>
+<text x="233" y="289" font-size="18">[ time ]</text>
+<text x="377" y="289" font-size="18">[ agent ]</text>
+<text x="511" y="289" font-size="18">[ action ]</text>
+<text x="646" y="289" font-size="18">[ result ]</text>
+<text x="788" y="289" font-size="18">[ actor ]</text>
+<rect x="220" y="315" width="730" height="65" rx="3" fill="white" stroke="#555" stroke-width="1.5"/>
+<text x="233" y="354" font-size="18">[ time ]</text>
+<text x="377" y="354" font-size="18">[ agent ]</text>
+<text x="511" y="354" font-size="18">[ action ]</text>
+<text x="646" y="354" font-size="18">[ result ]</text>
+<text x="788" y="354" font-size="18">[ actor ]</text>
+<rect x="220" y="380" width="730" height="65" rx="3" fill="#fafafa" stroke="#555" stroke-width="1.5"/>
+<text x="233" y="419" font-size="18">[ time ]</text>
+<text x="377" y="419" font-size="18">[ agent ]</text>
+<text x="511" y="419" font-size="18">[ action ]</text>
+<text x="646" y="419" font-size="18">[ result ]</text>
+<text x="788" y="419" font-size="18">[ actor ]</text>
+<rect x="220" y="463" width="122" height="42" rx="3" fill="#fff" stroke="#555" stroke-width="1.5"/>
+<text x="234" y="491" font-size="20">Previous</text>
+<text x="358" y="491" font-size="20">Page [ n ]</text>
+<rect x="474" y="463" width="106" height="42" rx="3" fill="#fff" stroke="#555" stroke-width="1.5"/>
+<text x="488" y="491" font-size="20">Next</text>
+<rect x="652" y="463" width="298" height="42" rx="3" fill="#dedede" stroke="#555" stroke-width="1.5"/>
+<text x="666" y="491" font-size="20" font-weight="bold">Export audit logs</text>
+<rect x="220" y="525" width="730" height="137" rx="3" fill="#f5f5f5" stroke="#555" stroke-width="1.5"/>
+<text x="236" y="555" font-size="21" font-weight="bold">Export dialog</text>
+<text x="236" y="589" font-size="19">[ start date ]     [ end date ]     [ agent name optional ]</text>
+<rect x="236" y="606" width="165" height="42" rx="3" fill="#fff" stroke="#555" stroke-width="1.5"/>
+<text x="250" y="634" font-size="20">Cancel</text>
+<rect x="679" y="606" width="250" height="42" rx="3" fill="#dedede" stroke="#555" stroke-width="1.5"/>
+<text x="693" y="634" font-size="20" font-weight="bold">Download CSV</text>
+</svg>
