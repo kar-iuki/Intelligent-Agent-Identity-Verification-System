@@ -3,7 +3,7 @@
     <h3 class="title">Live selfie check</h3>
     <p class="hint">
       First we take a clear photo while your face is centred and still.
-      Then you follow a short movement so we know you are a real person
+      Then you turn your head left or right so we know you are a real person
       (not a photo held up to the camera).
     </p>
 
@@ -110,23 +110,20 @@ const phase = ref('loading')
 const completedFile = ref(null)
 const previewUrl = ref(null)
 const faceCentered = ref(false)
-const blinkClosed = ref(false)
 const yawBaseline = ref(null)
 
 let faceLandmarker = null
 let mediaStream = null
 let rafId = null
 let lastVideoTime = -1
-let blinkCount = 0
 let centeredSince = null
 let latestLandmarks = null
 
-const CHALLENGES = ['blink', 'turn_left', 'turn_right']
+const CHALLENGES = ['turn_left', 'turn_right']
 
 const bannerTitle = computed(() => {
   if (phase.value === 'center') return 'Step 1 — Centre your face'
   if (phase.value === 'challenge') {
-    if (challenge.value === 'blink') return 'Step 2 — Blink twice'
     if (challenge.value === 'turn_left') return 'Step 2 — Turn your head left'
     return 'Step 2 — Turn your head right'
   }
@@ -142,9 +139,6 @@ const statusText = computed(() => {
       : 'Look straight at the camera and place your face inside the oval.'
   }
   if (phase.value === 'challenge') {
-    if (challenge.value === 'blink') {
-      return blinkClosed.value ? 'Open your eyes…' : 'Close your eyes, then open them.'
-    }
     if (challenge.value === 'turn_left') return 'Slowly look to your left (photo already saved).'
     return 'Slowly look to your right (photo already saved).'
   }
@@ -180,9 +174,7 @@ onBeforeUnmount(() => {
 
 function pickChallenge() {
   challenge.value = CHALLENGES[Math.floor(Math.random() * CHALLENGES.length)]
-  blinkClosed.value = false
   yawBaseline.value = null
-  blinkCount = 0
   centeredSince = null
   faceCentered.value = false
 }
@@ -306,16 +298,6 @@ function updateCenterStatus(landmarks, now) {
   }
 }
 
-function eyeAspectRatio(landmarks, indices) {
-  const dist = (a, b) => {
-    const dx = landmarks[a].x - landmarks[b].x
-    const dy = landmarks[a].y - landmarks[b].y
-    return Math.hypot(dx, dy)
-  }
-  const [p1, p2, p3, p4, p5, p6] = indices
-  return (dist(p2, p6) + dist(p3, p5)) / (2 * dist(p1, p4) + 1e-6)
-}
-
 function estimateYaw(landmarks) {
   // Positive yaw ≈ face turned toward subject's left (camera right)
   const leftCheek = landmarks[234]
@@ -326,21 +308,6 @@ function estimateYaw(landmarks) {
 }
 
 function evaluateChallenge(landmarks) {
-  if (challenge.value === 'blink') {
-    const leftEar = eyeAspectRatio(landmarks, [33, 160, 158, 133, 153, 144])
-    const rightEar = eyeAspectRatio(landmarks, [362, 385, 387, 263, 373, 380])
-    const ear = (leftEar + rightEar) / 2
-
-    if (!blinkClosed.value && ear < 0.16) {
-      blinkClosed.value = true
-    } else if (blinkClosed.value && ear > 0.22) {
-      blinkClosed.value = false
-      blinkCount += 1
-      if (blinkCount >= 2) finishChallenge()
-    }
-    return
-  }
-
   const yaw = estimateYaw(landmarks)
   if (yawBaseline.value === null) {
     // Baseline should be near-centre facing after photo
@@ -391,8 +358,6 @@ async function captureCenteredSelfie() {
     completedFile.value = new File([blob], `live-selfie-${Date.now()}.jpg`, { type: 'image/jpeg' })
     previewUrl.value = URL.createObjectURL(completedFile.value)
 
-    blinkCount = 0
-    blinkClosed.value = false
     yawBaseline.value = null
     phase.value = 'challenge'
   } finally {
@@ -403,7 +368,6 @@ async function captureCenteredSelfie() {
 function finishChallenge() {
   if (phase.value !== 'challenge' || !completedFile.value) return
   phase.value = 'success'
-  blinkCount = 0
 }
 
 function drawOverlay(result) {
