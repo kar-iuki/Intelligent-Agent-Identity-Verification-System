@@ -2,7 +2,7 @@
   <div class="score-bar">
     <div class="meta">
       <span class="label">{{ label }}</span>
-      <span class="value">{{ displayValue }}</span>
+      <span class="value">{{ displayValue }} <span class="assessment" :class="tone">{{ assessment }}</span></span>
     </div>
     <div class="track">
       <div class="fill" :class="tone" :style="{ width: `${percent}%` }" />
@@ -43,6 +43,10 @@ const tone = computed(() => {
   if (value >= props.amberThreshold) return 'amber'
   return 'red'
 })
+
+const assessment = computed(() => tone.value === 'green'
+  ? 'Within range'
+  : tone.value === 'amber' ? 'Needs review' : props.rangeMode ? 'Outside range' : 'Below threshold')
 </script>
 
 <style scoped>
@@ -56,20 +60,29 @@ const tone = computed(() => {
   display: flex;
   justify-content: space-between;
   font-size: 0.85rem;
+  gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
 .label {
-  color: #334e68;
+  color: var(--ink);
   font-weight: 600;
 }
 
 .value {
-  color: #486581;
+  color: var(--ink);
+  margin-left: auto;
+  text-align: right;
 }
+
+.assessment { display: inline-block; margin-left: .4rem; font-size: .7rem; }
+.assessment.green { color: var(--success); }
+.assessment.amber { color: var(--warning); }
+.assessment.red { color: var(--danger); }
 
 .track {
   height: 10px;
-  background: #edf2f7;
+  background: var(--surface-muted);
   border-radius: 999px;
   overflow: hidden;
 }
@@ -80,7 +93,7 @@ const tone = computed(() => {
   transition: width 0.25s ease;
 }
 
-.fill.green { background: #38a169; }
-.fill.amber { background: #d69e2e; }
-.fill.red { background: #e53e3e; }
+.fill.green { background: var(--success); }
+.fill.amber { background: var(--warning); }
+.fill.red { background: var(--danger); }
 </style>

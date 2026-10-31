@@ -256,13 +256,13 @@ onMounted(async () => {
   justify-content: center;
   min-height: 100vh;
   padding: 2rem;
-  background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+  background: linear-gradient(135deg, var(--surface-muted) 0%, var(--line) 100%);
 }
 
 .auth-card {
   width: 100%;
   max-width: 420px;
-  background: #fff;
+  background: var(--surface);
   border-radius: 12px;
   padding: 2.5rem;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
@@ -270,12 +270,12 @@ onMounted(async () => {
 
 h1 {
   font-size: 1.5rem;
-  color: #16213e;
+  color: var(--ink);
   margin-bottom: 0.25rem;
 }
 
 .subtitle {
-  color: #6c757d;
+  color: var(--muted);
   font-size: 0.875rem;
   margin-bottom: 2rem;
 }
@@ -288,7 +288,7 @@ label {
   display: block;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #334e68;
+  color: var(--ink);
   margin-bottom: 0.375rem;
 }
 
@@ -304,7 +304,7 @@ label {
 }
 
 .password-label a {
-  color: #286848;
+  color: var(--link);
   font-size: 0.75rem;
   font-weight: 600;
   text-decoration: none;
@@ -315,7 +315,7 @@ label {
 }
 
 .info {
-  color: #276749;
+  color: var(--success);
   font-size: 0.875rem;
   margin-bottom: 1rem;
 }
@@ -334,15 +334,15 @@ label {
 .captcha-image {
   width: 210px;
   height: 68px;
-  border: 1px solid #d5ded4;
+  border: 1px solid var(--line);
   border-radius: 8px;
-  background: #f3f7f1;
+  background: var(--surface-muted);
 }
 
 .captcha-pending {
   display: grid;
   place-items: center;
-  color: #6c757d;
+  color: var(--muted);
   font-size: 0.75rem;
 }
 
@@ -351,16 +351,16 @@ label {
   height: 44px;
   display: grid;
   place-items: center;
-  border: 1px solid #d5ded4;
+  border: 1px solid var(--line);
   border-radius: 8px;
-  background: #fff;
-  color: #176b55;
+  background: var(--surface);
+  color: var(--link);
 }
 
 input {
   width: 100%;
   padding: 0.625rem 0.875rem;
-  border: 1px solid #d9e2ec;
+  border: 1px solid var(--line);
   border-radius: 8px;
   font-size: 0.9375rem;
   transition: border-color 0.2s;
@@ -368,12 +368,12 @@ input {
 
 input:focus {
   outline: none;
-  border-color: #3e7cb1;
-  box-shadow: 0 0 0 3px rgba(62, 124, 177, 0.15);
+  border-color: var(--action);
+  box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
 .error {
-  color: #c81e1e;
+  color: var(--danger);
   font-size: 0.875rem;
   margin-bottom: 1rem;
 }
@@ -396,19 +396,19 @@ input:focus {
 }
 
 .btn-primary {
-  background: #3e7cb1;
-  color: #fff;
+  background: var(--action);
+  color: var(--on-brand);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: #2f6a9b;
+  background: var(--action-hover);
 }
 
 .divider {
   display: flex;
   align-items: center;
   margin: 1.5rem 0;
-  color: #9fb3c8;
+  color: var(--muted);
   font-size: 0.8125rem;
 }
 
@@ -417,7 +417,7 @@ input:focus {
   content: '';
   flex: 1;
   height: 1px;
-  background: #d9e2ec;
+  background: var(--line);
 }
 
 .divider span {
@@ -430,24 +430,24 @@ input:focus {
 }
 
 .btn-oauth {
-  background: #fff;
-  color: #334e68;
-  border: 1px solid #d9e2ec;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line);
 }
 
 .btn-oauth:hover:not(:disabled) {
-  background: #f0f4f8;
+  background: var(--surface-muted);
 }
 
 .footer-link {
   text-align: center;
   margin-top: 1.5rem;
   font-size: 0.875rem;
-  color: #6c757d;
+  color: var(--muted);
 }
 
 .footer-link a {
-  color: #3e7cb1;
+  color: var(--link);
   text-decoration: none;
   font-weight: 500;
 }
@@ -455,8 +455,8 @@ input:focus {
 .footer-link a:hover {
   text-decoration: underline;
 }
-.passkey-message { margin-top:1rem; color:#52606d; font-size:.9rem; }
-button:focus-visible, a:focus-visible { outline:3px solid #3e7cb1; outline-offset:3px; }
+.passkey-message { margin-top:1rem; color:var(--ink); font-size:.9rem; }
+button:focus-visible, a:focus-visible { outline:3px solid var(--focus); outline-offset:3px; }
 @media (max-width:480px) { .auth-page { padding:1rem; align-items:flex-start; } .auth-card { padding:1.25rem; } }
 @media (prefers-reduced-motion:reduce) { * { transition:none !important; } }
 </style>

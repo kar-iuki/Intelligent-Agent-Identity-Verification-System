@@ -165,7 +165,7 @@ async function retake() {
 .camera-label {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #334e68;
+  color: var(--ink);
 }
 
 .camera-panel {
@@ -179,7 +179,7 @@ async function retake() {
   max-height: 280px;
   object-fit: cover;
   border-radius: 12px;
-  background: #0f172a;
+  background: var(--media-background);
 }
 
 .actions {
@@ -191,8 +191,8 @@ async function retake() {
   padding: 0.625rem 1rem;
   border: none;
   border-radius: 8px;
-  background: #3e7cb1;
-  color: #fff;
+  background: var(--action);
+  color: var(--on-brand);
   font-weight: 600;
   cursor: pointer;
 }
@@ -203,16 +203,16 @@ async function retake() {
 }
 
 .btn.secondary {
-  background: #fff;
-  color: #334e68;
-  border: 1px solid #d9e2ec;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line);
 }
 
 .fallback {
   padding: 1rem;
   border-radius: 8px;
-  background: #fff7ed;
-  color: #9a3412;
+  background: var(--warning-bg);
+  color: var(--warning);
   font-size: 0.875rem;
   line-height: 1.5;
 }

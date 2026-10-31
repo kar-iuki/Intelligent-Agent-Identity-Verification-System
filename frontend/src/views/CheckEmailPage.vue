@@ -103,13 +103,13 @@ async function handleResend() {
   justify-content: center;
   min-height: 100vh;
   padding: 2rem;
-  background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+  background: linear-gradient(135deg, var(--surface-muted) 0%, var(--line) 100%);
 }
 
 .auth-card {
   width: 100%;
   max-width: 480px;
-  background: #fff;
+  background: var(--surface);
   border-radius: 12px;
   padding: 2.5rem;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
@@ -120,8 +120,8 @@ async function handleResend() {
   width: 56px;
   height: 56px;
   margin: 0 auto 1.5rem;
-  background: #dbeafe;
-  color: #1d4ed8;
+  background: var(--info-bg);
+  color: var(--info);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -131,28 +131,28 @@ async function handleResend() {
 
 h1 {
   font-size: 1.5rem;
-  color: #16213e;
+  color: var(--ink);
   margin-bottom: 1rem;
 }
 
 p {
-  color: #52606d;
+  color: var(--ink);
   line-height: 1.6;
   margin-bottom: 1rem;
 }
 
 .note {
   font-size: 0.875rem;
-  color: #829ab1;
+  color: var(--muted);
 }
 
 .info {
-  color: #276749;
+  color: var(--success);
   font-size: 0.875rem;
 }
 
 .error {
-  color: #c81e1e;
+  color: var(--danger);
   font-size: 0.875rem;
 }
 
@@ -175,23 +175,23 @@ p {
 }
 
 .btn-primary {
-  background: #3e7cb1;
-  color: #fff;
+  background: var(--action);
+  color: var(--on-brand);
 }
 
 .btn-secondary {
-  background: #edf2f7;
-  color: #2d3748;
+  background: var(--surface-muted);
+  color: var(--ink);
 }
 
 .footer-link {
   margin-top: 1.5rem;
   font-size: 0.875rem;
-  color: #6c757d;
+  color: var(--muted);
 }
 
 .footer-link a {
-  color: #3e7cb1;
+  color: var(--link);
   text-decoration: none;
   font-weight: 500;
 }

@@ -9,10 +9,10 @@ import { Fingerprint } from '@lucide/vue'
 defineProps({ busy: Boolean, prominent: Boolean, iconOnly: Boolean })
 </script>
 <style scoped>
-.passkey-button { display:flex; align-items:center; justify-content:center; gap:.6rem; width:100%; min-height:44px; padding:.75rem; border:1px solid #3e7cb1; border-radius:8px; background:transparent; color:inherit; font:inherit; font-weight:600; cursor:pointer; }
-.prominent { background:#3e7cb1; color:white; }
-.icon-only { width:48px; height:48px; flex:0 0 48px; padding:0; border-color:#cad8d3; color:#176b55; background:#f3f8f5; }
+.passkey-button { display:flex; align-items:center; justify-content:center; gap:.6rem; width:100%; min-height:44px; padding:.75rem; border:1px solid var(--action); border-radius:8px; background:transparent; color:inherit; font:inherit; font-weight:600; cursor:pointer; }
+.prominent { background:var(--action); color:var(--on-brand); }
+.icon-only { width:48px; height:48px; flex:0 0 48px; padding:0; border-color:var(--line); color:var(--link); background:var(--surface-muted); }
 button:disabled { opacity:.6; cursor:wait; }
-button:focus-visible { outline:3px solid #3e7cb1; outline-offset:3px; }
+button:focus-visible { outline:3px solid var(--focus); outline-offset:3px; }
 svg { flex-shrink:0; }
 </style>

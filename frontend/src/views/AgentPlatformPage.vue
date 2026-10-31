@@ -43,7 +43,7 @@ async function handleLogout() {
 <style scoped>
 .platform {
   min-height: 100vh;
-  background: #f0f4f8;
+  background: var(--surface-muted);
 }
 
 .platform-header {
@@ -51,17 +51,17 @@ async function handleLogout() {
   justify-content: space-between;
   align-items: center;
   padding: 1.25rem 2rem;
-  background: #fff;
-  border-bottom: 1px solid #d9e2ec;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
 }
 
 h1 {
   font-size: 1.25rem;
-  color: #16213e;
+  color: var(--ink);
 }
 
 .subtitle {
-  color: #627d98;
+  color: var(--muted);
   font-size: 0.875rem;
 }
 
@@ -72,16 +72,16 @@ h1 {
 }
 
 .link {
-  color: #3e7cb1;
+  color: var(--link);
   text-decoration: none;
   font-weight: 600;
 }
 
 .btn-logout {
   padding: 0.5rem 1rem;
-  border: 1px solid #d9e2ec;
+  border: 1px solid var(--line);
   border-radius: 8px;
-  background: #fff;
+  background: var(--surface);
   cursor: pointer;
 }
 
@@ -92,7 +92,7 @@ h1 {
 }
 
 .card {
-  background: #fff;
+  background: var(--surface);
   border-radius: 12px;
   padding: 2rem;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
@@ -100,11 +100,11 @@ h1 {
 
 h2 {
   margin-bottom: 0.75rem;
-  color: #16213e;
+  color: var(--ink);
 }
 
 p {
-  color: #52606d;
+  color: var(--ink);
   line-height: 1.6;
 }
 </style>

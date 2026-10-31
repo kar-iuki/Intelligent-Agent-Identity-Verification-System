@@ -93,12 +93,12 @@ onMounted(() => { load(); window.addEventListener('storage', refreshLocal) })
 onBeforeUnmount(() => { active = false; cancelPasskeyCeremony(); window.removeEventListener('storage', refreshLocal) })
 </script>
 <style scoped>
-.passkeys-page { max-width:800px; margin:auto; padding:clamp(1rem,4vw,2rem); color:#243b53; }
+.passkeys-page { max-width:800px; margin:auto; padding:clamp(1rem,4vw,2rem); color:var(--ink); }
 h1 { margin:1rem 0; } h2 { font-size:1.1rem; overflow-wrap:anywhere; }
-p { margin:.75rem 0; } ul { padding:0; list-style:none; } li { padding:1.25rem; margin:1rem 0; border:1px solid #d9e2ec; border-radius:12px; background:#fff; }
-button { display:inline-flex; gap:.5rem; align-items:center; min-height:44px; padding:.65rem 1rem; border:1px solid #9fb3c8; border-radius:8px; background:transparent; color:inherit; cursor:pointer; }
-button:disabled { opacity:.6; } .primary { background:#3e7cb1; color:white; } .row-actions { display:flex; gap:.5rem; }
-input { width:100%; padding:.7rem; margin:.5rem 0; border:1px solid #9fb3c8; border-radius:6px; }
-button:focus-visible, input:focus-visible, a:focus-visible { outline:3px solid #3e7cb1; outline-offset:3px; }
-.badge { display:inline-block; padding:.2rem .5rem; border:1px solid #9fb3c8; border-radius:1rem; font-size:.8rem; }
+p { margin:.75rem 0; } ul { padding:0; list-style:none; } li { padding:1.25rem; margin:1rem 0; border:1px solid var(--line); border-radius:12px; background:var(--surface); }
+button { display:inline-flex; gap:.5rem; align-items:center; min-height:44px; padding:.65rem 1rem; border:1px solid var(--muted); border-radius:8px; background:transparent; color:inherit; cursor:pointer; }
+button:disabled { opacity:.6; } .primary { background:var(--action); color:var(--on-brand); } .row-actions { display:flex; gap:.5rem; }
+input { width:100%; padding:.7rem; margin:.5rem 0; border:1px solid var(--muted); border-radius:6px; }
+button:focus-visible, input:focus-visible, a:focus-visible { outline:3px solid var(--focus); outline-offset:3px; }
+.badge { display:inline-block; padding:.2rem .5rem; border:1px solid var(--muted); border-radius:1rem; font-size:.8rem; }
 </style>

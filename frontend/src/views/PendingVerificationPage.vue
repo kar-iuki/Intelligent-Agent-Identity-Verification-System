@@ -26,13 +26,13 @@
   justify-content: center;
   min-height: 100vh;
   padding: 2rem;
-  background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+  background: linear-gradient(135deg, var(--surface-muted) 0%, var(--line) 100%);
 }
 
 .pending-card {
   width: 100%;
   max-width: 480px;
-  background: #fff;
+  background: var(--surface);
   border-radius: 12px;
   padding: 2.5rem;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
@@ -43,8 +43,8 @@
   width: 56px;
   height: 56px;
   margin: 0 auto 1.5rem;
-  background: #d4edda;
-  color: #155724;
+  background: var(--success-bg);
+  color: var(--success);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -55,27 +55,27 @@
 
 h1 {
   font-size: 1.5rem;
-  color: #16213e;
+  color: var(--ink);
   margin-bottom: 1rem;
 }
 
 p {
-  color: #52606d;
+  color: var(--ink);
   line-height: 1.6;
   margin-bottom: 1rem;
 }
 
 .note {
   font-size: 0.875rem;
-  color: #9fb3c8;
+  color: var(--muted);
 }
 
 .btn {
   display: inline-block;
   margin-top: 1rem;
   padding: 0.75rem 2rem;
-  background: #3e7cb1;
-  color: #fff;
+  background: var(--action);
+  color: var(--on-brand);
   text-decoration: none;
   border-radius: 8px;
   font-weight: 600;
@@ -83,6 +83,6 @@ p {
 }
 
 .btn:hover {
-  background: #2f6a9b;
+  background: var(--action-hover);
 }
 </style>

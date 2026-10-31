@@ -191,13 +191,13 @@ async function handleSubmit() {
   justify-content: center;
   min-height: 100vh;
   padding: 2rem;
-  background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+  background: linear-gradient(135deg, var(--surface-muted) 0%, var(--line) 100%);
 }
 
 .auth-card {
   width: 100%;
   max-width: 460px;
-  background: #fff;
+  background: var(--surface);
   border-radius: 12px;
   padding: 2.5rem;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
@@ -205,12 +205,12 @@ async function handleSubmit() {
 
 h1 {
   font-size: 1.5rem;
-  color: #16213e;
+  color: var(--ink);
   margin-bottom: 0.25rem;
 }
 
 .subtitle {
-  color: #6c757d;
+  color: var(--muted);
   font-size: 0.875rem;
   margin-bottom: 2rem;
   line-height: 1.5;
@@ -224,14 +224,14 @@ label {
   display: block;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #334e68;
+  color: var(--ink);
   margin-bottom: 0.375rem;
 }
 
 input {
   width: 100%;
   padding: 0.625rem 0.875rem;
-  border: 1px solid #d9e2ec;
+  border: 1px solid var(--line);
   border-radius: 8px;
   font-size: 0.9375rem;
   transition: border-color 0.2s;
@@ -239,26 +239,26 @@ input {
 
 input:focus {
   outline: none;
-  border-color: #3e7cb1;
-  box-shadow: 0 0 0 3px rgba(62, 124, 177, 0.15);
+  border-color: var(--action);
+  box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
 .hint {
   display: block;
   margin-top: 0.25rem;
   font-size: 0.75rem;
-  color: #829ab1;
+  color: var(--muted);
 }
 
 .field-error {
   display: block;
-  color: #c81e1e;
+  color: var(--danger);
   font-size: 0.8125rem;
   margin-top: 0.25rem;
 }
 
 .error {
-  color: #c81e1e;
+  color: var(--danger);
   font-size: 0.875rem;
   margin-bottom: 1rem;
 }
@@ -280,11 +280,11 @@ input:focus {
 }
 
 .btn-primary {
-  background: #3e7cb1;
-  color: #fff;
+  background: var(--action);
+  color: var(--on-brand);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: #2f6a9b;
+  background: var(--action-hover);
 }
 </style>

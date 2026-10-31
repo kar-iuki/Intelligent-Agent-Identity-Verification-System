@@ -291,12 +291,12 @@ async function runQualityCheck() {
 
 .title {
   margin: 0;
-  color: #243b53;
+  color: var(--ink);
 }
 
 .hint {
   margin: 0;
-  color: #627d98;
+  color: var(--muted);
   font-size: 0.9rem;
 }
 
@@ -306,17 +306,17 @@ async function runQualityCheck() {
 }
 
 .chip {
-  border: 1px solid #d9e2ec;
-  background: #fff;
+  border: 1px solid var(--line);
+  background: var(--surface);
   border-radius: 999px;
   padding: 0.4rem 0.85rem;
   cursor: pointer;
 }
 
 .chip.active {
-  background: #3e7cb1;
-  border-color: #3e7cb1;
-  color: #fff;
+  background: var(--action);
+  border-color: var(--action);
+  color: var(--on-brand);
 }
 
 .media-frame {
@@ -326,7 +326,7 @@ async function runQualityCheck() {
   aspect-ratio: var(--stream-aspect);
   border-radius: 12px;
   overflow: hidden;
-  background: #0f172a;
+  background: var(--media-background);
 }
 
 .media {
@@ -355,15 +355,15 @@ async function runQualityCheck() {
   border: none;
   border-radius: 8px;
   padding: 0.55rem 0.9rem;
-  background: #3e7cb1;
-  color: #fff;
+  background: var(--action);
+  color: var(--on-brand);
   font-weight: 600;
   cursor: pointer;
 }
 
 .btn.secondary {
-  background: #edf2f7;
-  color: #2d3748;
+  background: var(--surface-muted);
+  color: var(--ink);
 }
 
 .btn:disabled {
@@ -374,17 +374,17 @@ async function runQualityCheck() {
 .failures {
   margin: 0;
   padding-left: 1.1rem;
-  color: #c53030;
+  color: var(--danger);
 }
 
 .warnings {
   margin: 0;
   padding-left: 1.1rem;
-  color: #92400e;
+  color: var(--warning);
   font-size: 0.85rem;
 }
 
-.ok { color: #276749; margin: 0; }
-.status { color: #486581; }
-.error { color: #c53030; margin: 0; }
+.ok { color: var(--success); margin: 0; }
+.status { color: var(--ink); }
+.error { color: var(--danger); margin: 0; }
 </style>

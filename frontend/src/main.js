@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import { initTheme } from './composables/useTheme.js'
+import './theme.css'
 import './style.css'
 import './workspace.css'
 

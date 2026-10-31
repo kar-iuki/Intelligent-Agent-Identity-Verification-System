@@ -150,26 +150,26 @@ function clearSelection() {
 .upload-label {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #334e68;
+  color: var(--ink);
 }
 
 .drop-zone {
-  border: 2px dashed #bcccdc;
+  border: 2px dashed var(--input-border);
   border-radius: 12px;
   min-height: 180px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  background: #f8fafc;
+  background: var(--surface-muted);
   overflow: hidden;
   transition: border-color 0.2s, background-color 0.2s;
 }
 
 .drop-zone.drag-over {
-  border-color: #3e7cb1;
-  background: #e3f0fa;
-}
+
+
+ background:var(--selected-bg); border-color:var(--selected-border); }
 
 .drop-zone.has-preview {
   border-style: solid;
@@ -178,13 +178,13 @@ function clearSelection() {
 
 .drop-placeholder {
   text-align: center;
-  color: #627d98;
+  color: var(--muted);
   padding: 1.5rem;
 }
 
 .hint {
   font-size: 0.8125rem;
-  color: #9fb3c8;
+  color: var(--muted);
   margin: 0.35rem 0 1rem;
 }
 
@@ -192,9 +192,9 @@ function clearSelection() {
 .clear-btn {
   padding: 0.5rem 1rem;
   border-radius: 8px;
-  border: 1px solid #d9e2ec;
-  background: #fff;
-  color: #334e68;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
   cursor: pointer;
   font-size: 0.875rem;
   font-weight: 500;
@@ -202,7 +202,7 @@ function clearSelection() {
 
 .browse-btn:hover,
 .clear-btn:hover {
-  background: #f0f4f8;
+  background: var(--surface-muted);
 }
 
 .preview {
@@ -210,7 +210,7 @@ function clearSelection() {
   max-height: 260px;
   object-fit: contain;
   display: block;
-  background: #0f172a;
+  background: var(--media-background);
 }
 
 .hidden-input {
@@ -218,7 +218,7 @@ function clearSelection() {
 }
 
 .error {
-  color: #c81e1e;
+  color: var(--danger);
   font-size: 0.8125rem;
 }
 </style>

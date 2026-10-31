@@ -407,8 +407,8 @@ function emitPassed() {
   gap: 0.85rem;
 }
 
-.title { margin: 0; color: #243b53; }
-.hint { margin: 0; color: #627d98; font-size: 0.9rem; }
+.title { margin: 0; color: var(--ink); }
+.hint { margin: 0; color: var(--muted); font-size: 0.9rem; }
 
 .challenge-banner {
   display: flex;
@@ -416,22 +416,22 @@ function emitPassed() {
   gap: 0.2rem;
   padding: 0.85rem 1rem;
   border-radius: 10px;
-  background: #ebf8ff;
-  border: 1px solid #90cdf4;
-  color: #2a4365;
-}
+
+  border: 1px solid var(--info-border);
+
+ background:var(--info-bg); color:var(--info); border-color:var(--info-border); }
 
 .challenge-banner.ready {
-  background: #f0fff4;
-  border-color: #9ae6b4;
-  color: #276749;
-}
+
+
+
+ background:var(--success-bg); color:var(--success); border-color:var(--success-border); }
 
 .challenge-banner.ok {
-  background: #c6f6d5;
-  border-color: #9ae6b4;
-  color: #276749;
-}
+
+
+
+ background:var(--success-bg); color:var(--success); border-color:var(--success-border); }
 
 .stage {
   position: relative;
@@ -440,7 +440,7 @@ function emitPassed() {
   aspect-ratio: var(--stream-aspect);
   border-radius: 12px;
   overflow: hidden;
-  background: #0f172a;
+  background: var(--media-background);
 }
 
 .media {
@@ -481,7 +481,7 @@ function emitPassed() {
 }
 
 .guide-oval.ready {
-  border-color: #68d391;
+  border-color: var(--success);
   border-style: solid;
 }
 
@@ -496,7 +496,7 @@ function emitPassed() {
   padding: 0.35rem;
   border-radius: 8px;
   background: rgba(15, 23, 42, 0.75);
-  color: #e2e8f0;
+  color: var(--on-brand);
   font-size: 0.7rem;
 }
 
@@ -521,15 +521,15 @@ function emitPassed() {
   border: none;
   border-radius: 8px;
   padding: 0.55rem 0.9rem;
-  background: #3e7cb1;
-  color: #fff;
+  background: var(--action);
+  color: var(--on-brand);
   font-weight: 600;
   cursor: pointer;
 }
 
 .btn.secondary {
-  background: #edf2f7;
-  color: #2d3748;
+  background: var(--surface-muted);
+  color: var(--ink);
 }
 
 .btn:disabled {
@@ -537,6 +537,6 @@ function emitPassed() {
   cursor: not-allowed;
 }
 
-.error { color: #c53030; margin: 0; }
-.muted { color: #718096; margin: 0; }
+.error { color: var(--danger); margin: 0; }
+.muted { color: var(--muted); margin: 0; }
 </style>

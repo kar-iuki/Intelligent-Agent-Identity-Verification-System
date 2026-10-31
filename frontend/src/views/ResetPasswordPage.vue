@@ -115,11 +115,11 @@ async function handleSubmit() {
 .auth-card { width:100%; max-width:420px; }
 .form-group { margin-bottom:1.25rem; }
 label { display:block; font-size:.875rem; font-weight:600; margin-bottom:.375rem; }
-input { width:100%; padding:.625rem .875rem; border:1px solid #d5ded4; border-radius:8px; font-size:.9375rem; }
-.error { color:#c81e1e; font-size:.875rem; margin-bottom:1rem; }
+input { width:100%; padding:.625rem .875rem; border:1px solid var(--line); border-radius:8px; font-size:.9375rem; }
+.error { color:var(--danger); font-size:.875rem; margin-bottom:1rem; }
 .btn { display:inline-block; min-height:44px; width:100%; padding:.75rem; border:none; border-radius:8px; font-weight:600; cursor:pointer; text-align:center; text-decoration:none; box-sizing:border-box; }
-.btn-primary { background:#276b4f; color:#fff; }
+.btn-primary { background:var(--action); color:var(--on-brand); }
 .btn:disabled { opacity:.6; cursor:not-allowed; }
 .footer-link { text-align:center; margin-top:1.5rem; font-size:.875rem; }
-.footer-link a { color:#286848; font-weight:600; text-decoration:none; }
+.footer-link a { color:var(--link); font-weight:600; text-decoration:none; }
 </style>

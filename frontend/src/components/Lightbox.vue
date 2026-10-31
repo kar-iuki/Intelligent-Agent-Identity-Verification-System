@@ -126,7 +126,7 @@ defineExpose({ openLightbox: () => { open.value = true } })
   object-fit: cover;
   border-radius: 10px;
   display: block;
-  background: #0f172a;
+  background: var(--media-background);
 }
 
 .overlay {
@@ -153,7 +153,7 @@ defineExpose({ openLightbox: () => { open.value = true } })
   right: 1.25rem;
   border: none;
   background: transparent;
-  color: #fff;
+  color: var(--on-brand);
   font-size: 2rem;
   cursor: pointer;
 }
@@ -164,7 +164,7 @@ defineExpose({ openLightbox: () => { open.value = true } })
   transform: translateY(-50%);
   border: none;
   background: rgba(255, 255, 255, 0.15);
-  color: #fff;
+  color: var(--on-brand);
   font-size: 2rem;
   width: 48px;
   height: 48px;
