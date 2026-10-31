@@ -23,8 +23,14 @@ const routes = [
   },
   {
     path: '/',
-    redirect: (to) => {
+    name: 'home',
+    component: () => import('../views/HomeView.vue'),
+    meta: { landing: true },
+    beforeEnter: (to) => {
       const hashParams = new URLSearchParams(to.hash.replace(/^#/, ''))
+      // Email and OAuth links can still return to the site root.
+      const callbackKeys = ['access_token', 'code', 'token_hash', 'error', 'error_code', 'error_description', 'type']
+      if (!callbackKeys.some(key => hashParams.has(key) || to.query[key] !== undefined)) return true
       const type = (hashParams.get('type') || to.query.type || '').toString().toLowerCase()
       const path = (hashParams.get('access_token') || to.query.access_token) && type === 'recovery'
         ? '/reset-password'
@@ -112,6 +118,13 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) return savedPosition
+    if (to.meta.landing && ['#how-it-works', '#why-verity', '#questions', '#main-content'].includes(to.hash)) {
+      return { el: to.hash, top: 100, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }
+    }
+    if (to.path !== from.path) return { top: 0 }
+  },
 })
 
 router.beforeEach((to, _from, next) => {

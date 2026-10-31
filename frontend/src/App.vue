@@ -1,6 +1,7 @@
 <template>
   <div id="app">
-    <WorkspaceShell v-if="$route.meta.role"><router-view /></WorkspaceShell>
+    <router-view v-if="$route.meta.landing" />
+    <WorkspaceShell v-else-if="$route.meta.role"><router-view /></WorkspaceShell>
     <AuthShell v-else><router-view /></AuthShell>
   </div>
 </template>
