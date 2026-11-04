@@ -60,6 +60,16 @@
         </button>
       </form>
 
+      <div class="divider">
+        <span>or continue with</span>
+      </div>
+
+      <div class="oauth-buttons">
+        <button type="button" class="btn btn-oauth" :disabled="loading" @click="handleGoogleSignup">
+          Sign up with Google
+        </button>
+      </div>
+
       <p class="footer-link">
         Already have an account?
         <router-link to="/login">Sign in</router-link>
@@ -75,7 +85,7 @@ import { useAuthStore } from '../stores/authStore.js'
 import { messageFromGuardrailError } from '../utils/deviceFingerprint.js'
 
 const router = useRouter()
-const { register } = useAuthStore()
+const { register, loginWithOAuth } = useAuthStore()
 
 const form = reactive({
   fullName: '',
@@ -128,6 +138,17 @@ function validate() {
   }
 
   return valid
+}
+
+async function handleGoogleSignup() {
+  loading.value = true
+  errors.general = ''
+  try {
+    await loginWithOAuth('google')
+  } catch (err) {
+    errors.general = err.message || 'Google sign-up failed'
+    loading.value = false
+  }
 }
 
 async function handleRegister() {
@@ -254,6 +275,41 @@ input:focus {
 
 .btn-primary:hover:not(:disabled) {
   background: var(--action-hover);
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 1.5rem 0;
+  color: var(--muted);
+  font-size: 0.8125rem;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+.divider span {
+  padding: 0 1rem;
+}
+
+.oauth-buttons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.btn-oauth {
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line);
+}
+
+.btn-oauth:hover:not(:disabled) {
+  background: var(--surface-muted);
 }
 
 .footer-link {

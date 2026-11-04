@@ -9,7 +9,7 @@
 
     </header>
 
-    <PasskeyPrompt :ready="true" />
+    <PasskeyPrompt :ready="accountConfirmed" />
     <main class="platform-content">
       <section class="card workspace-welcome">
         <p class="workspace-eyebrow">YOUR NEXT STEP</p>
@@ -26,13 +26,25 @@
 </template>
 
 <script setup>
+import { onMounted, ref } from 'vue'
 import { ShieldCheck, History, Fingerprint } from '@lucide/vue'
 import PasskeyPrompt from '../components/PasskeyPrompt.vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore.js'
+import { getVerificationStatus } from '../services/verificationService.js'
 
 const router = useRouter()
 const { logout } = useAuthStore()
+const accountConfirmed = ref(false)
+
+onMounted(async () => {
+  try {
+    const status = await getVerificationStatus()
+    accountConfirmed.value = status?.status === 'verified' || status?.decision?.finalDecision === 'verified'
+  } catch {
+    accountConfirmed.value = false
+  }
+})
 
 async function handleLogout() {
   await logout()

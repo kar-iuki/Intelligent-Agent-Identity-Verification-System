@@ -31,13 +31,13 @@
       <canvas ref="canvasRef" class="hidden" />
 
       <div class="actions">
+        <button v-if="!streamActive && !previewUrl" type="button" class="btn secondary" @click="startCamera">
+          Open camera
+        </button>
         <button v-if="!previewUrl" type="button" class="btn" :disabled="!streamActive || busy" @click="capture">
           Capture
         </button>
         <button v-else type="button" class="btn secondary" :disabled="busy" @click="retake">Retake</button>
-        <button v-if="!streamActive && !previewUrl" type="button" class="btn secondary" @click="startCamera">
-          Open camera
-        </button>
       </div>
       <p v-if="cameraError" class="error">{{ cameraError }}</p>
     </div>
@@ -344,10 +344,10 @@ async function runQualityCheck() {
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .footer-actions {
-  justify-content: flex-end;
   margin-top: 0.5rem;
 }
 

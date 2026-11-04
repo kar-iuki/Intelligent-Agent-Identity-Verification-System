@@ -9,7 +9,7 @@
 
     </header>
 
-    <PasskeyPrompt :ready="!bootLoading && currentStep === 4 && verificationPhase !== 'loading'" />
+    <PasskeyPrompt :ready="passkeyReady" />
     <div class="dashboard-content">
       <div v-if="bootLoading" class="panel loading-panel">Loading your registration status...</div>
 
@@ -388,6 +388,13 @@ const qualityFailures = ref([])
 const failedImages = ref([])
 const verificationError = ref('')
 const finalDecision = ref(null)
+// Ask for a passkey only after the AI decision confirms the account.
+const passkeyReady = computed(() =>
+  !bootLoading.value
+  && currentStep.value === 4
+  && verificationPhase.value === 'decision'
+  && finalDecision.value === 'verified'
+)
 // plain-language results from the backend: scores, reasons, whether a retry is allowed
 const feedback = ref(null)
 const pipelineState = ref({

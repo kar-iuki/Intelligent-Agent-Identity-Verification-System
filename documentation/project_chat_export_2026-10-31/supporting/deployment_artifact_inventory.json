@@ -1,0 +1,30 @@
+[
+  {
+    "name": "Dockerfile",
+    "bytes": 1491
+  },
+  {
+    "name": "verity-deploy",
+    "bytes": null
+  },
+  {
+    "name": "verity-deploy-small.zip",
+    "bytes": 5390389
+  },
+  {
+    "name": "verity-deploy.zip",
+    "bytes": 386821941
+  },
+  {
+    "name": "Verity-deployment-guide.md",
+    "bytes": 4554
+  },
+  {
+    "name": "verity-github-build-fixed.zip",
+    "bytes": 5391624
+  },
+  {
+    "name": "verity-github-build.zip",
+    "bytes": 5391485
+  }
+]

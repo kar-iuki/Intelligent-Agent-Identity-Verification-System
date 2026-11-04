@@ -1,0 +1,90 @@
+{
+  "date": "2026-10-31",
+  "repository_revision": "7bd4632a6a38fec66cb2e8ef41aca762f07c33b1",
+  "chats": 18,
+  "turns": 129,
+  "messages": 407,
+  "source_files": 175,
+  "files": [
+    {
+      "path": "FULL_PROJECT_CHAT_EXPORT.md",
+      "bytes": 958945,
+      "sha256": "78705c02bf8970663217dc4d9530f1782f4d2fabc099415ade7a6b4ea8cedfc2"
+    },
+    {
+      "path": "FULL_PROJECT_CHAT_EXPORT.txt",
+      "bytes": 958945,
+      "sha256": "78705c02bf8970663217dc4d9530f1782f4d2fabc099415ade7a6b4ea8cedfc2"
+    },
+    {
+      "path": "PROJECT_HANDOFF.md",
+      "bytes": 54273,
+      "sha256": "4d9a63c4dbfdb0ffa76d789f2f7fdcc9a3b08249e44ee00c3ce1e7ab65ddce29"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2865,
+      "sha256": "9560034956ef9cf0a89357cd0bb36913598e18c803a2d96ecb4b79d6f718f8b7"
+    },
+    {
+      "path": "retrieved_chats.json",
+      "bytes": 465825,
+      "sha256": "96fe36dbede5296cbe2d5c1cac72e5ac9e1a5467362499e297d6a1b76bb59924"
+    },
+    {
+      "path": "supporting/ATTACHED_GUIDELINES_AND_REFERENCES.md",
+      "bytes": 67502,
+      "sha256": "93b645ee37429adae7cbd5823a4612c68b050195ef01fb48f4ae1d5d37267ba3"
+    },
+    {
+      "path": "supporting/attachment_inventory.json",
+      "bytes": 885,
+      "sha256": "86951d516194114860e3138da6082c794af4a34ee88e871b11914a71f3fad037"
+    },
+    {
+      "path": "supporting/CONVERSATIONS.md",
+      "bytes": 395692,
+      "sha256": "4bc4ee05fccb83fc35439ea679d7090e1a661824943beb4556a607042f98a7f1"
+    },
+    {
+      "path": "supporting/COVERAGE.md",
+      "bytes": 2899,
+      "sha256": "8844012c446d5640d8708768ff5c9abbcd048a3c4bf81861143e98a3f8a91e56"
+    },
+    {
+      "path": "supporting/CURRENT_CHAPTERS.md",
+      "bytes": 135084,
+      "sha256": "21565a0702267a6debdcaf7cb5bf0ea47daf2e50b83448f71d566279d2faaab9"
+    },
+    {
+      "path": "supporting/deployment_artifact_inventory.json",
+      "bytes": 487,
+      "sha256": "3fad1dd77b13ce8f277139712c5e1817a2d914b17b947b21ceb28af1b36acd68"
+    },
+    {
+      "path": "supporting/DEPLOYMENT_PACKAGE_TEXT.md",
+      "bytes": 12295,
+      "sha256": "ba9bc3e3bfae948a7bdc6431544a724da9a561b26405d64d9132f3857caada31"
+    },
+    {
+      "path": "supporting/FILE_AND_COMMIT_INDEX.md",
+      "bytes": 94134,
+      "sha256": "d498324923d9d11264302a55b3616a46e115eea51113a22aa6e29b5eab913178"
+    },
+    {
+      "path": "supporting/HISTORICAL_CHAPTER_VERSIONS.md",
+      "bytes": 157692,
+      "sha256": "8d4ae0ff12e5e4c4b939b533ceb51fb286ed66376001232df5d91d502d243341"
+    },
+    {
+      "path": "supporting/SAVED_EVIDENCE.md",
+      "bytes": 195974,
+      "sha256": "398e64d1940ad569326a372c4dde9a20005cd8261daff6780dd2839c267c42cd"
+    },
+    {
+      "path": "supporting/SOURCE_SNAPSHOT.md",
+      "bytes": 1036476,
+      "sha256": "3f96919b0287525b6b1674ad91b2eee5cb48f63c45869a3aa370dc0ca1c1f90c"
+    }
+  ]
+}
