@@ -1,0 +1,14 @@
+**/__pycache__
+**/*.pyc
+.git
+.env
+.env.*
+*.zip
+tests
+notebooks
+debug
+ml/data
+ml/reports
+ml/experiments
+ml/legacy_v1
+ml/legacy_v2

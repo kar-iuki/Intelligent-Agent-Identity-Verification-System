@@ -1,128 +1,208 @@
-# KYC v3 improvement experiment
+# Recorded KYC experiment results
 
-Production promotion: **True**. Passed predeclared release gate: accuracy increased, macro F1 and both false-verification counts did not worsen.
+Model **3.1.0**, trained 2026-11-04T18:44:02+00:00; seed 42.
+All results below are from synthetic held-out data. No requested target accuracy was used.
 
-Both rows below were evaluated on the SAME fresh 1,500 synthetic cases. The original v2 74.33% result used a different test set and must not be used as the before value here.
+## Dataset and split
 
-| Model | Accuracy | Macro F1 | Weighted F1 | Rejected → Verified | Manual Review → Verified |
+| Partition | Verified | Manual Review | Rejected | Total |
+|---|---:|---:|---:|---:|
+| All | 6000 | 2000 | 2000 | 10000 |
+| train | 4200 | 1400 | 1400 | 7000 |
+| validation | 900 | 300 | 300 | 1500 |
+| test | 900 | 300 | 300 | 1500 |
+
+## Model comparison
+
+| Model | Accuracy | Macro F1 | Weighted F1 | Rejected → Verified | Review → Verified |
 |---|---:|---:|---:|---:|---:|
-| Saved v2 incumbent | 75.733% | 0.651909 | 0.730391 | 44 | 186 |
-| Selected v3 candidate | 75.800% | 0.654082 | 0.731979 | 43 | 184 |
+| Full SVM | 0.767333 | 0.679446 | 0.749505 | 22 | 169 |
+| Identity-only SVM | 0.770667 | 0.678461 | 0.750589 | 22 | 173 |
+| Decision Tree | 0.741333 | 0.682694 | 0.743059 | 16 | 153 |
 
-Accuracy difference: **0.067 percentage points**.
-Paired bootstrap 95% interval: [-0.0013333333333333333, 0.0033333333333333335] (accuracy fraction).
-Macro F1 difference: 0.002173; paired interval: [-0.0010511307847866746, 0.006854749742914959].
+### Full SVM
 
-## Selected model and policy
+Selected parameters: `{'C': 10, 'gamma': 1}`. Training CV macro F1: **0.710958**.
 
-Candidate: **raw_native_sigmoid**.
-Training-only hyperparameters: `{'C': 10, 'gamma': 'scale'}`; CV macro F1: 0.672766.
-Policy: probability; review multiplier 1.0; verification threshold 0.0; verification margin 0.0.
-All six input features and the generator assumptions were retained. Quality transforms, where selected, are learned inside training folds. Probabilities are unchanged by the decision policy.
+| Class | Precision | Recall | F1 | Support |
+|---|---:|---:|---:|---:|
+| Verified | 0.809950 | 0.904444 | 0.854593 | 900 |
+| Manual Review | 0.491979 | 0.306667 | 0.377823 | 300 |
+| Rejected | 0.795455 | 0.816667 | 0.805921 | 300 |
 
-| Selection metrics | Accuracy | Macro F1 | Review recall | Rejected → Verified | Review → Verified |
-|---|---:|---:|---:|---:|---:|
-| Comparable baseline | 0.757333 | 0.659895 | 0.300000 | 29 | 92 |
-| Selected candidate | 0.757333 | 0.659895 | 0.300000 | 29 | 92 |
-
-## Fresh per-class results
-
-| Model | Class | Precision | Recall | F1 |
-|---|---|---:|---:|---:|
-| v2 | Verified | 0.783427 | 0.924444 | 0.848114 |
-| v2 | Manual Review | 0.634921 | 0.266667 | 0.375587 |
-| v2 | Rejected | 0.717949 | 0.746667 | 0.732026 |
-| v3 | Verified | 0.785444 | 0.923333 | 0.848825 |
-| v3 | Manual Review | 0.630769 | 0.273333 | 0.381395 |
-| v3 | Rejected | 0.717949 | 0.746667 | 0.732026 |
-
-## incumbent confusion matrix
-
-Actual rows / predicted columns; order Verified, Manual Review, Rejected.
+Confusion matrix: actual rows / predicted columns; order Verified, Manual Review, Rejected.
 
 ```text
-[832, 14, 54]
-[186, 80, 34]
-[44, 32, 224]
+[814, 62, 24]
+[169, 92, 39]
+[22, 33, 245]
 ```
 
-## candidate confusion matrix
+All off-diagonal errors:
+- Verified -> Manual Review: 62
+- Verified -> Rejected: 24
+- Manual Review -> Verified: 169
+- Manual Review -> Rejected: 39
+- Rejected -> Verified: 22
+- Rejected -> Manual Review: 33
 
-Actual rows / predicted columns; order Verified, Manual Review, Rejected.
+### Identity-only SVM
+
+Selected parameters: `{'C': 100, 'gamma': 1}`. Training CV macro F1: **0.706363**.
+
+| Class | Precision | Recall | F1 | Support |
+|---|---:|---:|---:|---:|
+| Verified | 0.808636 | 0.915556 | 0.858781 | 900 |
+| Manual Review | 0.520231 | 0.300000 | 0.380550 | 300 |
+| Rejected | 0.785714 | 0.806667 | 0.796053 | 300 |
+
+Confusion matrix: actual rows / predicted columns; order Verified, Manual Review, Rejected.
 
 ```text
-[831, 15, 54]
-[184, 82, 34]
-[43, 33, 224]
+[824, 47, 29]
+[173, 90, 37]
+[22, 36, 242]
 ```
+
+All off-diagonal errors:
+- Verified -> Manual Review: 47
+- Verified -> Rejected: 29
+- Manual Review -> Verified: 173
+- Manual Review -> Rejected: 37
+- Rejected -> Verified: 22
+- Rejected -> Manual Review: 36
+
+### Decision Tree
+
+Selected parameters: `{'max_depth': 5, 'min_samples_leaf': 20}`. Training CV macro F1: **0.699150**.
+
+| Class | Precision | Recall | F1 | Support |
+|---|---:|---:|---:|---:|
+| Verified | 0.818864 | 0.848889 | 0.833606 | 900 |
+| Manual Review | 0.396825 | 0.416667 | 0.406504 | 300 |
+| Rejected | 0.884921 | 0.743333 | 0.807971 | 300 |
+
+Confusion matrix: actual rows / predicted columns; order Verified, Manual Review, Rejected.
+
+```text
+[764, 129, 7]
+[153, 125, 22]
+[16, 61, 223]
+```
+
+All off-diagonal errors:
+- Verified -> Manual Review: 129
+- Verified -> Rejected: 7
+- Manual Review -> Verified: 153
+- Manual Review -> Rejected: 22
+- Rejected -> Verified: 16
+- Rejected -> Manual Review: 61
 
 ## Probability quality
 
-| Model | Log loss | Multiclass Brier |
+| Model | Log loss | Multiclass Brier (sum) |
 |---|---:|---:|
-| incumbent | 0.660123 | 0.373659 |
-| candidate | 0.659596 | 0.373110 |
+| Full SVM | 0.615813 | 0.350726 |
+| Identity-only SVM | 0.624319 | 0.353755 |
+| Decision Tree | 0.693903 | 0.386282 |
+| Decision Tree, sigmoid | 0.593573 | 0.334291 |
 
-## What was compared
+Lower is better. Brier is mean sum of three squared probability errors, range 0–2. SVM calibration uses validation only. Reliability diagrams and per-class ten-bin ECE are saved; synthetic calibration does not imply real certainty.
 
-Four SVM variants (raw/power quality × native/explicit one-vs-rest), three calibration methods (sigmoid/isotonic/temperature), and native versus validation-selected review policies. Three new 24-point five-fold searches were run; the prior raw-native CV winner was reused with provenance. All policy/calibration variants are in `validation_candidates.csv`.
+## Importance
 
-## Isolation and autonomy
-
-Original train=7,000; calibration=750; selection=750. Original test=1,500 retired. Fresh evaluation=1,500, generated only after selection freeze. Exact and near-duplicate checks cover all 11,500 rows. The test is used once for reported evaluation and a predeclared release acceptance check, not candidate tuning. Training checkpoints allow recovery from implementation errors; completed experiments are not silently rerun. No online learning exists.
-
-## Permutation importance
-
-| Feature | Macro F1 decrease | Repeat SD |
+| SVM feature | Mean macro F1 drop | Repeat SD |
 |---|---:|---:|
-| liveness_score | 0.201380 | 0.008477 |
-| face_match_score | 0.110442 | 0.005995 |
-| ocr_confidence_score | 0.049802 | 0.007588 |
-| blur_score | 0.003831 | 0.003357 |
-| brightness_score | -0.000359 | 0.003924 |
-| contrast_score | -0.003439 | 0.003605 |
+| liveness_score | 0.179344 | 0.007381 |
+| ocr_confidence_score | 0.134949 | 0.007287 |
+| face_match_score | 0.049646 | 0.004907 |
+| blur_score | 0.002585 | 0.003141 |
+| brightness_score | 0.002089 | 0.004200 |
+| contrast_score | 0.000929 | 0.003377 |
+
+20 permutations; seed 42. SD is across repeats, not a population confidence interval.
+
+| Decision Tree feature | Impurity importance |
+|---|---:|
+| liveness_score | 0.499406 |
+| ocr_confidence_score | 0.306559 |
+| face_match_score | 0.175841 |
+| blur_score | 0.015528 |
+| contrast_score | 0.002665 |
+| brightness_score | 0.000000 |
+
+Tree impurity importance and SVM permutation drops are different quantities; correlated predictors can change both rankings.
+
+## Ablation
+
+Full-minus-identity macro F1: **0.000985**.
+Paired bootstrap 95% interval: [-0.014476344247495498, 0.016385613319433848] (1,000 replicates).
+Interpret this as evidence conditional on the simulator and these fitted models. It is not proof of production benefit. Both models were tuned independently using comparable training CV; six production features remain.
+
+## Duplicate and leakage diagnostics
+
+```json
+{
+  "exact_duplicate_feature_vectors": 0,
+  "conflicting_label_vectors": 0,
+  "cross_split_duplicates": {
+    "train_test": 0,
+    "train_validation": 0,
+    "validation_test": 0
+  },
+  "near_duplicate_pairs": 0,
+  "near_duplicate_definition": "All differences <= face .1, live .001, OCR .001, log1p(blur) .01, brightness .1, contrast .1",
+  "nearest_neighbor_tolerance_distance_percentiles": {
+    "min": 14.111516158481663,
+    "p01": 26.388015471157452,
+    "p50": 64.35066865877764
+  }
+}
+```
+
+```json
+{
+  "split_rows_disjoint": true,
+  "features_exclude_target_and_scenario_ids": true,
+  "scaler_fit": "Each CV training fold; final scaler on 7000 training rows only.",
+  "tuning": "5-fold stratified training CV only, both SVMs and tree.",
+  "calibration": "Frozen estimators fitted on train; sigmoid calibrators fitted on 1500 validation rows only.",
+  "test": "1500 rows used only for final metrics, diagnostic importance, plots and paired uncertainty, never selection.",
+  "synthetic_label_limitation": "Outcomes assigned by assumed scenarios, not real adjudication. Some scenarios intentionally have identical observable distributions under different latent outcomes.",
+  "single_feature_training_cv_macro_f1": {
+    "face_match_score": 0.3776807707392223,
+    "liveness_score": 0.5736846226423242,
+    "ocr_confidence_score": 0.4816119250822462,
+    "blur_score": 0.2267550693631019,
+    "brightness_score": 0.3232091558292084,
+    "contrast_score": 0.29284742768936034
+  },
+  "benchmark_limitations": "Local measurement files reused as distribution evidence, not independent real-world validation. Raw benchmark images not rerun in this experiment.",
+  "near_perfect_trigger": false,
+  "quality_dominates_permutation": false,
+  "test_experiments_run": 1
+}
+```
+
+Historical findings: see `legacy_methodology_audit.json`. Original data, scripts and model files are retained. Full methodology, API units, calibration policy and limitations are in `../README.md`.
+
+## Defence explanation
+
+The RBF SVM combines six upstream numerical verification signals. It does not process images. Face, liveness and OCR provide identity evidence; raw image-quality metrics provide context for unreliable captures. A training-only MinMaxScaler normalizes the scores, an RBF SVM learns nonlinear boundaries, and validation-only sigmoid calibration produces probabilities for Verified, Manual Review and Rejected. Results quantify performance under documented synthetic assumptions; independent real KYC evaluation is still required.
 
 ## Limitations
 
-- Fresh synthetic draw from the SAME assumptions; not independent real-world validation.
-- Previously observed v2 results motivated the hypotheses; original test was retired.
-- Calibration and selection are disjoint but small (750 each); searching policies can overfit selection.
-- Isotonic calibration may overfit small calibration samples; temperature can preserve poor decision rankings.
-- Latent review and genuine scenarios can share observed distributions; missing evidence remains irreducible.
-- Decision-policy preferences do not change calibrated probability values.
-- Quality transform and calibrators are static; no online learning.
-- The original data contains observationally identical components with different assumed adjudication outcomes. Their minimum population error contribution is 8%; other overlap can add more.
-- Accuracy improvements do not by themselves establish acceptable false-approval rates. Examine the exact counts above.
-- Local integration and API checks do not constitute remote Hugging Face deployment or live database validation.
+- Synthetic joint distributions and adjudication labels are assumptions.
+- 60/20/20 is an experimental allocation, not prevalence.
+- MIDV score is text agreement, not proof of document authenticity.
+- LFW and NUAA are limited benchmarks; no demographic, modern attack or device shift validation.
+- Calibration is for this synthetic population, not real-world certainty.
+- Clipping outside training extrema may conceal production distribution shift.
+- No online learning; explicit offline retraining needs confirmed real labels.
 
-## Files
+## Interpretation of this run
 
-- [baseline_calibration_diagnostic.json](<C:/Users/ikari/Desktop/School Work/Intelligent-Agent-Identity-Verification-System/ai-service/ml/experiments/v3/baseline_calibration_diagnostic.json>)
-- [candidate_calibration.png](<C:/Users/ikari/Desktop/School Work/Intelligent-Agent-Identity-Verification-System/ai-service/ml/experiments/v3/candidate_calibration.png>)
-- [candidate_confusion_matrix.png](<C:/Users/ikari/Desktop/School Work/Intelligent-Agent-Identity-Verification-System/ai-service/ml/experiments/v3/candidate_confusion_matrix.png>)
-- [candidate_model.pkl](<C:/Users/ikari/Desktop/School Work/Intelligent-Agent-Identity-Verification-System/ai-service/ml/experiments/v3/candidate_model.pkl>)
-- [candidate_scaler.pkl](<C:/Users/ikari/Desktop/School Work/Intelligent-Agent-Identity-Verification-System/ai-service/ml/experiments/v3/candidate_scaler.pkl>)
-- [comparison.png](<C:/Users/ikari/Desktop/School Work/Intelligent-Agent-Identity-Verification-System/ai-service/ml/experiments/v3/comparison.png>)
-- [development_split_manifest.csv](<C:/Users/ikari/Desktop/School Work/Intelligent-Agent-Identity-Verification-System/ai-service/ml/experiments/v3/development_split_manifest.csv>)
-- [fresh_evaluation_1500.csv](<C:/Users/ikari/Desktop/School Work/Intelligent-Agent-Identity-Verification-System/ai-service/ml/experiments/v3/fresh_evaluation_1500.csv>)
-- [fresh_evaluation_metadata.json](<C:/Users/ikari/Desktop/School Work/Intelligent-Agent-Identity-Verification-System/ai-service/ml/experiments/v3/fresh_evaluation_metadata.json>)
-- [identifiability_diagnostic.json](<C:/Users/ikari/Desktop/School Work/Intelligent-Agent-Identity-Verification-System/ai-service/ml/experiments/v3/identifiability_diagnostic.json>)
-- [improvement_report.json](<C:/Users/ikari/Desktop/School Work/Intelligent-Agent-Identity-Verification-System/ai-service/ml/experiments/v3/improvement_report.json>)
-- [incumbent_calibration.png](<C:/Users/ikari/Desktop/School Work/Intelligent-Agent-Identity-Verification-System/ai-service/ml/experiments/v3/incumbent_calibration.png>)
-- [incumbent_confusion_matrix.png](<C:/Users/ikari/Desktop/School Work/Intelligent-Agent-Identity-Verification-System/ai-service/ml/experiments/v3/incumbent_confusion_matrix.png>)
-- [power_native_grid.csv](<C:/Users/ikari/Desktop/School Work/Intelligent-Agent-Identity-Verification-System/ai-service/ml/experiments/v3/power_native_grid.csv>)
-- [power_native_training.pkl](<C:/Users/ikari/Desktop/School Work/Intelligent-Agent-Identity-Verification-System/ai-service/ml/experiments/v3/power_native_training.pkl>)
-- [power_ovr_grid.csv](<C:/Users/ikari/Desktop/School Work/Intelligent-Agent-Identity-Verification-System/ai-service/ml/experiments/v3/power_ovr_grid.csv>)
-- [power_ovr_training.pkl](<C:/Users/ikari/Desktop/School Work/Intelligent-Agent-Identity-Verification-System/ai-service/ml/experiments/v3/power_ovr_training.pkl>)
-- [protocol.json](<C:/Users/ikari/Desktop/School Work/Intelligent-Agent-Identity-Verification-System/ai-service/ml/experiments/v3/protocol.json>)
-- [raw_native_training.pkl](<C:/Users/ikari/Desktop/School Work/Intelligent-Agent-Identity-Verification-System/ai-service/ml/experiments/v3/raw_native_training.pkl>)
-- [raw_ovr_grid.csv](<C:/Users/ikari/Desktop/School Work/Intelligent-Agent-Identity-Verification-System/ai-service/ml/experiments/v3/raw_ovr_grid.csv>)
-- [raw_ovr_training.pkl](<C:/Users/ikari/Desktop/School Work/Intelligent-Agent-Identity-Verification-System/ai-service/ml/experiments/v3/raw_ovr_training.pkl>)
-- [README.md](<C:/Users/ikari/Desktop/School Work/Intelligent-Agent-Identity-Verification-System/ai-service/ml/experiments/v3/README.md>)
-- [selection_frozen.json](<C:/Users/ikari/Desktop/School Work/Intelligent-Agent-Identity-Verification-System/ai-service/ml/experiments/v3/selection_frozen.json>)
-- [svm_permutation_importance.csv](<C:/Users/ikari/Desktop/School Work/Intelligent-Agent-Identity-Verification-System/ai-service/ml/experiments/v3/svm_permutation_importance.csv>)
-- [svm_permutation_importance.png](<C:/Users/ikari/Desktop/School Work/Intelligent-Agent-Identity-Verification-System/ai-service/ml/experiments/v3/svm_permutation_importance.png>)
-- [validation_candidates.csv](<C:/Users/ikari/Desktop/School Work/Intelligent-Agent-Identity-Verification-System/ai-service/ml/experiments/v3/validation_candidates.csv>)
+Quality features improved observed macro F1 in this run.
+Classification metrics, security errors and probability quality must be considered separately.
+The full model incorrectly verified 22 of 300 Rejected cases and 169 of 300 Manual Review cases. These errors do not justify automatic operational approval. No test-guided retuning was performed.
 
-- [Runner](<C:/Users/ikari/Desktop/School Work/Intelligent-Agent-Identity-Verification-System/ai-service/ml/improve_model.py>)
-- [Saved-policy implementation](<C:/Users/ikari/Desktop/School Work/Intelligent-Agent-Identity-Verification-System/ai-service/ml/decision_model.py>)
