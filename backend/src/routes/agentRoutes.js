@@ -18,6 +18,7 @@ import {
 
 const router = Router()
 
+// Registration and document uploads are limited to a signed-in agent.
 router.use(authMiddleware, requireRole('agent'))
 
 router.post('/registration', fraudGuardrailsMiddleware, submitRegistration)
