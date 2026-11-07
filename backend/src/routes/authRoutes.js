@@ -15,6 +15,7 @@ import {
 
 const router = Router()
 
+// Password reset stays on an authenticated recovery session.
 router.post('/register', registerAgent)
 router.post('/resend-verification', resendVerificationEmail)
 router.get('/captcha', issueCaptcha)
