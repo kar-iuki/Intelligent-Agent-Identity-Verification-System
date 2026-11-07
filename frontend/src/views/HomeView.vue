@@ -1,4 +1,5 @@
 <template>
+  <!-- Public landing remains available before an agent signs in. -->
   <div ref="pageRoot" class="landing" :class="{ 'motion-ready': motionReady, 'motion-paused': !playing }">
     <a href="#main-content" class="landing-skip">Skip to content</a>
     <header class="site-header">
