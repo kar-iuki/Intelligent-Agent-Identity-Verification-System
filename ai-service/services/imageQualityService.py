@@ -5,6 +5,7 @@ import numpy as np
 
 
 # Defaults suited to identity documents (OCR needs sharper text)
+# Blur, brightness, and contrast are scored before OCR runs.
 BLUR_THRESHOLD = 40.0
 BRIGHTNESS_MIN = 40.0
 BRIGHTNESS_MAX = 220.0
