@@ -1,4 +1,5 @@
 <template>
+  <!-- Review starts from the agent directory and the open audit window. -->
   <div class="admin workspace">
     <header class="admin-header">
       <div>
