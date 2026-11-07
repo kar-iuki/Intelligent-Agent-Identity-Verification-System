@@ -2,6 +2,7 @@ import supabase from '../utils/supabaseClient.js'
 import { logAction, ACTIONS, OUTCOMES } from '../utils/auditLogger.js'
 import { fraudConfig } from '../config/fraudConfig.js'
 
+// A strike reset is written to the audit log before a new registration window starts.
 function hoursAgoIso(hours) {
   return new Date(Date.now() - hours * 60 * 60 * 1000).toISOString()
 }
