@@ -4,6 +4,7 @@ import numpy as np
 
 logger = logging.getLogger(__name__)
 
+# The portrait and the selfie are compared with the InsightFace embedding.
 FACE_MATCH_THRESHOLD = 70.0
 
 face_app = None
