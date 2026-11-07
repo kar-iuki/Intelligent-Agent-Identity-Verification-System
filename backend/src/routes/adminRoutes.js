@@ -21,6 +21,7 @@ import {
 
 const router = Router()
 
+// Case review, strike resets, and audit export are limited to administrators.
 router.use(authMiddleware, requireRole('admin'))
 
 router.get('/stats', getDashboardStats)
