@@ -1,4 +1,5 @@
 <template>
+  <!-- Document submission waits until the agent's registration status has loaded. -->
   <div class="dashboard workspace">
     <header class="dashboard-header">
       <div>
