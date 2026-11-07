@@ -1,5 +1,6 @@
 const AI_SERVICE_URL = (process.env.AI_SERVICE_URL || 'http://localhost:5000').replace(/\/+$/, '')
 
+// Quality, OCR, face match, liveness, and the decision are requested in that order.
 function fetchAI(url, options = {}) {
   const key = process.env.VERITY_API_KEY || ''
   const hostname = new URL(AI_SERVICE_URL).hostname
