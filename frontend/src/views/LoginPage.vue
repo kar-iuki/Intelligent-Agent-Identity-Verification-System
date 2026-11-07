@@ -1,4 +1,5 @@
 <template>
+  <!-- Password sign-in stays available alongside the passkey ceremony. -->
   <div class="auth-page">
     <div class="auth-card">
       <p class="auth-eyebrow">WELCOME BACK</p>
