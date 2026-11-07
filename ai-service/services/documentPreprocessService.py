@@ -9,6 +9,7 @@ from services.imageQualityService import DOCUMENT_BLUR_THRESHOLD, compute_blur_s
 
 logger = logging.getLogger(__name__)
 
+# Document photos are straightened onto a fixed canvas before OCR.
 DEFAULT_OUTPUT_SIZE = (1000, 630)
 # below this many pixels across the card, small print (da321w3eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeetes, ID digits) is unreliable for OCR
 LOW_RESOLUTION_CARD_WIDTH = 600
