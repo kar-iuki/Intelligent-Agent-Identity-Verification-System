@@ -9,6 +9,7 @@ import numpy as np
 warnings.filterwarnings('ignore')
 logger = logging.getLogger(__name__)
 
+# Silent-face inference stays on CPU when CUDA is not available.
 SILENT_FACE_ROOT = os.path.abspath(
     os.path.join(os.path.dirname(__file__), '..', 'silent_face')
 )
