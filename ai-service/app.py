@@ -28,6 +28,7 @@ app.register_blueprint(liveness_bp, url_prefix='/api/liveness')
 app.register_blueprint(svm_bp, url_prefix='/api/svm')
 
 
+# Feature routes report 503 when a model fails to load. This route only confirms the process is up.
 @app.route('/health', methods=['GET'])
 def health_check():
     return jsonify({'status': 'ok'})
