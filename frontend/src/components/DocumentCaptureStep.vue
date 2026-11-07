@@ -1,4 +1,5 @@
 <template>
+  <!-- A verification retry requires a new camera photo instead of a file upload. -->
   <div ref="captureRoot" class="doc-capture">
     <h3 class="title">{{ title }}</h3>
     <p class="hint">{{ hint }}</p>
