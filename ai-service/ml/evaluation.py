@@ -1,4 +1,5 @@
 """Metrics and plots; executed after model/calibrator choices are frozen."""
+# Accuracy and the confusion matrix are reported only after those choices stay fixed.
 from pathlib import Path
 import json
 import numpy as np
