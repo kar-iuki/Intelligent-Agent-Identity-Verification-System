@@ -1,4 +1,5 @@
 import json
+# MRZ checksums are checked after the document text is read.
 import logging
 import os
 import re
