@@ -1,4 +1,5 @@
 <template>
+  <!-- Saved passkeys can be renamed or removed without deleting the account. -->
   <main class="passkeys-page workspace">
     <p class="workspace-eyebrow">ACCOUNT / SECURITY</p>
     <h1>Manage Passkeys</h1>
