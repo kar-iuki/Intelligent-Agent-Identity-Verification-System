@@ -3,6 +3,7 @@ import { auditWindow } from '../utils/auditWindow.js'
 const BUCKET = 'agent-documents'
 const DOCUMENT_TYPES = ['national_id', 'id_front', 'id_back', 'passport', 'drivers_licence', 'selfie']
 
+// Verified identity files are removed after three Nairobi business days.
 function storagePath(value, agentId) {
   if (!value) return null
   let path = value
