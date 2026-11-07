@@ -3,6 +3,7 @@
  * All controllers/middleware must write AuditLogs through logAction.
  */
 
+// Agent history and the admin export both read the entries written here.
 import supabase from './supabaseClient.js'
 
 export const ACTIONS = {
