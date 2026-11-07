@@ -8,6 +8,7 @@ import { createPasskeyService, PasskeyError } from '../services/passkeyService.j
 import { getPasskeyConfig } from '../config/passkeyConfig.js';
 import { logAction } from '../utils/auditLogger.js';
 
+// Login ceremonies stay public. Registration and passkey management stay on a signed-in session.
 export function createPasskeyRouter({ database = db, authenticate = authMiddleware, readConfig = getPasskeyConfig, sessionIssuer, logger = logAction } = {}) {
 const router = Router();
 router.use(async (req, res, next) => {
