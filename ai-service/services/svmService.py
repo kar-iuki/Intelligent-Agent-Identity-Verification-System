@@ -5,6 +5,7 @@ Loads the trained SVM classifier and its fitted MinMaxScaler once at import time
 and exposes predict_kyc_decision() for the /api/svm routes.
 """
 
+# The six pipeline scores are scaled before the saved SVM predicts the decision.
 import hashlib
 import json
 import logging
