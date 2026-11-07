@@ -14,6 +14,7 @@ import AgentPlatformPage from '../views/AgentPlatformPage.vue'
 import AdminDashboard from '../views/AdminDashboard.vue'
 import AdminModelEvaluation from '../views/AdminModelEvaluation.vue'
 
+// Agent and admin pages stay behind the signed-in role check.
 const routes = [
   {
     path: '/agent/passkeys',
