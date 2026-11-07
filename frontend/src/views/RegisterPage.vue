@@ -1,4 +1,5 @@
 <template>
+  <!-- Account creation sends a confirmation link before the workspace opens. -->
   <div class="auth-page">
     <div class="auth-card">
       <h1>Agent Registration</h1>
