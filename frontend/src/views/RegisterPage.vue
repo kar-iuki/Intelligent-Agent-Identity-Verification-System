@@ -2,8 +2,8 @@
   <!-- Account creation sends a confirmation link before the workspace opens. -->
   <div class="auth-page">
     <div class="auth-card">
-      <h1>Agent Registration</h1>
-      <p class="subtitle">Create your account. We will email you a confirmation link.</p>
+      <h1>Create your account</h1>
+      <p class="subtitle">We’ll email you a confirmation link to start your agent registration.</p>
 
       <form @submit.prevent="handleRegister">
         <div class="form-group">

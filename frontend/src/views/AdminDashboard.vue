@@ -33,41 +33,41 @@
     </Transition>
 
     <main class="admin-content">
-      <!-- Stats bar -->
+      <p v-if="statsUnavailable" class="stats-message" role="status">Verification totals are unavailable. <button class="linkish" @click="loadStats">Retry</button></p>
       <section class="stats-bar" aria-label="Verification totals">
         <article class="stat-card">
           <div class="stat-icon total" aria-hidden="true"><Users :size="17" /></div>
           <div>
             <p class="stat-label">Total Agents</p>
-            <p class="stat-value">{{ stats.totalAgents }}</p>
+            <p class="stat-value">{{ stats?.totalAgents ?? '—' }}</p>
           </div>
         </article>
-        <button type="button" class="stat-card clickable amber" @click="goToPending">
+        <button type="button" class="stat-card clickable amber" @click="goToPending" title="Open the review queue">
           <div class="stat-icon amber" aria-hidden="true"><Clock3 :size="17" /></div>
           <div>
-            <p class="stat-label">Awaiting Review</p>
-            <p class="stat-value">{{ stats.awaitingReview }}</p>
+            <p class="stat-label">Awaiting review <span aria-hidden="true">↗</span></p>
+            <p class="stat-value">{{ stats?.awaitingReview ?? '—' }}</p>
           </div>
         </button>
         <article class="stat-card green">
           <div class="stat-icon green" aria-hidden="true"><ShieldCheck :size="17" /></div>
           <div>
             <p class="stat-label">Verified Today</p>
-            <p class="stat-value">{{ stats.verifiedToday }}</p>
+            <p class="stat-value">{{ stats?.verifiedToday ?? '—' }}</p>
           </div>
         </article>
         <article class="stat-card red">
           <div class="stat-icon red" aria-hidden="true"><CircleX :size="17" /></div>
           <div>
             <p class="stat-label">Rejected Today</p>
-            <p class="stat-value">{{ stats.rejectedToday }}</p>
+            <p class="stat-value">{{ stats?.rejectedToday ?? '—' }}</p>
           </div>
         </article>
         <article class="stat-card grey">
           <div class="stat-icon grey" aria-hidden="true"><ScanFace :size="17" /></div>
           <div>
             <p class="stat-label">Pending Verification</p>
-            <p class="stat-value">{{ stats.pendingVerification }}</p>
+            <p class="stat-value">{{ stats?.pendingVerification ?? '—' }}</p>
           </div>
         </article>
       </section>
@@ -611,13 +611,8 @@ let activityTimer = null
 let toastTimer = null
 let socket = null
 
-const stats = reactive({
-  totalAgents: 0,
-  awaitingReview: 0,
-  verifiedToday: 0,
-  rejectedToday: 0,
-  pendingVerification: 0,
-})
+const stats = ref(null)
+const statsUnavailable = ref(false)
 
 const toast = reactive({
   visible: false,
@@ -807,13 +802,11 @@ async function loadFlagged() {
 async function loadStats() {
   try {
     const data = await getDashboardStats()
-    stats.totalAgents = data.totalAgents || 0
-    stats.awaitingReview = data.awaitingReview || 0
-    stats.verifiedToday = data.verifiedToday || 0
-    stats.rejectedToday = data.rejectedToday || 0
-    stats.pendingVerification = data.pendingVerification || 0
-  } catch (err) {
-    console.error('Failed to load stats', err)
+    stats.value = data
+    statsUnavailable.value = false
+  } catch {
+    stats.value = null
+    statsUnavailable.value = true
   }
 }
 
@@ -1201,6 +1194,7 @@ h1 {
   padding: 1.5rem;
 }
 
+.stats-message { margin-bottom:12px; color:var(--muted); font-size:14px; }
 .stats-bar {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));

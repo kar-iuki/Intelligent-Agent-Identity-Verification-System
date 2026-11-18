@@ -1,119 +1,81 @@
 <template>
   <div class="landing">
-    <a class="landing-skip" href="#main-content">Skip to content</a>
+    <a class="skip" href="#main-content">Skip to content</a>
     <header class="site-header">
       <div class="wrap nav-wrap">
         <RouterLink to="/" class="wordmark" aria-label="Verity home"><img src="/verity.svg" alt="" />Verity</RouterLink>
-        <nav class="desktop-nav" aria-label="Main navigation">
-          <a v-for="link in sections" :key="link.id" :href="'#' + link.id">{{ link.label }}</a>
-        </nav>
-        <div class="nav-actions">
-          <RouterLink to="/login">Sign in</RouterLink>
-          <RouterLink to="/register" class="button compact">Create account <ArrowUpRight :size="16" /></RouterLink>
-        </div>
-        <button ref="menuTrigger" class="menu-button" :aria-expanded="menuOpen" aria-controls="mobile-navigation" :aria-label="menuOpen ? 'Close navigation' : 'Open navigation'" @click="menuOpen = !menuOpen">
-          <X v-if="menuOpen" /><Menu v-else />
-        </button>
+        <nav class="desktop-nav" aria-label="Main navigation"><a href="#how-it-works">How it works</a><a href="#guide">Document guide</a><a href="#questions">Help</a></nav>
+        <RouterLink class="sign-in" to="/login">Sign in <ArrowUpRight :size="16" /></RouterLink>
+        <button ref="menuTrigger" class="menu-button" :aria-expanded="menuOpen" aria-controls="mobile-navigation" :aria-label="menuOpen ? 'Close navigation' : 'Open navigation'" @click="menuOpen = !menuOpen"><X v-if="menuOpen" /><Menu v-else /></button>
       </div>
       <nav v-if="menuOpen" id="mobile-navigation" class="mobile-nav wrap" aria-label="Mobile navigation">
-        <a v-for="link in sections" :key="link.id" :href="'#' + link.id" @click="menuOpen = false">{{ link.label }} <ArrowRight :size="16" /></a>
-        <RouterLink to="/login">Sign in <ArrowRight :size="16" /></RouterLink>
-        <RouterLink to="/register">Create account <ArrowUpRight :size="16" /></RouterLink>
+        <a href="#how-it-works" @click="menuOpen = false">How it works</a><a href="#guide" @click="menuOpen = false">Document guide</a><a href="#questions" @click="menuOpen = false">Help</a>
       </nav>
     </header>
-
     <main id="main-content">
-      <section class="hero wrap" aria-labelledby="hero-title">
-        <div class="hero-copy">
-          <p class="kicker"><span class="registration-mark" aria-hidden="true"></span> Agent registration</p>
-          <h1 id="hero-title">Verify your<br /><span>identity.</span></h1>
-          <p class="hero-description">Verify your identity with a photo ID and a guided live selfie. Follow each check from your own agent workspace.</p>
-          <div class="hero-actions"><RouterLink class="button" to="/register">Start verification <ArrowUpRight :size="19" /></RouterLink><a class="secondary-link" href="#how-it-works">How it works <ArrowDown :size="16" /></a></div>
-        </div>
-        <figure class="study">
-          <img class="study-image" src="/fingerprint-study.webp" width="1080" height="1080" alt="A sculpted fingerprint with finely cut metal ridges" fetchpriority="high" />
-          <div class="study-frame" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-          <figcaption><span><Fingerprint :size="16" /> Fingerprint study</span><span>Fig. 01</span></figcaption>
-        </figure>
-      </section>
-      <section class="document-strip" aria-label="Accepted identity documents">
-        <div class="wrap strip-inner"><p>Accepted documents</p><span><ContactRound />National ID</span><span><BookOpen />Passport</span><span><IdCard />Driver’s licence</span></div>
-      </section>
-
-      <section id="how-it-works" class="wrap section-space journey">
-        <div class="section-heading"><h2>How verification works</h2><p>Register and confirm your personal details. Then follow these three checks in your workspace.</p></div>
-        <div class="process-grid">
-          <div class="demo-tabs" role="group" aria-label="Explore verification steps">
-            <button v-for="(step, index) in steps" :key="step.short" aria-controls="verification-preview" :aria-pressed="demoStep === index" @click="selectStep(index)">
-              <span class="step-index" aria-hidden="true">0{{ index + 1 }}</span><span>{{ step.short }}</span><ArrowUpRight :size="18" />
-            </button>
+      <section class="intro" aria-labelledby="hero-title">
+        <div class="wrap hero">
+          <div class="hero-copy">
+            <h1 id="hero-title">Get verified<br /><span>as an agent.</span></h1>
+            <p>Confirm who you are with a photo ID and a live selfie. Your workspace shows each step and your verification result.</p>
+            <div class="hero-actions"><RouterLink class="start" to="/register">Create an account <ArrowRight :size="19" /></RouterLink><a href="#how-it-works">See the steps <ArrowDown :size="16" /></a></div>
           </div>
-          <div id="verification-preview" class="process-preview">
-            <div class="preview-header"><span>Verification preview</span><button :aria-label="playing ? 'Pause verification preview' : 'Play verification preview'" @click="togglePlayback"><Pause v-if="playing" :size="16" /><Play v-else :size="16" /></button></div>
-            <div class="preview-body">
-              <div class="preview-symbol" aria-hidden="true"><component :is="steps[demoStep].icon" :size="76" :stroke-width="1.1" /></div>
-              <div><h3>{{ steps[demoStep].title }}</h3><p>{{ steps[demoStep].detail }}</p></div>
+          <section id="guide" class="guide" aria-labelledby="guide-title">
+            <header><h2 id="guide-title"><ScanLine :size="19" />Document guide</h2></header>
+            <div class="choices" role="group" aria-label="Choose an identity document">
+              <button v-for="(item, index) in documents" :key="item.id" :aria-pressed="documentIndex === index" aria-controls="document-instructions" @click="documentIndex = index">{{ item.name }}</button>
             </div>
-          </div>
+            <div class="document-stage"><img :src="documentInfo.image" :alt="documentInfo.alt" width="680" height="680" fetchpriority="high" /><div class="frame" aria-hidden="true"></div></div>
+            <div id="document-instructions" class="guide-caption" aria-live="polite"><span class="capture-icon"><Camera :size="19" /></span><div><h3>{{ documentInfo.capture }}</h3><p>{{ documentInfo.hint }}</p></div></div>
+          </section>
         </div>
       </section>
 
-      <section id="why-verity" class="checks-section">
-        <div class="wrap checks-inner">
-          <div class="checks-title"><p class="kicker"><span class="registration-mark" aria-hidden="true"></span> Inside Verity</p><h2>Behind <br />the checks</h2></div>
-          <div class="feature-list">
-            <article v-for="feature in features" :key="feature.title"><component :is="feature.icon" :size="24" :stroke-width="1.5" /><div><h3>{{ feature.title }}</h3><p>{{ feature.description }}</p></div></article>
-          </div>
+      <section id="how-it-works" class="wrap flow-section">
+        <div class="section-title"><h2>How verification works</h2><p>Start with your email, then complete these checks.</p></div>
+        <div class="step-selector" role="group" aria-label="Explore verification steps">
+          <button v-for="(step, index) in steps" :key="step.short" :aria-pressed="demoStep === index" aria-controls="verification-preview" @click="selectStep(index)">
+            <span class="step-number" aria-hidden="true">0{{ index + 1 }}</span><span>{{ step.short }}</span><component :is="step.icon" :size="22" aria-hidden="true" />
+          </button>
         </div>
+        <div id="verification-preview" class="instruction-row"><div><h3>{{ steps[demoStep].title }}</h3><p>{{ steps[demoStep].detail }}</p></div><button class="play" @click="togglePlayback" :aria-label="playing ? 'Pause verification preview' : 'Play verification preview'"><Pause v-if="playing" :size="16" /><Play v-else :size="16" /></button></div>
       </section>
 
-      <section id="questions" class="wrap section-space faq-section">
-        <div><h2>Before you begin</h2><p class="section-subtitle">Documents, camera access, and next steps.</p></div>
-        <div class="faq-list"><details v-for="(faq, index) in faqs" :key="faq.question" :open="index === 0">
-          <summary>{{ faq.question }}<Plus :size="18" /></summary><p>{{ faq.answer }}</p>
-        </details></div>
+      <section id="questions" class="help-section">
+        <div class="wrap help-layout"><div class="section-title"><h2>Before you start</h2><p>Answers to common verification questions.</p></div>
+          <div class="faq-list"><details v-for="faq in faqs" :key="faq.question"><summary>{{ faq.question }}<Plus :size="18" /></summary><p>{{ faq.answer }}</p></details></div>
+        </div>
       </section>
-      <section class="cta-section"><div class="wrap cta-inner"><h2>Ready to verify?</h2><RouterLink class="button" to="/register">Create your account <ArrowUpRight :size="18" /></RouterLink></div></section>
     </main>
-    <footer class="site-footer wrap"><RouterLink to="/" class="wordmark" aria-label="Verity home"><img src="/verity.svg" alt="" />Verity</RouterLink><span>© {{ new Date().getFullYear() }} Verity</span><nav aria-label="Footer navigation"><a href="#questions">FAQs</a><RouterLink to="/login">Sign in</RouterLink><a href="#main-content">Back to top <ArrowUp :size="15" /></a></nav></footer>
+    <footer class="site-footer wrap"><RouterLink class="wordmark" to="/" aria-label="Verity home"><img src="/verity.svg" alt="" />Verity</RouterLink><span>Agent identity verification</span><nav aria-label="Footer navigation"><RouterLink to="/register">Create account</RouterLink><RouterLink to="/login">Sign in</RouterLink></nav></footer>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
-import { ArrowDown, ArrowRight, ArrowUp, ArrowUpRight, BookOpen, ContactRound, Fingerprint, IdCard, KeyRound, ListChecks, Menu, Pause, Play, Plus, ScanFace, ScanLine, X } from '@lucide/vue'
+import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
+import { ArrowDown, ArrowRight, ArrowUpRight, Camera, ContactRound, ListChecks, Menu, Pause, Play, Plus, ScanFace, ScanLine, X } from '@lucide/vue'
 
-const sections = [
-  { id: 'how-it-works', label: 'How it works' },
-  { id: 'why-verity', label: 'Why Verity' },
-  { id: 'questions', label: 'FAQs' },
-]
+import { documents } from '../utils/documentGuide.js'
+
+const documentIndex = ref(0)
+const documentInfo = computed(() => documents[documentIndex.value])
 const steps = [
-  { short: 'Document', title: 'Capture your photo ID', detail: 'Choose your document type and follow the prompts to capture each required side.', icon: ContactRound },
-  { short: 'Selfie', title: 'Take a live selfie', detail: 'Centre your face in the camera, then turn your head in the direction shown on screen.', icon: ScanFace },
-  { short: 'Review', title: 'Check your result', detail: 'Open your dashboard to see your verification status and any instructions for another attempt.', icon: ListChecks },
-]
-const features = [
-  { title: 'Document quality', description: 'Image checks help you capture readable details before submission.', icon: ScanLine },
-  { title: 'Face matching and liveness', description: 'Verity compares your selfie with your document portrait and checks your guided head movement.', icon: ScanFace },
-  { title: 'Verification history', description: 'Your dashboard shows the outcome. Your activity history keeps a record of account actions.', icon: ListChecks },
-  { title: 'Passkey sign-in', description: 'Add a passkey on a supported device to sign in again. Email and Google sign-in are also available.', icon: KeyRound },
+  { short:'Document', title:'Capture your photo ID', detail:'Choose a national ID, passport, or driver’s licence. Follow the capture prompts and check that the details are readable.', icon:ContactRound },
+  { short:'Selfie', title:'Take a live selfie', detail:'Face the camera in good light. Take a centred photo, then turn your head in the direction shown.', icon:ScanFace },
+  { short:'Review', title:'Check your result', detail:'Open your identity overview to see the decision, review any feedback, or complete a requested retry.', icon:ListChecks },
 ]
 const faqs = [
-  { question: 'What do I need to get started?', answer: 'Have your personal details, an accepted photo ID, and a device with a working camera ready. You also need access to your email to confirm your account.' },
-  { question: 'Which identity documents can I use?', answer: 'Use the front and back of a national ID, the photo page of a passport, or the front of a driver’s licence.' },
-  { question: 'What happens during the live selfie check?', answer: 'Allow camera access and face a light source. Centre your face for a photo, then follow the prompt to turn your head left or right.' },
-  { question: 'What if I need another attempt?', answer: 'Your dashboard shows your next steps. When a document retry is available, take fresh photos with your camera. Some submissions need further review.' },
-  { question: 'Can I use my phone?', answer: 'Yes. Use a current browser with camera access to register, take photos, and check your status on the same device.' },
+  { question:'What do I need to get started?', answer:'Have your email, personal details, photo ID, and a camera-enabled phone or computer ready. Verity sends a confirmation link to your email when you register.' },
+  { question:'Which identity documents can I use?', answer:'Use the front and back of a national ID, the photo page of a passport, or the front of a driver’s licence.' },
+  { question:'How does the live selfie check work?', answer:'Verity compares your selfie with your document portrait. A guided head turn checks for movement. Allow camera access when you reach the selfie step.' },
+  { question:'What happens if I need to try again?', answer:'Your identity overview shows the next step. If a document retry is available, use the camera to take fresh photos. Some cases go to an administrator for review.' },
+  { question:'How do I return to my workspace?', answer:'Sign in with email or Google. On a supported device, you can also use a passkey you have registered. Your workspace includes your verification status and account activity.' },
 ]
 const menuOpen = ref(false)
 const menuTrigger = ref(null)
 const demoStep = ref(0)
 const playing = ref(false)
-let timer
-let motionPreference
-let originalTitle
-
+let timer, motionPreference, originalTitle
 function stopPlayback() {
   clearInterval(timer)
   playing.value = false

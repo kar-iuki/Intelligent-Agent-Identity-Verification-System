@@ -3,8 +3,8 @@
   <div class="dashboard workspace">
     <header class="dashboard-header">
       <div>
-        <h1>Agent registration</h1>
-        <p class="welcome">Welcome, {{ displayName }}</p>
+        <h1>Identity overview</h1>
+        <p class="welcome">Registration progress for {{ displayName }}</p>
       </div>
 
     </header>
@@ -14,22 +14,12 @@
       <div v-if="bootLoading" class="panel loading-panel">Loading your registration status...</div>
 
       <template v-else>
-        <ol class="progress">
-          <li :aria-current="currentStep === 1 ? 'step' : undefined" :class="{ active: currentStep === 1, done: currentStep > 1 }">
-            <span class="step-index">1</span>
-            <span>Personal details</span>
-          </li>
-          <li :aria-current="currentStep === 2 ? 'step' : undefined" :class="{ active: currentStep === 2, done: currentStep > 2 }">
-            <span class="step-index">2</span>
-            <span>Identity document</span>
-          </li>
-          <li :aria-current="currentStep === 3 ? 'step' : undefined" :class="{ active: currentStep === 3, done: currentStep > 3 }">
-            <span class="step-index">3</span>
-            <span>Live selfie</span>
-          </li>
-          <li :aria-current="currentStep === 4 ? 'step' : undefined" :class="{ active: currentStep === 4, done: currentStep === 4 }">
-            <span class="step-index">4</span>
-            <span>Verification</span>
+        <ol class="progress" aria-label="Verification progress">
+          <li v-for="(label, index) in stepLabels" :key="label"
+              :aria-current="currentStep === index + 1 ? 'step' : undefined"
+              :class="{ active: currentStep === index + 1, done: currentStep > index + 1 }">
+            <span class="step-index"><Check v-if="currentStep > index + 1" :size="14" aria-label="Completed" /><template v-else>{{ index + 1 }}</template></span>
+            <span>{{ label }}</span>
           </li>
         </ol>
 
@@ -109,17 +99,9 @@
           </p>
 
           <div v-if="docSubstep === 'choose'" class="doc-type-grid">
-            <button type="button" class="doc-type-card" @click="selectDocKind('national_id')">
-              <strong>National ID</strong>
-              <span>Capture front, then back (ID number must match)</span>
-            </button>
-            <button type="button" class="doc-type-card" @click="selectDocKind('passport')">
-              <strong>Passport</strong>
-              <span>Bio-data page (includes expiry)</span>
-            </button>
-            <button type="button" class="doc-type-card" @click="selectDocKind('drivers_licence')">
-              <strong>Driver's licence</strong>
-              <span>Front of the licence card</span>
+            <button v-for="doc in documents" :key="doc.id" type="button" class="doc-type-card" @click="selectDocKind(doc.id)">
+              <img :src="doc.image" alt="" width="680" height="680" />
+              <strong>{{ doc.name }}</strong><span>{{ doc.capture }}</span>
             </button>
             <button type="button" class="btn-secondary" @click="currentStep = 1">Back</button>
           </div>
@@ -320,6 +302,8 @@
 </template>
 
 <script setup>
+import { documents } from '../utils/documentGuide.js'
+import { Check } from '@lucide/vue'
 import PasskeyPrompt from '../components/PasskeyPrompt.vue'
 import { computed, onMounted, onBeforeUnmount, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -347,6 +331,7 @@ const { state, logout, fetchCurrentUser } = useAuthStore()
 
 const bootLoading = ref(true)
 const currentStep = ref(1)
+const stepLabels = ['Personal details', 'Photo ID', 'Live selfie', 'Result']
 const savingDetails = ref(false)
 const uploading = ref(false)
 const uploadError = ref('')
@@ -1118,6 +1103,8 @@ input[readonly] {
   border-color: var(--action);
   box-shadow: 0 0 0 3px var(--focus-ring);
 }
+
+.doc-type-card img { width:100%; height:88px; object-fit:contain; background:#151b30; border-radius:6px; margin-bottom:6px; }
 
 .doc-type-card strong {
   font-size: 1.05rem;

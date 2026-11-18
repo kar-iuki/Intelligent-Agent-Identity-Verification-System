@@ -6,17 +6,25 @@ for (const viewport of [{ width:1440, height:1000 }, { width:390, height:844 }, 
     const errors = []
     page.on('pageerror', error => errors.push(error.message))
     await page.goto('/')
-    await expect(page.getByRole('heading', { level:1 })).toContainText('Verify your')
+    await expect(page.getByRole('heading', { level:1 })).toContainText('Get verified')
     await expect(page.locator('.auth-shell')).toHaveCount(0)
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+    for (const [name, capture] of [['Passport','Open to the photo page'], ['Driver’s licence','Capture the front'], ['National ID','Capture both sides']]) {
+      const choice = page.getByRole('button', { name, exact:true })
+      await choice.click()
+      await expect(choice).toHaveAttribute('aria-pressed','true')
+      await expect(page.locator('#document-instructions')).toContainText(capture)
+      await expect(page.locator('.document-stage img')).toHaveJSProperty('complete',true)
+      expect(await page.locator('.document-stage img').evaluate(img => img.naturalWidth)).toBeGreaterThan(0)
+    }
     await page.getByRole('button', { name:'Selfie', exact:true }).click()
     await expect(page.getByRole('heading', { name:'Take a live selfie' })).toBeVisible()
     await expect(page.getByRole('button', { name:'Play verification preview' })).toBeVisible()
     await page.getByRole('button', { name:'Review', exact:true }).click()
     await expect(page.getByRole('heading', { name:'Check your result' })).toBeVisible()
     await page.locator('summary').filter({ hasText:'Which identity documents' }).click()
-    await expect(page.locator('details[open]')).toContainText(['What do I need', 'Which identity documents'])
-    for (const section of ['#how-it-works', '#why-verity', '#questions', '.cta-section']) {
+    await expect(page.locator('details[open]')).toContainText('Which identity documents')
+    for (const section of ['#guide', '#how-it-works', '#questions']) {
       const heading = page.locator(section).getByRole('heading').first()
       await heading.scrollIntoViewIfNeeded()
       await expect(heading).toBeInViewport()
