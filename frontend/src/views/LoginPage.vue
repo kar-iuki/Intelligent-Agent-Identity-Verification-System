@@ -2,9 +2,8 @@
   <!-- Password sign-in stays available alongside the passkey ceremony. -->
   <div class="auth-page">
     <div class="auth-card">
-      <p class="auth-eyebrow">WELCOME BACK</p>
       <h1>Sign in to your workspace</h1>
-      <p class="subtitle">Continue your verification journey.</p>
+      <p class="subtitle">Use your account to access your verification status and activity.</p>
 
       <form @submit.prevent="handleLogin">
         <div class="form-group">

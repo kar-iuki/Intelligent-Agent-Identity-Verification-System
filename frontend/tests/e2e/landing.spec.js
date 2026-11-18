@@ -1,24 +1,25 @@
 import { test, expect } from '@playwright/test'
 
 for (const viewport of [{ width:1440, height:1000 }, { width:390, height:844 }, { width:320, height:740 }]) {
-  test(`landing page navigation and illustration at ${viewport.width}px`, async ({ page }) => {
+  test(`landing page navigation and verification preview at ${viewport.width}px`, async ({ page }) => {
     await page.setViewportSize(viewport)
     const errors = []
     page.on('pageerror', error => errors.push(error.message))
     await page.goto('/')
-    await expect(page.getByRole('heading', { level:1 })).toContainText('Trust starts')
+    await expect(page.getByRole('heading', { level:1 })).toContainText('Verify your')
     await expect(page.locator('.auth-shell')).toHaveCount(0)
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
-    await page.getByRole('button', { name:'02Selfie' }).click()
-    await expect(page.locator('.floating-badge')).toContainText('A moment of movement')
-    await expect(page.getByRole('button', { name:'Play illustration animation' })).toBeVisible()
-    await page.getByRole('button', { name:'03Review' }).click()
-    await expect(page.locator('.floating-badge')).toContainText('Clarity on what’s next')
+    await page.getByRole('button', { name:'Selfie', exact:true }).click()
+    await expect(page.getByRole('heading', { name:'Take a live selfie' })).toBeVisible()
+    await expect(page.getByRole('button', { name:'Play verification preview' })).toBeVisible()
+    await page.getByRole('button', { name:'Review', exact:true }).click()
+    await expect(page.getByRole('heading', { name:'Check your result' })).toBeVisible()
     await page.locator('summary').filter({ hasText:'Which identity documents' }).click()
     await expect(page.locator('details[open]')).toContainText(['What do I need', 'Which identity documents'])
     for (const section of ['#how-it-works', '#why-verity', '#questions', '.cta-section']) {
-      await page.locator(section).scrollIntoViewIfNeeded()
-      await expect(page.locator(section).locator('.reveal').first().or(page.locator(section + '.reveal'))).toHaveCSS('opacity','1')
+      const heading = page.locator(section).getByRole('heading').first()
+      await heading.scrollIntoViewIfNeeded()
+      await expect(heading).toBeInViewport()
     }
     if (viewport.width < 800) {
       await page.getByRole('button', { name:'Open navigation' }).click()
@@ -41,8 +42,11 @@ for (const viewport of [{ width:1440, height:1000 }, { width:390, height:844 }, 
 test('reduced motion and authentication callback routes are preserved', async ({ page }) => {
   await page.emulateMedia({ reducedMotion:'reduce' })
   await page.goto('/')
-  await expect(page.getByRole('button', { name:'Play illustration animation' })).toBeVisible()
-  await expect(page.locator('.identity-card')).toHaveCSS('animation-name','none')
+  await expect(page.getByRole('button', { name:'Play verification preview' })).toBeVisible()
+  await expect(page.getByRole('button', { name:'Document', exact:true })).toHaveAttribute('aria-pressed','true')
+  await page.clock.install()
+  await page.clock.fastForward(6000)
+  await expect(page.getByRole('heading', { name:'Capture your photo ID' })).toBeVisible()
   // Intercept session processing; this check concerns root routing only.
   await page.route('**/api/**', route => route.fulfill({ status:400, json:{ error:'Test callback' } }))
   await page.goto('/?error=access_denied')

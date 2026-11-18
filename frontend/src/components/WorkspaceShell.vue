@@ -3,15 +3,14 @@
     <a class="skip-link" href="#workspace-main">Skip to content</a>
     <button v-if="mobileOpen" class="nav-scrim" aria-label="Close navigation" @click="closeMenu" />
     <aside ref="sidebar" id="workspace-navigation" class="app-sidebar" aria-label="Workspace navigation" @keydown="trapFocus">
-      <router-link :to="home" class="brand" aria-label="Verity home"><span class="brand-mark"><ShieldCheck :size="23" /></span><span class="nav-copy">Verity<span class="brand-caption">IDENTITY WORKSPACE</span></span></router-link>
-      <div class="sidebar-label nav-copy">{{ admin ? 'ADMINISTRATION' : 'AGENT WORKSPACE' }}</div>
+      <router-link :to="home" class="brand" aria-label="Verity home"><img class="verity-mark" src="/verity.svg" alt="" /><span class="nav-copy">Verity</span></router-link>
+      <div class="sidebar-label nav-copy">{{ admin ? 'Administration' : 'Agent workspace' }}</div>
       <nav class="sidebar-links" aria-label="Main navigation">
         <router-link v-for="item in links" :key="item.to" :to="item.to" :class="{ selected: selected(item) }" :aria-current="selected(item) ? 'page' : undefined" :title="item.label" @click="mobileOpen = false">
           <component :is="item.icon" :size="19" aria-hidden="true" /><span class="nav-copy">{{ item.label }}</span><ChevronRight v-if="selected(item)" class="nav-indicator nav-copy" :size="14" />
         </router-link>
       </nav>
       <div class="sidebar-bottom">
-        <div class="sidebar-note nav-copy"><ShieldCheck :size="20" /><strong>Identity starts with trust.</strong><p>Your verification and account tools, in one place.</p></div>
         <div class="sidebar-profile"><span class="profile-avatar">{{ initial }}</span><div class="nav-copy"><strong>{{ displayName }}</strong><span>{{ admin ? 'Administrator' : 'Agent account' }}</span></div></div>
         <button class="sidebar-signout" :disabled="signingOut" @click="signOut" title="Sign out"><LogOut :size="18" /><span class="nav-copy">{{ signingOut ? 'Signing out…' : 'Sign out' }}</span></button>
       </div>
@@ -25,7 +24,7 @@
           <Sun v-if="isDark" :size="18" />
           <Moon v-else :size="18" />
         </button>
-        <span class="topbar-account"><span class="account-dot" />{{ admin ? 'Admin' : 'Agent' }} portal</span>
+        <span class="topbar-account">{{ admin ? 'Admin' : 'Agent' }} portal</span>
       </header>
       <div id="workspace-main" tabindex="-1"><slot /></div>
       <footer class="workspace-footer">Verity <span>Intelligent Agent Identity Verification System</span></footer>

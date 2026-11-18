@@ -1,7 +1,6 @@
 <template>
   <!-- Saved passkeys can be renamed or removed without deleting the account. -->
   <main class="passkeys-page workspace">
-    <p class="workspace-eyebrow">ACCOUNT / SECURITY</p>
     <h1>Manage Passkeys</h1>
     <p>Passkeys let your device verify you. Your password and Google sign-in remain available.</p>
     <button v-if="supported" class="primary" :disabled="busy || loading" @click="add"><Fingerprint :size="20" aria-hidden="true" /> Add a passkey</button>

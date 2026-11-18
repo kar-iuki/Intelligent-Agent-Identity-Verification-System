@@ -3,9 +3,8 @@
   <div class="admin workspace">
     <header class="admin-header">
       <div>
-        <p class="workspace-eyebrow">ADMINISTRATION / IDENTITY OPERATIONS</p>
-        <h1>Identity control center</h1>
-        <p class="welcome">Signed in as {{ state.user?.email || 'Administrator' }}</p>
+        <h1>Verification overview</h1>
+        <p class="welcome">Agent registrations, decisions, and cases awaiting review.</p>
       </div>
       <div class="header-actions">
         <router-link
@@ -35,7 +34,7 @@
 
     <main class="admin-content">
       <!-- Stats bar -->
-      <section class="stats-bar">
+      <section class="stats-bar" aria-label="Verification totals">
         <article class="stat-card">
           <div class="stat-icon total" aria-hidden="true"><Users :size="17" /></div>
           <div>
@@ -233,7 +232,7 @@
           <table>
             <thead>
               <tr>
-                <th class="sortable" @click="toggleAuditSort">Timestamp {{ auditSortAsc ? '↑' : '↓' }}</th>
+                <th :aria-sort="auditSortAsc ? 'ascending' : 'descending'"><button type="button" class="sort-time" @click="toggleAuditSort">Timestamp <span aria-hidden="true">{{ auditSortAsc ? '↑' : '↓' }}</span></button></th>
                 <th>Agent Name</th>
                 <th>Action</th>
                 <th>Outcome</th>
@@ -581,7 +580,7 @@ const router = useRouter()
 const route = useRoute()
 const validViews = ['agents', 'pending', 'recent', 'flagged', 'audit']
 const routeView = () => validViews.includes(route.query.view) ? route.query.view : 'agents'
-const { state, logout } = useAuthStore()
+const { logout } = useAuthStore()
 
 const tab = ref(routeView())
 const loading = ref(false)
@@ -1392,7 +1391,12 @@ th, td {
   font-size: 0.9rem;
 }
 
-th.sortable {
+.sort-time {
+  border:0;
+  background:transparent;
+  color:inherit;
+  font:inherit;
+  text-transform:inherit;
   cursor: pointer;
 }
 

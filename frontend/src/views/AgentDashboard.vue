@@ -3,8 +3,7 @@
   <div class="dashboard workspace">
     <header class="dashboard-header">
       <div>
-        <p class="workspace-eyebrow">AGENT PORTAL / IDENTITY</p>
-        <h1>Agent Registration</h1>
+        <h1>Agent registration</h1>
         <p class="welcome">Welcome, {{ displayName }}</p>
       </div>
 
@@ -16,19 +15,19 @@
 
       <template v-else>
         <ol class="progress">
-          <li :class="{ active: currentStep === 1, done: currentStep > 1 }">
+          <li :aria-current="currentStep === 1 ? 'step' : undefined" :class="{ active: currentStep === 1, done: currentStep > 1 }">
             <span class="step-index">1</span>
             <span>Personal details</span>
           </li>
-          <li :class="{ active: currentStep === 2, done: currentStep > 2 }">
+          <li :aria-current="currentStep === 2 ? 'step' : undefined" :class="{ active: currentStep === 2, done: currentStep > 2 }">
             <span class="step-index">2</span>
             <span>Identity document</span>
           </li>
-          <li :class="{ active: currentStep === 3, done: currentStep > 3 }">
+          <li :aria-current="currentStep === 3 ? 'step' : undefined" :class="{ active: currentStep === 3, done: currentStep > 3 }">
             <span class="step-index">3</span>
             <span>Live selfie</span>
           </li>
-          <li :class="{ active: currentStep === 4, done: currentStep === 4 }">
+          <li :aria-current="currentStep === 4 ? 'step' : undefined" :class="{ active: currentStep === 4, done: currentStep === 4 }">
             <span class="step-index">4</span>
             <span>Verification</span>
           </li>

@@ -1,7 +1,6 @@
 <template>
   <div class="auth-page">
     <div class="auth-card">
-      <p class="auth-eyebrow">ACCOUNT RECOVERY</p>
       <h1>Choose a new password</h1>
       <p class="subtitle">Use at least 8 characters. You can sign in with it right away.</p>
 

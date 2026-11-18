@@ -1,7 +1,6 @@
 <template>
   <div class="auth-page">
     <div class="auth-card">
-      <p class="auth-eyebrow">ACCOUNT RECOVERY</p>
       <h1>Reset your password</h1>
       <p class="subtitle">Enter the email on your account. We will send a link to choose a new password.</p>
 
