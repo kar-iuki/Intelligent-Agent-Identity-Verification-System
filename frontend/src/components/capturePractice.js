@@ -6,7 +6,14 @@ export function mountCapturePractice(root, initialLayout = 'focus') {
   let documentIndex = 0
   let state = 'ready'
   root.innerHTML = `
-    <div class="capture-console">
+    <div class="capture-documents" role="group" aria-label="Sample document">
+      ${documents.map((doc, index) => `
+        <button type="button" data-doc="${index}" aria-controls="practice-preview">
+          <img src="${doc.image}" alt="" width="56" height="36" loading="lazy" />
+          <span>${doc.name}</span>
+        </button>`).join('')}
+    </div>
+    <div id="practice-preview" class="capture-console">
       <div class="capture-toolbar">
         <span class="capture-label">Practice camera</span>
         <div class="capture-switch" role="group" aria-label="Capture layout">
@@ -19,7 +26,7 @@ export function mountCapturePractice(root, initialLayout = 'focus') {
           <h3></h3><p></p>
         </div>
         <div class="capture-scene document-stage">
-          <img width="896" height="552" fetchpriority="high" />
+          <img width="896" height="552" loading="lazy" />
           <div class="capture-marks" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
           <span class="capture-readout"></span>
         </div>
@@ -28,14 +35,11 @@ export function mountCapturePractice(root, initialLayout = 'focus') {
           <button type="button" class="capture-secondary" data-action="secondary"></button>
         </div>
       </div>
-      <div class="capture-documents" role="group" aria-label="Sample document">
-        ${documents.map((item,i) => `<button type="button" data-doc="${i}">${item.name}</button>`).join('')}
-      </div>
     </div>`
   const consoleEl = root.querySelector('.capture-console')
   const title = root.querySelector('h3')
   const hint = root.querySelector('.capture-copy p')
-  const photo = root.querySelector('img')
+  const photo = root.querySelector('.document-stage img')
   const readout = root.querySelector('.capture-readout')
   const primary = root.querySelector('[data-action="primary"]')
   const secondary = root.querySelector('[data-action="secondary"]')

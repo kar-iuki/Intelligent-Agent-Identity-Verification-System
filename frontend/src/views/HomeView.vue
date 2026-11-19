@@ -16,16 +16,35 @@
       <section class="intro" aria-labelledby="hero-title">
         <div class="wrap hero">
           <div class="hero-copy">
-            <p class="hero-context">Agent identity verification</p>
-            <h1 id="hero-title">Your identity,<br /><em>in focus.</em></h1>
-            <p class="hero-description">Get verified with your photo ID and a live selfie. Try a sample capture first, or create an account to begin.</p>
-            <div class="hero-actions"><RouterLink class="start" to="/register">Create an account <ArrowRight :size="19" /></RouterLink><a href="#how-it-works">View the steps <ArrowDown :size="16" /></a></div>
+            <p class="hero-context"><ScanFace :size="18" aria-hidden="true" />Agent identity verification</p>
+            <h1 id="hero-title">Your identity,<br /><span>in focus.</span></h1>
+            <p class="hero-description">Verify your identity with a photo ID and a live selfie. Follow each check from your agent workspace.</p>
+            <div class="hero-actions"><RouterLink class="start" to="/register">Create an account <ArrowRight :size="19" /></RouterLink><a href="#guide">Try a sample <ArrowDown :size="16" /></a></div>
           </div>
-          <section id="guide" class="guide" aria-labelledby="guide-title">
-            <header class="guide-heading"><h2 id="guide-title">Document guide</h2><span>Sample photos · camera off</span></header>
-            <div ref="practiceRoot"></div>
-          </section>
+          <figure class="print-study">
+            <img src="/fingerprint-study.webp" alt="A sculpted fingerprint formed from brushed silver ridges" width="1080" height="1080" fetchpriority="high" />
+            <div class="study-frame" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+          </figure>
         </div>
+        <div class="prep-strip">
+          <div class="wrap prep-inner">
+            <span>What you’ll need</span>
+            <ul>
+              <li><ContactRound aria-hidden="true" />Photo ID</li>
+              <li><Camera aria-hidden="true" />Camera</li>
+              <li><Mail aria-hidden="true" />Email access</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="guide" class="wrap guide-layout" aria-labelledby="guide-title">
+        <div class="guide-intro section-title">
+          <h2 id="guide-title">Document guide</h2>
+          <p>Try a capture with a sample document before using your own. Choose an ID and check how it looks in the frame.</p>
+          <p class="camera-note"><CameraOff :size="16" aria-hidden="true" /> Your camera stays off during practice</p>
+        </div>
+        <div ref="practiceRoot" class="practice-mount"></div>
       </section>
 
       <section id="how-it-works" class="wrap flow-section">
@@ -50,7 +69,7 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
-import { ArrowDown, ArrowRight, ArrowUpRight, ContactRound, ListChecks, Menu, Pause, Play, Plus, ScanFace, X } from '@lucide/vue'
+import { ArrowDown, ArrowRight, ArrowUpRight, Camera, CameraOff, ContactRound, ListChecks, Mail, Menu, Pause, Play, Plus, ScanFace, X } from '@lucide/vue'
 
 import { mountCapturePractice } from '../components/capturePractice.js'
 import '../capture.css'

@@ -5,7 +5,7 @@ before component and workspace styles. Use the same roles in new components:
 
 | Role | Use |
 | --- | --- |
-| `--brand`, `--brand-paper`, `--brand-sage` | Deep teal, ivory and sage brand artwork |
+| `--brand`, `--brand-paper`, `--brand-sage` | Forest green, pale paper and lime brand accents |
 | `--action`, `--action-hover`, `--on-brand` | Primary controls |
 | `--ink`, `--muted`, `--link` | Text and navigation |
 | `--surface`, `--surface-muted`, `--canvas`, `--line` | Panels, page backgrounds and borders |
@@ -22,4 +22,4 @@ colours become lighter in dark mode and must not be used as white-text fills.
 Keep status text or icons alongside colour. Score bars show an assessment as
 well as their number and colour. Model-chart intensity describes a share, not
 a verification decision. Brand illustrations and camera overlays retain their
-own artwork colours; the public landing page intentionally stays ivory.
+own artwork colours; the public landing page uses a fixed dark hero and light document guide.

@@ -11,8 +11,8 @@
       >
         <span class="model-dot" aria-hidden="true" />
         <span v-if="status.loading">Checking model…</span>
-        <span v-else-if="status.modelLoaded">SVM Model Active v{{ status.modelVersion }}</span>
-        <span v-else>Fallback Mode — Threshold Rules</span>
+        <span v-else-if="status.modelLoaded">SVM active<template v-if="status.modelVersion"> · v{{ status.modelVersion }}</template></span>
+        <span v-else>Using threshold rules</span>
       </span>
     </header>
 

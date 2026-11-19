@@ -4,7 +4,7 @@
     <PasskeyPrompt :ready="status === 'verified'" />
     <main class="platform-content">
       <section class="identity-summary" aria-labelledby="summary-title">
-        <div class="summary-label"><ShieldCheck :size="21" /><span>Identity verification</span></div>
+        <div class="summary-label"><component :is="statusIcon" :size="21" aria-hidden="true" /><span>Identity verification</span></div>
         <div aria-live="polite"><h2 id="summary-title">{{ summary.title }}</h2><p>{{ summary.detail }}</p></div>
         <div class="summary-actions"><RouterLink to="/agent/dashboard">{{ summary.action }} <ArrowRight :size="17" /></RouterLink><button v-if="status === 'unavailable'" @click="loadStatus">Retry</button></div>
       </section>
@@ -17,7 +17,7 @@
 </template>
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import { ArrowRight, Fingerprint, History, ShieldCheck } from '@lucide/vue'
+import { ArrowRight, CircleX, Clock3, Fingerprint, History, ScanFace, ShieldCheck } from '@lucide/vue'
 import PasskeyPrompt from '../components/PasskeyPrompt.vue'
 import { getVerificationStatus } from '../services/verificationService.js'
 
@@ -31,6 +31,12 @@ const summaries = {
   rejected: { title:'Verification unsuccessful', detail:'Read the feedback in your overview and check which next steps are available.', action:'View feedback' },
   unavailable: { title:'Status unavailable', detail:'The latest verification record could not be loaded.', action:'Open identity overview' },
 }
+const statusIcon = computed(() => ({
+  verified: ShieldCheck,
+  pending: Clock3,
+  review: Clock3,
+  rejected: CircleX,
+}[status.value] || ScanFace))
 const summary = computed(() => summaries[status.value])
 async function loadStatus() {
   status.value = 'loading'
@@ -45,15 +51,15 @@ async function loadStatus() {
 onMounted(loadStatus)
 </script>
 <style scoped>
-.identity-summary { border:1px solid #384364; border-radius:12px; background:#1b233c; color:#f4f6ff; padding:clamp(24px,4vw,48px); }
-.summary-label { display:flex; align-items:center; gap:10px; margin-bottom:24px; color:#c3cdff; font-size:14px; }
+.identity-summary { border:1px solid #3d4b40; border-radius:12px; background:#172019; color:#f1f5ee; padding:clamp(24px,4vw,48px); }
+.summary-label { display:flex; align-items:center; gap:10px; margin-bottom:24px; color:var(--brand-sage); font-size:14px; }
 #app .identity-summary h2 { font-size:clamp(28px,3vw,42px); letter-spacing:-.05em; color:inherit; font-weight:550; }
-.identity-summary p { color:#ccd2e7; margin-top:8px; max-width:55ch; }
+.identity-summary p { color:#c4cfc5; margin-top:8px; max-width:55ch; }
 .summary-actions { display:flex; gap:12px; margin-top:24px; flex-wrap:wrap; }
 .summary-actions a,.summary-actions button { display:inline-flex; gap:14px; align-items:center; padding:10px 16px; border-radius:7px; font-size:14px; min-height:44px; }
-.summary-actions a { background:#c4cdff; color:#171e36; font-weight:550; text-decoration:none; }
-.summary-actions a:hover { background:#d7ddff; }
-.summary-actions button { background:transparent; color:white; border:1px solid #8b97be; }
+.summary-actions a { background:var(--brand-sage); color:#172019; font-weight:550; text-decoration:none; }
+.summary-actions a:hover { background:#e4ffab; }
+.summary-actions button { background:transparent; color:white; border:1px solid #869589; }
 .workspace-tools { margin-top:20px; display:grid; grid-template-columns:1fr 1fr; gap:16px; }
 .workspace-tools a { display:flex; align-items:center; gap:16px; padding:24px; border:1px solid var(--line); border-radius:10px; text-decoration:none; color:var(--ink); background:var(--surface); }
 .workspace-tools a:hover { border-color:var(--selected-border); }

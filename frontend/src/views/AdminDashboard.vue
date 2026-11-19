@@ -15,8 +15,8 @@
         >
           <span class="model-dot" aria-hidden="true" />
           <span v-if="modelStatus.loading">Checking model…</span>
-          <span v-else-if="modelStatus.modelLoaded">SVM Model Active v{{ modelStatus.modelVersion }}</span>
-          <span v-else>Fallback Mode — Threshold Rules</span>
+          <span v-else-if="modelStatus.modelLoaded">SVM active<template v-if="modelStatus.modelVersion"> · v{{ modelStatus.modelVersion }}</template></span>
+          <span v-else>Using threshold rules</span>
         </router-link>
       </div>
     </header>
@@ -28,7 +28,7 @@
           <p class="toast-title">New case awaiting review</p>
           <p class="toast-body">{{ toast.agentName }}</p>
         </div>
-        <button class="btn approve" @click="viewToastCase">View Case</button>
+        <button class="btn approve" @click="viewToastCase">View case</button>
       </div>
     </Transition>
 
@@ -38,7 +38,7 @@
         <article class="stat-card">
           <div class="stat-icon total" aria-hidden="true"><Users :size="17" /></div>
           <div>
-            <p class="stat-label">Total Agents</p>
+            <p class="stat-label">Total agents</p>
             <p class="stat-value">{{ stats?.totalAgents ?? '—' }}</p>
           </div>
         </article>
@@ -52,21 +52,21 @@
         <article class="stat-card green">
           <div class="stat-icon green" aria-hidden="true"><ShieldCheck :size="17" /></div>
           <div>
-            <p class="stat-label">Verified Today</p>
+            <p class="stat-label">Verified today</p>
             <p class="stat-value">{{ stats?.verifiedToday ?? '—' }}</p>
           </div>
         </article>
         <article class="stat-card red">
           <div class="stat-icon red" aria-hidden="true"><CircleX :size="17" /></div>
           <div>
-            <p class="stat-label">Rejected Today</p>
+            <p class="stat-label">Rejected today</p>
             <p class="stat-value">{{ stats?.rejectedToday ?? '—' }}</p>
           </div>
         </article>
         <article class="stat-card grey">
           <div class="stat-icon grey" aria-hidden="true"><ScanFace :size="17" /></div>
           <div>
-            <p class="stat-label">Pending Verification</p>
+            <p class="stat-label">Pending verification</p>
             <p class="stat-value">{{ stats?.pendingVerification ?? '—' }}</p>
           </div>
         </article>
@@ -1447,7 +1447,7 @@ tr.clickable:hover {
   border-radius: 999px;
   font-size: 0.75rem;
   font-weight: 700;
-  text-transform: uppercase;
+  text-transform: capitalize;
 }
 
 .badge.verified { background: var(--success-bg); color: var(--success); }
@@ -1593,14 +1593,7 @@ tr.clickable:hover {
 .skeleton {
   height: 180px;
   border-radius: 10px;
-  background: linear-gradient(90deg, var(--surface-muted) 25%, var(--surface-muted) 50%, var(--surface-muted) 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.2s infinite;
-}
-
-@keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  background: var(--surface-muted);
 }
 
 .scores {

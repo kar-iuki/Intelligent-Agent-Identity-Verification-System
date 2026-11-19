@@ -1,28 +1,40 @@
 <template>
   <!-- Saved passkeys can be renamed or removed without deleting the account. -->
   <main class="passkeys-page workspace">
-    <h1>Manage Passkeys</h1>
-    <p>Passkeys let your device verify you. Your password and Google sign-in remain available.</p>
-    <button v-if="supported" class="primary" :disabled="busy || loading" @click="add"><Fingerprint :size="20" aria-hidden="true" /> Add a passkey</button>
-    <p role="status">{{ message }}</p>
-    <p v-if="loading">Loading passkeys…</p>
-    <p v-else-if="!passkeys.length">{{ supported ? 'No passkeys yet. Add one to sign in with Face ID or fingerprint.' : 'No passkeys yet.' }}</p>
-    <ul v-else>
-      <li v-for="key in passkeys" :key="key.id">
-        <form v-if="editing === key.id" @submit.prevent="rename(key)">
-          <label :for="`label-${key.id}`">Passkey name</label>
-          <input :id="`label-${key.id}`" v-model="label" maxlength="100" required />
-          <button :disabled="busy">Save</button><button type="button" @click="editing = null">Cancel</button>
-        </form>
-        <h2 v-else>{{ key.label }}</h2>
-        <p>{{ key.device_name }} — {{ key.browser }} <span v-if="localCredential === key.credential_id" class="badge">This device</span> <span v-if="key.backed_up" class="badge">Synced</span></p>
-        <p>Added <time :datetime="key.created_at" :title="fullDate(key.created_at)">{{ relative(key.created_at) }}</time> · <span v-if="!key.last_used_at">Never used</span><span v-else>Last used <time :datetime="key.last_used_at" :title="fullDate(key.last_used_at)">{{ relative(key.last_used_at) }}</time></span></p>
-        <div class="row-actions">
-          <button type="button" :disabled="busy" @click="editing = key.id; label = key.label">Rename</button>
-          <button type="button" :disabled="busy" @click="removing = key">Remove</button>
-        </div>
-      </li>
-    </ul>
+    <header>
+      <div>
+        <h1>Manage passkeys</h1>
+        <p class="subtitle">Use a passkey, your password, or Google to sign in to Verity.</p>
+      </div>
+      <button v-if="supported" class="primary" :disabled="busy || loading" @click="add">
+        <Fingerprint :size="18" aria-hidden="true" /> Add a passkey
+      </button>
+    </header>
+    <section class="content" aria-label="Saved passkeys">
+      <p role="status">{{ message }}</p>
+      <p v-if="loading">Loading passkeys…</p>
+      <div v-else-if="!passkeys.length" class="passkey-empty">
+        <Fingerprint :size="32" aria-hidden="true" />
+        <h2>No passkeys yet.</h2>
+        <p v-if="supported">Add a passkey to sign in with your device’s screen lock.</p>
+      </div>
+      <ul v-else>
+        <li v-for="key in passkeys" :key="key.id">
+          <form v-if="editing === key.id" @submit.prevent="rename(key)">
+            <label :for="`label-${key.id}`">Passkey name</label>
+            <input :id="`label-${key.id}`" v-model="label" maxlength="100" required />
+            <button :disabled="busy">Save</button><button type="button" @click="editing = null">Cancel</button>
+          </form>
+          <h2 v-else>{{ key.label }}</h2>
+          <p>{{ key.device_name }} — {{ key.browser }} <span v-if="localCredential === key.credential_id" class="badge">This device</span> <span v-if="key.backed_up" class="badge">Synced</span></p>
+          <p>Added <time :datetime="key.created_at" :title="fullDate(key.created_at)">{{ relative(key.created_at) }}</time> · <span v-if="!key.last_used_at">Never used</span><span v-else>Last used <time :datetime="key.last_used_at" :title="fullDate(key.last_used_at)">{{ relative(key.last_used_at) }}</time></span></p>
+          <div class="row-actions">
+            <button type="button" :disabled="busy" @click="editing = key.id; label = key.label">Rename</button>
+            <button type="button" :disabled="busy" @click="removing = key">Remove</button>
+          </div>
+        </li>
+      </ul>
+    </section>
     <PasskeyDialog v-if="removing" title="Remove this passkey?" @dismiss="removing = null">
       <p>You won't be able to sign in with it anymore.</p>
       <p role="status">{{ removeError }}</p>
@@ -93,7 +105,11 @@ onMounted(() => { load(); window.addEventListener('storage', refreshLocal) })
 onBeforeUnmount(() => { active = false; cancelPasskeyCeremony(); window.removeEventListener('storage', refreshLocal) })
 </script>
 <style scoped>
-.passkeys-page { max-width:800px; margin:auto; padding:clamp(1rem,4vw,2rem); color:var(--ink); }
+.passkeys-page { color:var(--ink); }
+.passkey-empty { padding:32px; border:1px solid var(--line); border-radius:12px; background:var(--surface); }
+.passkey-empty svg { display:block; color:var(--link); margin-bottom:16px; }
+.passkey-empty p { margin:4px 0 0; color:var(--muted); }
+.content > [role="status"]:empty { margin:0; }
 h1 { margin:1rem 0; } h2 { font-size:1.1rem; overflow-wrap:anywhere; }
 p { margin:.75rem 0; } ul { padding:0; list-style:none; } li { padding:1.25rem; margin:1rem 0; border:1px solid var(--line); border-radius:12px; background:var(--surface); }
 button { display:inline-flex; gap:.5rem; align-items:center; min-height:44px; padding:.65rem 1rem; border:1px solid var(--muted); border-radius:8px; background:transparent; color:inherit; cursor:pointer; }
