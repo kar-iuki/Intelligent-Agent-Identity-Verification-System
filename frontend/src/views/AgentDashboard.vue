@@ -4,7 +4,7 @@
     <header class="dashboard-header">
       <div>
         <h1>Identity overview</h1>
-        <p class="welcome">Registration progress for {{ displayName }}</p>
+        <p class="welcome">Follow your registration from personal details to a verification decision.</p>
       </div>
 
     </header>
@@ -14,14 +14,24 @@
       <div v-if="bootLoading" class="panel loading-panel">Loading your registration status...</div>
 
       <template v-else>
-        <ol class="progress" aria-label="Verification progress">
-          <li v-for="(label, index) in stepLabels" :key="label"
-              :aria-current="currentStep === index + 1 ? 'step' : undefined"
-              :class="{ active: currentStep === index + 1, done: currentStep > index + 1 }">
-            <span class="step-index"><Check v-if="currentStep > index + 1" :size="14" aria-label="Completed" /><template v-else>{{ index + 1 }}</template></span>
-            <span>{{ label }}</span>
-          </li>
-        </ol>
+        <aside class="registration-rail" aria-label="Registration progress">
+          <div class="record-holder">
+            <span>Agent record</span>
+            <strong>{{ displayName }}</strong>
+          </div>
+          <div class="step-heading">
+            <h2>Registration steps</h2>
+            <span>{{ currentStep }} / {{ stepLabels.length }}</span>
+          </div>
+          <ol class="registration-steps">
+            <li v-for="(label, index) in stepLabels" :key="label"
+                :aria-current="currentStep === index + 1 ? 'step' : undefined"
+                :class="{ active: currentStep === index + 1, done: currentStep > index + 1 }">
+              <span class="step-index"><Check v-if="currentStep > index + 1" :size="14" aria-label="Completed" /><template v-else>{{ index + 1 }}</template></span>
+              <span>{{ label }}</span>
+            </li>
+          </ol>
+        </aside>
 
         <!-- Step 1 -->
         <section v-if="currentStep === 1" class="panel">
@@ -146,7 +156,7 @@
         <!-- Step 4: verification -->
         <section v-else class="panel confirmation">
           <template v-if="verificationPhase === 'idle'">
-            <div class="success-icon">✓</div>
+            <div class="success-icon" aria-hidden="true"><Check :size="26" /></div>
             <h2>Documents submitted</h2>
             <p class="panel-copy">
               Your identity document and live selfie passed capture checks.
@@ -175,7 +185,7 @@
           </template>
 
           <template v-else-if="verificationPhase === 'failed'">
-            <div class="error-icon">!</div>
+            <div class="error-icon" aria-hidden="true"><CircleAlert :size="26" /></div>
             <h2>Image quality check failed</h2>
             <p class="panel-copy">
               {{ qualityFailureSummary }}
@@ -192,46 +202,8 @@
           </template>
 
           <template v-else-if="verificationPhase === 'passed' || verificationPhase === 'decision'">
-            <ol class="pipeline-progress">
-              <li
-                v-for="step in pipelineSteps"
-                :key="step.label"
-                :class="step.complete ? 'complete' : 'pending-step'"
-              >
-                {{ step.label }}
-              </li>
-            </ol>
-
-            <div v-if="feedback?.scores" class="score-panel">
-              <h3>Your results</h3>
-              <ScoreBar
-                label="Document check (OCR confidence)"
-                :value="Math.round((feedback.scores.ocrConfidenceScore ?? 0) * 100)"
-                :max="100"
-                :green-threshold="70"
-                :amber-threshold="40"
-              />
-              <ScoreBar
-                label="Face match"
-                :value="feedback.scores.faceMatchScore ?? 0"
-                :max="100"
-                :green-threshold="80"
-                :amber-threshold="50"
-              />
-              <ScoreBar
-                label="Liveness"
-                :value="Math.round((feedback.scores.livenessScore ?? 0) * 100)"
-                :max="100"
-                :green-threshold="75"
-                :amber-threshold="50"
-              />
-              <p class="score-note">
-                Automatic approval needs OCR above 70%, face match above 80% and liveness above 75%.
-              </p>
-            </div>
-
             <template v-if="finalDecision === 'verified'">
-              <div class="banner banner-success">Your identity has been verified</div>
+              <h2 class="banner banner-success">Your identity has been verified</h2>
               <p class="panel-copy">
                 You now have full platform access. Continue to the agent workspace to get started.
               </p>
@@ -241,7 +213,7 @@
             </template>
 
             <template v-else-if="finalDecision === 'review'">
-              <div class="banner banner-review">Your verification is under review</div>
+              <h2 class="banner banner-review">Your verification is under review</h2>
               <p class="panel-copy">
                 An administrator is reviewing your case. You will be notified once a decision is made.
                 No further action is required from you right now.
@@ -255,7 +227,7 @@
             </template>
 
             <template v-else-if="finalDecision === 'rejected'">
-              <div class="banner banner-rejected">Your verification was unsuccessful</div>
+              <h2 class="banner banner-rejected">Your verification was unsuccessful</h2>
               <p class="panel-copy">{{ feedback?.summary || 'Your identity could not be verified with the documents provided.' }}</p>
 
               <div v-if="feedback?.reasons?.length" class="feedback-block">
@@ -291,6 +263,45 @@
               <h2>Finalising decision</h2>
               <p class="panel-copy">Waiting for the access control decision...</p>
             </template>
+
+            <ol class="pipeline-progress" aria-label="Verification checks">
+              <li
+                v-for="step in pipelineSteps"
+                :key="step.label"
+                :class="step.complete ? 'complete' : 'pending-step'"
+              >
+                <span>{{ step.label }}</span>
+                <span class="check-state"><Check v-if="step.complete" :size="14" aria-hidden="true" />{{ step.complete ? 'Complete' : 'Pending' }}</span>
+              </li>
+            </ol>
+
+            <div v-if="feedback?.scores" class="score-panel">
+              <h3>Your results</h3>
+              <ScoreBar
+                label="Document check (OCR confidence)"
+                :value="Math.round((feedback.scores.ocrConfidenceScore ?? 0) * 100)"
+                :max="100"
+                :green-threshold="70"
+                :amber-threshold="40"
+              />
+              <ScoreBar
+                label="Face match"
+                :value="feedback.scores.faceMatchScore ?? 0"
+                :max="100"
+                :green-threshold="80"
+                :amber-threshold="50"
+              />
+              <ScoreBar
+                label="Liveness"
+                :value="Math.round((feedback.scores.livenessScore ?? 0) * 100)"
+                :max="100"
+                :green-threshold="75"
+                :amber-threshold="50"
+              />
+              <p class="score-note">
+                Automatic approval needs OCR above 70%, face match above 80% and liveness above 75%.
+              </p>
+            </div>
           </template>
 
           <p v-if="verificationError" class="error">{{ verificationError }}</p>
@@ -302,7 +313,7 @@
 
 <script setup>
 import { documents } from '../utils/documentGuide.js'
-import { Check } from '@lucide/vue'
+import { Check, CircleAlert } from '@lucide/vue'
 import PasskeyPrompt from '../components/PasskeyPrompt.vue'
 import { computed, onMounted, onBeforeUnmount, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -393,23 +404,23 @@ let pollTimer = null
 
 const pipelineSteps = computed(() => [
   {
-    label: pipelineState.value.imageQuality === 'complete' ? 'Image Quality ✓' : 'Image Quality — pending',
+    label: 'Image quality',
     complete: pipelineState.value.imageQuality === 'complete',
   },
   {
-    label: pipelineState.value.documentVerification === 'complete' ? 'Document Verification ✓' : 'Document Verification — pending',
+    label: 'Document verification',
     complete: pipelineState.value.documentVerification === 'complete',
   },
   {
-    label: pipelineState.value.faceMatching === 'complete' ? 'Face Matching ✓' : 'Face Matching — pending',
+    label: 'Face matching',
     complete: pipelineState.value.faceMatching === 'complete',
   },
   {
-    label: pipelineState.value.livenessDetection === 'complete' ? 'Liveness Detection ✓' : 'Liveness Detection — pending',
+    label: 'Liveness detection',
     complete: pipelineState.value.livenessDetection === 'complete',
   },
   {
-    label: pipelineState.value.verificationDecision === 'complete' ? 'Verification Decision ✓' : 'Verification Decision — pending',
+    label: 'Verification decision',
     complete: pipelineState.value.verificationDecision === 'complete',
   },
 ])
@@ -913,59 +924,44 @@ h1 {
   margin: 0 auto;
 }
 
-.progress {
-  list-style: none;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
+/* Keep the active task wide enough for a camera preview or a two-column form. */
+.dashboard { container-type:inline-size; }
+.dashboard-content { display:grid; grid-template-columns:minmax(0,1fr) minmax(208px,.36fr); gap:20px; align-items:start; }
+.dashboard-content > .panel { grid-column:1; grid-row:1; min-width:0; }
+.dashboard-content > .loading-panel { grid-column:1 / -1; }
+.registration-rail { grid-column:2; grid-row:1; overflow:hidden; color:var(--ink); background:var(--surface); border:1px solid var(--line); border-radius:12px; }
+.record-holder { position:relative; isolation:isolate; overflow:hidden; min-height:128px; display:flex; flex-direction:column; justify-content:flex-end; gap:8px; padding:20px; background:#131b16; color:#f3f6ef; }
+.record-holder::before { content:""; position:absolute; z-index:-1; inset:0 0 0 36%; background:url("/fingerprint-study.webp") right center / cover no-repeat; opacity:.26; mask-image:linear-gradient(to right,transparent,#000); }
+.record-holder span,.step-heading span { font:12px/1.5 var(--meta-font); }
+.record-holder span { color:#c9d5c8; }
+.record-holder strong { font-size:clamp(20px,2vw,28px); line-height:1.15; letter-spacing:-.035em; font-weight:500; overflow-wrap:anywhere; }
+.step-heading { display:flex; gap:12px; align-items:center; justify-content:space-between; margin:20px 16px 12px; }
+#app .step-heading h2 { font-size:14px; font-weight:550; }
+.step-heading span { color:var(--muted); white-space:nowrap; }
+.registration-steps { list-style:none; display:grid; gap:4px; margin:0 8px 12px; }
+.registration-steps li { display:flex; align-items:center; gap:12px; min-height:42px; padding:8px; color:var(--muted); font-size:14px; border-radius:6px; }
+.registration-steps .active { color:var(--selected-text); background:var(--selected-bg); font-weight:600; }
+.step-index { flex:none; width:24px; height:24px; display:grid; place-items:center; border:1px solid var(--line); border-radius:50%; font:12px var(--meta-font); }
+.active .step-index { color:var(--on-brand); background:var(--action); border-color:var(--action); }
+.done .step-index { color:var(--success); background:var(--success-bg); border-color:var(--success-border); }
+#app .dashboard .dashboard-content > .panel { padding:clamp(20px,2.5vw,36px); }
+#app .dashboard .dashboard-content > .panel > h2 { font-size:clamp(24px,2.4vw,36px); letter-spacing:-.045em; line-height:1.12; font-weight:500; }
+#app .dashboard .panel-copy { font-size:14px; line-height:1.6; }
+#app .dashboard .form input { border-color:var(--input-border); }
+#app .dashboard .form input:read-only { background:var(--surface-muted); }
+@container (max-width:820px) {
+  .dashboard-content { grid-template-columns:minmax(0,1fr); gap:16px; }
+  .registration-rail,.dashboard-content > .panel { grid-column:auto; grid-row:auto; }
+  .record-holder { min-height:0; padding:12px 16px; flex-direction:row; align-items:baseline; justify-content:space-between; }
+  .record-holder strong { font-size:18px; text-align:right; }
+  .step-heading { margin:12px 16px 4px; }
+  .registration-steps { grid-template-columns:repeat(4,minmax(0,1fr)); margin-bottom:8px; }
+  .registration-steps li { font-size:12px; gap:6px; }
 }
-
-.progress li {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.85rem 1rem;
-  border-radius: 10px;
-  background: var(--surface);
-  color: var(--muted);
-  border: 1px solid var(--surface-muted);
-  font-size: 0.875rem;
-  font-weight: 500;
+@container (max-width:550px) {
+  .registration-steps { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .registration-steps li { min-height:32px; padding:4px 8px; }
 }
-
-.progress li.active {
-  color: var(--ink);
-  border-color: var(--action);
-  box-shadow: 0 0 0 3px var(--focus-ring);
-}
-
-.progress li.done {
-  color: var(--success);
-  border-color: var(--success-border);
-}
-
-.step-index {
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 999px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--surface-muted);
-  font-size: 0.75rem;
-  font-weight: 700;
-}
-
-.progress li.active .step-index {
-  background: var(--action);
-  color: var(--on-brand);
-}
-
-.progress li.done .step-index {
-
-
- background:var(--success-solid); color:var(--on-brand); }
 
 .panel {
   background: var(--surface);
@@ -1080,7 +1076,7 @@ input[readonly] {
 
 .doc-type-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: repeat(auto-fit,minmax(min(100%,148px),1fr));
   gap: 1rem;
   margin-top: 0.5rem;
 }
@@ -1138,16 +1134,12 @@ input[readonly] {
   gap: 1rem;
 }
 
-.confirmation {
-  text-align: center;
-  max-width: 560px;
-  margin: 0 auto;
-}
+.confirmation { text-align:left; }
 
 .success-icon {
   width: 56px;
   height: 56px;
-  margin: 0 auto 1rem;
+  margin: 0 0 1rem;
   border-radius: 50%;
   background: var(--success-bg);
   color: var(--success);
@@ -1191,12 +1183,14 @@ input[readonly] {
 .spinner {
   width: 48px;
   height: 48px;
-  margin: 0 auto 1.25rem;
+  margin: 0 0 1.25rem;
   border: 4px solid var(--line);
   border-top-color: var(--action);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
+
+@media (prefers-reduced-motion:reduce) { .spinner { animation:none; } }
 
 @keyframes spin {
   to {
@@ -1207,7 +1201,7 @@ input[readonly] {
 .error-icon {
   width: 56px;
   height: 56px;
-  margin: 0 auto 1rem;
+  margin: 0 0 1rem;
   border-radius: 50%;
   background: var(--danger-bg);
   color: var(--danger);
@@ -1221,8 +1215,7 @@ input[readonly] {
 .failure-list {
   list-style: none;
   text-align: left;
-  margin: 0 auto 1.5rem;
-  max-width: 420px;
+  margin: 0 0 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
@@ -1284,51 +1277,29 @@ input[readonly] {
   line-height: 1.4;
 }
 
-.pipeline-progress {
-  list-style: none;
-  text-align: left;
-  margin: 1.5rem auto 0;
-  max-width: 420px;
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
-}
-
-.pipeline-progress li {
-  padding: 0.8rem 1rem;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-
-.pipeline-progress li.complete {
-  background: var(--success-bg);
-  color: var(--success);
-}
-
-.pipeline-progress li.pending-step {
-
-
- background:var(--warning-bg); color:var(--warning); border-color:var(--warning-border); }
-
+.pipeline-progress { list-style:none; padding:0; margin:24px 0; border-top:1px solid var(--line); }
+.pipeline-progress li { display:flex; align-items:center; justify-content:space-between; gap:16px; min-height:40px; padding:8px 0; border-bottom:1px solid var(--line); font-size:14px; }
+.check-state { display:inline-flex; align-items:center; gap:6px; font-size:12px; }
+.complete .check-state { color:var(--success); }
+.pending-step .check-state { color:var(--warning); }
 .banner {
-  margin: 1.25rem 0 1rem;
-  padding: 0.9rem 1rem;
+  margin: 0 0 1rem;
+  padding: 1rem;
   border-radius: 10px;
   font-weight: 700;
 }
 
-.banner-success {
+#app .dashboard .banner-success {
   background: var(--success-bg);
   color: var(--success);
 }
 
-.banner-review {
+#app .dashboard .banner-review {
   background: var(--warning-bg);
   color: var(--warning);
 }
 
-.banner-rejected {
+#app .dashboard .banner-rejected {
   background: var(--danger-bg);
   color: var(--danger);
 }
@@ -1345,9 +1316,6 @@ input[readonly] {
     padding: 1rem;
   }
 
-  .progress {
-    grid-template-columns: 1fr;
-  }
 
   .upload-grid {
     grid-template-columns: 1fr;

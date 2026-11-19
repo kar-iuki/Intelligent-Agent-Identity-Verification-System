@@ -8,6 +8,8 @@ for (const viewport of [{ width:1440, height:1000 }, { width:390, height:844 }, 
     await page.goto('/')
     await expect(page.getByRole('heading', { level:1 })).toContainText('Your identity,')
     await expect(page.locator('.auth-shell')).toHaveCount(0)
+    const intro = await page.locator('.intro').boundingBox()
+    expect(intro.y + intro.height).toBeGreaterThanOrEqual(viewport.height - 1)
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
     for (const [name, capture] of [['Passport','Open to the photo page'], ['Driver’s licence','Capture the front'], ['National ID','Capture both sides']]) {
       const choice = page.getByRole('button', { name, exact:true })

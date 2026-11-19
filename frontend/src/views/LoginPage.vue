@@ -23,21 +23,26 @@
             <label for="password">Password</label>
             <router-link to="/forgot-password">Forgot password?</router-link>
           </div>
-          <input
-            id="password"
-            v-model="password"
-            type="password"
-            autocomplete="current-password"
-            placeholder="Enter your password"
-            required
-          />
+          <div class="password-input">
+            <input
+              id="password"
+              v-model="password"
+              :type="showPassword ? 'text' : 'password'"
+              autocomplete="current-password"
+              placeholder="Enter your password"
+              required
+            />
+            <button type="button" class="password-visibility" :aria-label="showPassword ? 'Hide password' : 'Show password'" aria-controls="password" @click="showPassword = !showPassword">
+              <EyeOff v-if="showPassword" :size="18" aria-hidden="true" /><Eye v-else :size="18" aria-hidden="true" />
+            </button>
+          </div>
         </div>
 
         <div class="form-group">
           <label for="captcha">Human check</label>
           <div class="captcha-row">
             <img v-if="captchaImage" class="captcha-image" :src="captchaImage" alt="Distorted characters to type" />
-            <span v-else class="captcha-image captcha-pending">Loading characters...</span>
+            <span v-else class="captcha-image captcha-pending">{{ captchaLoading ? 'Loading characters…' : 'Characters unavailable' }}</span>
             <button type="button" class="captcha-refresh" :disabled="captchaLoading" aria-label="Show different characters" title="Show different characters" @click="loadCaptcha">
               <RefreshCw :size="18" />
             </button>
@@ -100,7 +105,7 @@
 import { ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore.js'
-import { RefreshCw } from '@lucide/vue'
+import { Eye, EyeOff, RefreshCw } from '@lucide/vue'
 import PasskeyButton from '../components/PasskeyButton.vue'
 import api from '../services/api.js'
 import { usePasskeySupport } from '../composables/usePasskeySupport.js'
@@ -144,6 +149,7 @@ onBeforeUnmount(() => { disposed = true; clearTimeout(primeTimer); cancelPasskey
 const email = ref('')
 watch(email, schedulePasskeyChallenge)
 const password = ref('')
+const showPassword = ref(false)
 const captchaId = ref('')
 const captchaSvg = ref('')
 const captchaAnswer = ref('')
@@ -292,6 +298,10 @@ label {
   margin-bottom: 0.375rem;
 }
 
+.password-input { position:relative; }
+#app .password-input input { padding-right:52px; }
+.password-visibility { position:absolute; inset:2px 2px 2px auto; width:44px; display:grid; place-items:center; border:0; border-radius:6px; color:var(--muted); background:transparent; }
+.password-visibility:hover { background:var(--surface-muted); }
 .password-label {
   display: flex;
   align-items: baseline;

@@ -34,45 +34,33 @@
 
     <main class="admin-content">
       <p v-if="statsUnavailable" class="stats-message" role="status">Verification totals are unavailable. <button class="linkish" @click="loadStats">Retry</button></p>
-      <section class="stats-bar" aria-label="Verification totals">
-        <article class="stat-card">
-          <div class="stat-icon total" aria-hidden="true"><Users :size="17" /></div>
-          <div>
-            <p class="stat-label">Total agents</p>
-            <p class="stat-value">{{ stats?.totalAgents ?? '—' }}</p>
-          </div>
-        </article>
-        <button type="button" class="stat-card clickable amber" @click="goToPending" title="Open the review queue">
-          <div class="stat-icon amber" aria-hidden="true"><Clock3 :size="17" /></div>
-          <div>
-            <p class="stat-label">Awaiting review <span aria-hidden="true">↗</span></p>
-            <p class="stat-value">{{ stats?.awaitingReview ?? '—' }}</p>
-          </div>
+      <section class="review-summary" aria-label="Verification totals">
+        <button type="button" class="queue-card" @click="goToPending">
+          <span class="queue-label"><Clock3 :size="18" aria-hidden="true" /> Awaiting review</span>
+          <strong>{{ stats?.awaitingReview ?? '—' }}</strong>
+          <span class="queue-action">Open review queue <ArrowRight :size="18" aria-hidden="true" /></span>
         </button>
-        <article class="stat-card green">
-          <div class="stat-icon green" aria-hidden="true"><ShieldCheck :size="17" /></div>
-          <div>
-            <p class="stat-label">Verified today</p>
-            <p class="stat-value">{{ stats?.verifiedToday ?? '—' }}</p>
+
+        <article class="outcomes-card">
+          <h2>Today’s outcomes</h2>
+          <p>For requests submitted today</p>
+          <dl class="outcome-counts">
+            <div><dt><span class="stat-icon green" aria-hidden="true"></span>Verified</dt><dd>{{ stats?.verifiedToday ?? '—' }}</dd></div>
+            <div><dt><span class="stat-icon red" aria-hidden="true"></span>Rejected</dt><dd>{{ stats?.rejectedToday ?? '—' }}</dd></div>
+          </dl>
+          <div class="outcome-bar" aria-hidden="true">
+            <template v-if="stats && stats.verifiedToday != null && stats.rejectedToday != null">
+              <span class="verified-share" :style="{ flexGrow: stats.verifiedToday }"></span>
+              <span class="rejected-share" :style="{ flexGrow: stats.rejectedToday }"></span>
+            </template>
           </div>
         </article>
-        <article class="stat-card red">
-          <div class="stat-icon red" aria-hidden="true"><CircleX :size="17" /></div>
-          <div>
-            <p class="stat-label">Rejected today</p>
-            <p class="stat-value">{{ stats?.rejectedToday ?? '—' }}</p>
-          </div>
-        </article>
-        <article class="stat-card grey">
-          <div class="stat-icon grey" aria-hidden="true"><ScanFace :size="17" /></div>
-          <div>
-            <p class="stat-label">Pending verification</p>
-            <p class="stat-value">{{ stats?.pendingVerification ?? '—' }}</p>
-          </div>
-        </article>
+
+        <dl class="registration-totals">
+          <div><dt><Users :size="16" aria-hidden="true" />Total agents</dt><dd>{{ stats?.totalAgents ?? '—' }}</dd></div>
+          <div><dt><ScanFace class="stat-icon grey" :size="16" aria-hidden="true" />Pending verification</dt><dd>{{ stats?.pendingVerification ?? '—' }}</dd></div>
+        </dl>
       </section>
-
-
 
       <p v-if="error" class="error">{{ error }}</p>
       <p v-if="loading" class="muted">Loading...</p>
@@ -552,8 +540,8 @@
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
-import { Users, Clock3, ShieldCheck, CircleX, ScanFace } from '@lucide/vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
+import { ArrowRight, Users, Clock3, ScanFace } from '@lucide/vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore.js'
 import Lightbox from '../components/Lightbox.vue'
@@ -765,9 +753,10 @@ function viewToastCase() {
   }
 }
 
-function goToPending() {
-  switchTab('pending')
-  document.getElementById('pending-section')?.scrollIntoView({ behavior: 'smooth' })
+async function goToPending() {
+  if (tab.value !== 'pending') switchTab('pending')
+  await nextTick()
+  document.getElementById('pending-section')?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })
 }
 
 watch(() => route.query.view, () => switchTab(routeView()))
@@ -1195,68 +1184,47 @@ h1 {
 }
 
 .stats-message { margin-bottom:12px; color:var(--muted); font-size:14px; }
-.stats-bar {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 0.75rem;
-  margin-bottom: 1rem;
+.admin-content { container-type:inline-size; }
+.review-summary { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) minmax(0,.85fr); gap:16px; margin-bottom:24px; }
+.review-summary > * { min-width:0; margin:0; border-radius:12px; border:1px solid var(--line); background:var(--surface); }
+.queue-card { display:flex; flex-direction:column; align-items:stretch; padding:20px 24px; color:#f3f6ed; text-align:left; background:#17231c; border-color:#314537; }
+.queue-card:hover { background:#223629; }
+.queue-label,.queue-action,.registration-totals dt,.outcome-counts dt { display:flex; align-items:center; gap:8px; }
+.queue-label,.registration-totals dt,.outcome-counts dt { font-size:14px; }
+.queue-label { color:#d4dfd4; }
+.queue-card strong { font-size:clamp(40px,4.5vw,68px); line-height:1.1; font-weight:500; letter-spacing:-.045em; padding:8px 0 16px; }
+.queue-action { margin-top:auto; padding-top:12px; border-top:1px solid #435146; color:var(--brand-sage); font-size:14px; justify-content:space-between; }
+.outcomes-card { padding:20px 24px; display:flex; flex-direction:column; }
+.outcomes-card > p { font-size:13px; color:var(--muted); }
+.outcome-counts { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:16px 0 12px; }
+.outcome-counts dt,.registration-totals dt { color:var(--muted); }
+.outcome-counts dd,.registration-totals dd { font-size:28px; line-height:1.2; font-weight:500; margin:4px 0 0; }
+.review-summary :is(dd,strong) { font-variant-numeric:tabular-nums; overflow-wrap:anywhere; }
+.outcome-counts .stat-icon { display:inline-block; width:8px; height:8px; border-radius:2px; background:currentColor; }
+.stat-icon.green { color:var(--success); }
+.stat-icon.red { color:var(--danger); }
+.stat-icon.grey { color:var(--warning); }
+.outcome-bar { margin-top:auto; display:flex; height:8px; background:var(--surface-muted); border-radius:4px; overflow:hidden; }
+.outcome-bar span { flex-basis:0; }
+.verified-share { background:var(--success); }
+.rejected-share { background:var(--danger); }
+.registration-totals { display:grid; padding:0 20px; }
+.registration-totals > div { display:flex; flex-direction:column; justify-content:center; padding:12px 0; }
+.registration-totals > div + div { border-top:1px solid var(--line); }
+.registration-totals svg { flex:none; }
+@container (max-width:820px) {
+  .review-summary { grid-template-columns:minmax(0,1fr) minmax(0,1.25fr); gap:12px; }
+  .registration-totals { grid-column:1 / -1; grid-template-columns:1fr 1fr; padding:12px 16px; }
+  .registration-totals > div { padding:0; }
+  .registration-totals > div + div { border-top:0; border-left:1px solid var(--line); padding-left:16px; }
 }
-
-.stat-card {
-  background: var(--surface);
-  border-radius: 12px;
-  padding: 1rem;
-  display: flex;
-  gap: 0.75rem;
-  align-items: center;
-  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
-  border: 1px solid var(--surface-muted);
+@container (max-width:520px) {
+  .review-summary { grid-template-columns:minmax(0,1fr); }
+  .queue-card { display:grid; grid-template-columns:1fr auto; gap:12px; align-items:center; padding:16px 20px; }
+  .queue-card strong { padding:0; font-size:40px; }
+  .queue-action { grid-column:1 / -1; }
+  .outcomes-card { padding:16px 20px; }
 }
-
-.stat-card.clickable {
-  cursor: pointer;
-}
-
-.stat-card.clickable:hover {
-  border-color: var(--warning-border);
-}
-
-.stat-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  display: grid;
-  place-items: center;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  background: var(--surface-muted);
-}
-
-.stat-icon.amber { background: var(--warning-bg); color: var(--warning); }
-.stat-icon.green { background: var(--success-bg); color: var(--success); }
-.stat-icon.red { background: var(--danger-bg); color: var(--danger); }
-.stat-icon.grey { background: var(--surface-muted); color: var(--ink); }
-.stat-icon.total { background: var(--info-bg); color: var(--info); }
-
-.stat-label {
-  font-size: 0.75rem;
-  color: var(--muted);
-  margin: 0;
-}
-
-.stat-value {
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: var(--ink);
-  margin: 0.1rem 0 0;
-}
-
-.stat-card.amber .stat-value { color: var(--warning); }
-.stat-card.green .stat-value { color: var(--success); }
-.stat-card.red .stat-value { color: var(--danger); }
-.stat-card.grey .stat-value { color: var(--ink); }
-
 .activity-panel {
   margin-bottom: 1rem;
 }
@@ -1696,20 +1664,12 @@ tr.clickable:hover {
 }
 
 @media (max-width: 1000px) {
-  .stats-bar {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .activity-list li {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 640px) {
-  .stats-bar {
-    grid-template-columns: 1fr;
-  }
-
   .image-grid {
     grid-template-columns: 1fr;
   }
