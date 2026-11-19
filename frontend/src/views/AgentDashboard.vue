@@ -271,7 +271,11 @@
                   <dt>{{ score.label }}</dt>
                   <dd v-if="score.value !== null">
                     <span class="result-value">{{ scoreFormat.format(score.value) }}<small>%</small></span>
-                    <span class="result-track" aria-hidden="true"><span :style="{ width: score.value + '%' }"></span></span>
+                    <span class="result-track" :class="score.band" role="meter" :aria-label="score.label"
+                      aria-valuemin="0" aria-valuemax="100" :aria-valuenow="score.value"
+                      :aria-valuetext="scoreFormat.format(score.value) + '% (' + score.band + ')'">
+                      <span :style="{ width: score.value + '%' }"></span>
+                    </span>
                   </dd>
                   <dd v-else class="missing-score">Unavailable</dd>
                 </div>
@@ -304,6 +308,7 @@
 </template>
 
 <script setup>
+import { verificationScoreScales } from '../utils/verificationScoreScales.js'
 import { documents } from '../utils/documentGuide.js'
 import { Check, ChevronDown, CircleAlert, Clock3, ShieldCheck } from '@lucide/vue'
 import PasskeyPrompt from '../components/PasskeyPrompt.vue'
@@ -385,15 +390,17 @@ const passkeyReady = computed(() =>
 const feedback = ref(null)
 const scoreFormat = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 })
 const resultMetrics = [
-  { key: 'ocrConfidenceScore', label: 'OCR confidence', max: 1 },
-  { key: 'faceMatchScore', label: 'Face match', max: 100 },
-  { key: 'livenessScore', label: 'Liveness', max: 1 },
+  { key: 'ocrConfidenceScore', label: 'OCR confidence' },
+  { key: 'faceMatchScore', label: 'Face match' },
+  { key: 'livenessScore', label: 'Liveness' },
 ]
-const resultScores = computed(() => resultMetrics.map(({ key, label, max }) => {
+const resultScores = computed(() => resultMetrics.map(({ key, label }) => {
+  const { max, amberThreshold, greenThreshold } = verificationScoreScales[key]
   const raw = feedback.value?.scores?.[key]
   const value = typeof raw === 'string' && raw.trim() ? Number(raw) : raw
-  const available = Number.isFinite(value) && value >= 0 && value <= max
-  return { label, value: available ? (value / max) * 100 : null }
+  if (!Number.isFinite(value) || value < 0 || value > max) return { label, value: null }
+  const band = value >= greenThreshold ? 'high' : value >= amberThreshold ? 'medium' : 'low'
+  return { label, value: (value / max) * 100, band }
 }))
 const pipelineState = ref({
   imageQuality: 'pending',
@@ -1252,7 +1259,11 @@ input[readonly] {
 .result-value { display:block; font:500 clamp(24px,5.2cqi,42px)/1.25 var(--ui-font); letter-spacing:-.04em; font-variant-numeric:tabular-nums; }
 .result-value small { margin-inline-start:2px; color:#c4d0c5; font-size:.52em; letter-spacing:0; }
 .result-track { display:block; height:5px; margin-top:14px; overflow:hidden; border-radius:2px; background:#455248; }
-.result-track > span { display:block; height:100%; background:var(--brand-sage); }
+.result-track.low { color:#ff8880; }
+.result-track.medium { color:#ffb45e; }
+.result-track.high { color:#77dc92; }
+.result-track > span { display:block; height:100%; background:currentColor; }
+.result-track[aria-valuenow="0"] { border-inline-start:2px solid currentColor; }
 .result-metric .missing-score { color:#c4d0c5; font-size:14px; margin-top:12px; }
 @container (max-width:425px) {
   .result-metrics { display:block; margin-top:12px; }

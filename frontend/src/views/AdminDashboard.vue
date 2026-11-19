@@ -425,23 +425,17 @@
             <ScoreBar
               label="Face match"
               :value="num(latestScores.face_match_score)"
-              :max="100"
-              :green-threshold="80"
-              :amber-threshold="50"
+              v-bind="verificationScoreScales.faceMatchScore"
             />
             <ScoreBar
               label="Liveness"
               :value="num(latestScores.liveness_score)"
-              :max="1"
-              :green-threshold="0.75"
-              :amber-threshold="0.5"
+              v-bind="verificationScoreScales.livenessScore"
             />
             <ScoreBar
               label="OCR confidence"
               :value="num(latestScores.ocr_confidence_score)"
-              :max="1"
-              :green-threshold="0.7"
-              :amber-threshold="0.4"
+              v-bind="verificationScoreScales.ocrConfidenceScore"
             />
             <ScoreBar
               label="Blur"
@@ -544,6 +538,7 @@ import { ArrowRight, Users, Clock3, ScanFace } from '@lucide/vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore.js'
 import Lightbox from '../components/Lightbox.vue'
+import { verificationScoreScales } from '../utils/verificationScoreScales.js'
 import ScoreBar from '../components/ScoreBar.vue'
 import {
   getPendingCases,
@@ -1391,11 +1386,6 @@ tr.clickable:hover {
   padding: 0.4rem 0.75rem;
   cursor: pointer;
   font-weight: 600;
-}
-
-.btn.approve {
-  background: var(--success-bg);
-  color: var(--success);
 }
 
 .btn.reject {

@@ -8,6 +8,7 @@
   --brand-paper: #f4f5ef;
   --brand-sage: #d5f98b;
   --on-brand: #ffffff;
+  --action-border: #708e79;
   --action: var(--brand);
   --action-hover: var(--brand-hover);
   --link: #274534;
@@ -28,7 +29,6 @@
   --success: #15803d;
   --success-bg: #f0fdf4;
   --success-border: #86cda0;
-  --success-solid: #15803d;
   --warning: #b45309;
   --warning-bg: #fffbeb;
   --warning-border: #e8b665;
@@ -45,8 +45,8 @@
   --sidebar-muted: #b1bcb4;
   --sidebar-border: #39443b;
   --sidebar-hover: #26312a;
-  --sidebar-selected: var(--brand-sage);
-  --sidebar-selected-text: var(--brand);
+  --sidebar-selected: var(--action);
+  --sidebar-selected-text: var(--on-brand);
   --passkey-background: var(--surface);
   --passkey-color: var(--ink);
 }

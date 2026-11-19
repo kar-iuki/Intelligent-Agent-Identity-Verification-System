@@ -25,6 +25,7 @@ onBeforeUnmount(() => { dialog.value?.close(); restoreFocus() })
 .passkey-actions { display:flex; flex-wrap:wrap; gap:.6rem; margin-top:1rem; }
 .passkey-actions button { min-height:44px; padding:.65rem 1rem; border:1px solid var(--muted); border-radius:8px; background:transparent; color:inherit; cursor:pointer; }
 .passkey-actions .primary { background:var(--action); color:var(--on-brand); }
+.passkey-actions .primary:hover:not(:disabled) { background:var(--action-hover); }
 .passkey-actions .text { border-color:transparent; text-decoration:underline; }
 .passkey-actions button:disabled { opacity:.6; }
 </style>

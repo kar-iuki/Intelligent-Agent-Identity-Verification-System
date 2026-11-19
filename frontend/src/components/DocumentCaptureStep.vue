@@ -307,6 +307,7 @@ async function runQualityCheck() {
 .camera-standby { position:absolute; left:12px; right:12px; text-align:center; color:#e4ebe1; font-size:14px; }
 .footer-actions { display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px; }
 .step-next { background:var(--action); border:1px solid var(--action); color:var(--on-brand); }
+.step-next:hover:not(:disabled) { background:var(--action-hover); }
 .notice { padding:12px 16px; border-left:3px solid var(--warning-border); color:var(--warning); background:var(--warning-bg); font-size:14px; }
 .notice ul { padding-left:18px; margin-top:4px; }
 .upload-hint { color:var(--muted); margin-block:5px 12px; }

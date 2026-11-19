@@ -15,7 +15,7 @@ button:disabled { cursor:not-allowed; opacity:.55; }
 .sidebar-links a,.sidebar-signout { display:flex; align-items:center; gap:12px; padding:8px 12px; min-height:40px; border-radius:8px; color:var(--sidebar-text); font-size:13px; text-decoration:none; white-space:nowrap; }
 .sidebar-links svg,.sidebar-signout svg { flex-shrink:0; }
 .sidebar-links a:hover,.sidebar-signout:hover { background:var(--sidebar-hover); color:var(--on-brand); }
-.sidebar-links a.selected { background:var(--sidebar-selected); color:var(--sidebar-selected-text); font-weight:600; }
+.sidebar-links a.selected { box-shadow:inset 3px 0 var(--action-border); background:var(--sidebar-selected); color:var(--sidebar-selected-text); font-weight:600; }
 .nav-indicator { margin-left:auto; }
 .sidebar-bottom { margin-top:auto; padding-top:48px; }
 .sidebar-profile { display:flex; gap:10px; align-items:center; padding:18px 8px; border-top:1px solid var(--sidebar-border); }
@@ -178,9 +178,10 @@ button:disabled { cursor:not-allowed; opacity:.55; }
 
 
 /* Shared semantic states retain their meaning in both themes. */
-#app .workspace .btn.approve { background:var(--success-solid); color:var(--on-brand); border:1px solid var(--success-solid); }
+#app .workspace .btn.approve { border:1px solid var(--action); }
 #app .workspace .btn.reject { background:var(--danger-bg); color:var(--danger); border-color:var(--danger-border); border:1px solid var(--danger-border); }
-#app .workspace :is(.btn:not(.secondary):not(.ghost):not(.approve):not(.reject),.primary) { background:var(--action); color:var(--on-brand); }
+#app .workspace :is(.btn:not(.secondary,.ghost,.reject,.btn-secondary),.primary) { background:var(--action); color:var(--on-brand); }
+#app .workspace :is(.btn:not(.secondary,.ghost,.reject,.btn-secondary),.btn-primary,.primary):hover:not(:disabled) { background:var(--action-hover); }
 #app .workspace .btn.secondary { background:var(--surface-muted); color:var(--ink); border:1px solid var(--line); }
 #app :is(.auth-shell,.workspace) input:focus { border-color:var(--focus); box-shadow:0 0 0 3px var(--focus-ring); }
 #app .auth-shell input { color:var(--ink); }

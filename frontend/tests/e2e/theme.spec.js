@@ -34,6 +34,27 @@ async function contrast(locator) {
   })
 }
 for (const theme of ['light','dark']) {
+  test(`${theme}: primary buttons share the sign-in palette across flows`, async ({ page }) => {
+    await mockApp(page, theme)
+    await page.goto('/login')
+    const signIn = page.getByRole('button', { name: 'Sign In', exact: true })
+    const fill = await signIn.evaluate(el => getComputedStyle(el).backgroundColor)
+    await page.goto('/')
+    await expect(page.locator('.hero-actions .start')).toHaveCSS('background-color', fill)
+    for (const layout of ['Guided', 'Focus']) {
+      await page.getByRole('button', { name: layout, exact: true }).click()
+      await expect(page.getByRole('button', { name: 'Capture sample' })).toHaveCSS('background-color', fill)
+    }
+    await page.goto('/agent/platform')
+    await expect(page.locator('.summary-actions a')).toHaveCSS('background-color', fill)
+    await expect(page.locator('.sidebar-links .selected')).toHaveCSS('background-color', fill)
+    await page.route('**/api/admin/cases/pending', route => route.fulfill({ json: {
+      cases: [{ request: { request_id: 'example' }, agent: { agent_id: 'example', full_name: 'Test agent' } }],
+    } }))
+    await page.goto('/admin/dashboard?view=pending')
+    await expect(page.getByRole('button', { name: 'Approve', exact: true })).toHaveCSS('background-color', fill)
+  })
+
   test(`${theme}: consistent admin and audit statuses with readable contrast`, async ({ page }) => {
     await mockApp(page, theme)
     await page.goto('/admin/dashboard')

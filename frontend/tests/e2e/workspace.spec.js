@@ -116,3 +116,22 @@ test('agent results show measured percentages and distinguish missing scores fro
   await page.getByText('Verification checks', { exact:true }).click()
   await expect(page.getByRole('list', { name:'Verification checks' })).toBeVisible()
 })
+
+test('agent score bars use the thresholds for each check', async ({ page }) => {
+  await session(page)
+  await page.route('**/api/verification/status', route => route.fulfill({ json: {
+    status: 'review',
+    feedback: { scores: { ocrConfidenceScore: 0.39, faceMatchScore: 50, livenessScore: 0.75 } },
+  } }))
+  await page.goto('/agent/dashboard')
+  const results = page.getByRole('region', { name: 'Your results' })
+  for (const [label, description, color] of [
+    ['OCR confidence', '39% (low)', 'rgb(255, 136, 128)'],
+    ['Face match', '50% (medium)', 'rgb(255, 180, 94)'],
+    ['Liveness', '75% (high)', 'rgb(119, 220, 146)'],
+  ]) {
+    const meter = results.getByRole('meter', { name: label })
+    await expect(meter).toHaveAttribute('aria-valuetext', description)
+    await expect(meter.locator('span')).toHaveCSS('background-color', color)
+  }
+})

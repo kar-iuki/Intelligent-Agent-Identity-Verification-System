@@ -57,8 +57,8 @@ onMounted(loadStatus)
 .identity-summary p { color:#c4cfc5; margin-top:8px; max-width:55ch; }
 .summary-actions { display:flex; gap:12px; margin-top:24px; flex-wrap:wrap; }
 .summary-actions a,.summary-actions button { display:inline-flex; gap:14px; align-items:center; padding:10px 16px; border-radius:7px; font-size:14px; min-height:44px; }
-.summary-actions a { background:var(--brand-sage); color:#172019; font-weight:550; text-decoration:none; }
-.summary-actions a:hover { background:#e4ffab; }
+.summary-actions a { border:1px solid var(--action-border); background:var(--action); color:var(--on-brand); font-weight:550; text-decoration:none; }
+.summary-actions a:hover { background:var(--action-hover); }
 .summary-actions button { background:transparent; color:white; border:1px solid #869589; }
 .workspace-tools { margin-top:20px; display:grid; grid-template-columns:1fr 1fr; gap:16px; }
 .workspace-tools a { display:flex; align-items:center; gap:16px; padding:24px; border:1px solid var(--line); border-radius:10px; text-decoration:none; color:var(--ink); background:var(--surface); }
