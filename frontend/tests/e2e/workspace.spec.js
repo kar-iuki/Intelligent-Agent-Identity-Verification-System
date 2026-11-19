@@ -99,3 +99,20 @@ test('all entry and workspace views fit desktop and mobile screens', async ({ pa
   await page.screenshot({ path:'test-results/model-mobile.png', fullPage:true, animations:'disabled' })
   await expect(page.getByRole('heading', { name:'Model Evaluation' })).toBeVisible()
 })
+
+test('agent results show measured percentages and distinguish missing scores from zero', async ({ page }) => {
+  await session(page)
+  await page.route('**/api/verification/status', route => route.fulfill({ json:{
+    status:'review',
+    feedback:{ scores:{ ocrConfidenceScore:0.92, faceMatchScore:0, livenessScore:null } },
+  } }))
+  await page.goto('/agent/dashboard')
+  const results = page.getByRole('region', { name:'Your results' })
+  await expect(results.locator('dd')).toHaveText(['92%', '0%', 'Unavailable'])
+  await expect(results).not.toContainText(/within range|needs review|outside range|below threshold/i)
+  await expect(page.getByRole('heading', { name:'Your verification is under review' })).toBeVisible()
+  await page.setViewportSize({ width:320, height:740 })
+  await noOverflow(page)
+  await page.getByText('Verification checks', { exact:true }).click()
+  await expect(page.getByRole('list', { name:'Verification checks' })).toBeVisible()
+})

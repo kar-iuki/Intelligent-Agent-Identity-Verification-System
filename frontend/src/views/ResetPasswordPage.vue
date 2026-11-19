@@ -1,6 +1,7 @@
 <template>
   <div class="auth-page">
     <div class="auth-card">
+      <span class="entry-symbol" aria-hidden="true"><KeyRound :size="24" /></span>
       <h1>Choose a new password</h1>
       <p class="subtitle">Use at least 8 characters. You can sign in with it right away.</p>
 
@@ -28,7 +29,7 @@
           />
         </div>
 
-        <p v-if="error" class="error">{{ error }}</p>
+        <p v-if="error" role="alert" class="error">{{ error }}</p>
 
         <button type="submit" class="btn btn-primary" :disabled="loading">
           {{ loading ? 'Updating...' : 'Update password' }}
@@ -48,6 +49,7 @@
 </template>
 
 <script setup>
+import { KeyRound } from '@lucide/vue'
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore.js'

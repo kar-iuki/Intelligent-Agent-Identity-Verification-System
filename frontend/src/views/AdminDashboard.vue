@@ -300,16 +300,15 @@
 
     <!-- Agent detail drawer -->
     <div v-if="detail" class="drawer-backdrop" @click.self="closeDetail">
-      <aside class="drawer">
+      <aside class="drawer" aria-labelledby="record-title">
         <header>
-          <h3>Agent detail</h3>
+          <h3 id="record-title">{{ detail.agent.full_name || 'Agent detail' }}</h3>
           <button class="btn ghost" @click="closeDetail">Close</button>
         </header>
 
         <section class="drawer-section">
           <h4>Agent information</h4>
           <dl class="info-grid">
-            <div><dt>Full name</dt><dd>{{ detail.agent.full_name }}</dd></div>
             <div><dt>Email</dt><dd>{{ detail.agent.email || '—' }}</dd></div>
             <div><dt>Phone</dt><dd>{{ detail.agent.phone_number || '—' }}</dd></div>
             <div><dt>National ID</dt><dd>{{ detail.agent.national_id }}</dd></div>
@@ -341,7 +340,7 @@
               <p class="img-label">ID back</p>
               <Lightbox
                 :images="lightboxImages"
-                :start-index="Math.min(1, lightboxImages.length - 1)"
+                :start-index="documentUrl ? 1 : 0"
                 alt="ID back"
               />
             </div>
@@ -1480,8 +1479,10 @@ tr.clickable:hover {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 40;
+  z-index: 72;
 }
+
+.modal-backdrop { z-index: 73; }
 
 .modal {
   background: var(--surface);
@@ -1507,7 +1508,7 @@ tr.clickable:hover {
 }
 
 .drawer {
-  width: min(520px, 96vw);
+  width: min(576px, 100%);
   background: var(--surface);
   padding: 1.25rem;
   overflow-y: auto;
@@ -1531,7 +1532,9 @@ tr.clickable:hover {
 
 .info-grid {
   display: grid;
-  gap: 0.55rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  gap: 16px 24px;
+  overflow-wrap: anywhere;
   margin: 0;
 }
 

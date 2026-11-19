@@ -203,7 +203,7 @@
 
           <template v-else-if="verificationPhase === 'passed' || verificationPhase === 'decision'">
             <template v-if="finalDecision === 'verified'">
-              <h2 class="banner banner-success">Your identity has been verified</h2>
+              <h2 class="banner banner-success"><ShieldCheck :size="24" aria-hidden="true" />Your identity has been verified</h2>
               <p class="panel-copy">
                 You now have full platform access. Continue to the agent workspace to get started.
               </p>
@@ -213,7 +213,7 @@
             </template>
 
             <template v-else-if="finalDecision === 'review'">
-              <h2 class="banner banner-review">Your verification is under review</h2>
+              <h2 class="banner banner-review"><Clock3 :size="24" aria-hidden="true" />Your verification is under review</h2>
               <p class="panel-copy">
                 An administrator is reviewing your case. You will be notified once a decision is made.
                 No further action is required from you right now.
@@ -227,7 +227,7 @@
             </template>
 
             <template v-else-if="finalDecision === 'rejected'">
-              <h2 class="banner banner-rejected">Your verification was unsuccessful</h2>
+              <h2 class="banner banner-rejected"><CircleAlert :size="24" aria-hidden="true" />Your verification was unsuccessful</h2>
               <p class="panel-copy">{{ feedback?.summary || 'Your identity could not be verified with the documents provided.' }}</p>
 
               <div v-if="feedback?.reasons?.length" class="feedback-block">
@@ -264,44 +264,36 @@
               <p class="panel-copy">Waiting for the access control decision...</p>
             </template>
 
-            <ol class="pipeline-progress" aria-label="Verification checks">
-              <li
-                v-for="step in pipelineSteps"
-                :key="step.label"
-                :class="step.complete ? 'complete' : 'pending-step'"
-              >
-                <span>{{ step.label }}</span>
-                <span class="check-state"><Check v-if="step.complete" :size="14" aria-hidden="true" />{{ step.complete ? 'Complete' : 'Pending' }}</span>
-              </li>
-            </ol>
+            <section v-if="feedback?.scores" class="score-panel" aria-labelledby="results-heading">
+              <h3 id="results-heading">Your results</h3>
+              <dl class="result-metrics">
+                <div v-for="score in resultScores" :key="score.label" class="result-metric">
+                  <dt>{{ score.label }}</dt>
+                  <dd v-if="score.value !== null">
+                    <span class="result-value">{{ scoreFormat.format(score.value) }}<small>%</small></span>
+                    <span class="result-track" aria-hidden="true"><span :style="{ width: score.value + '%' }"></span></span>
+                  </dd>
+                  <dd v-else class="missing-score">Unavailable</dd>
+                </div>
+              </dl>
+            </section>
 
-            <div v-if="feedback?.scores" class="score-panel">
-              <h3>Your results</h3>
-              <ScoreBar
-                label="Document check (OCR confidence)"
-                :value="Math.round((feedback.scores.ocrConfidenceScore ?? 0) * 100)"
-                :max="100"
-                :green-threshold="70"
-                :amber-threshold="40"
-              />
-              <ScoreBar
-                label="Face match"
-                :value="feedback.scores.faceMatchScore ?? 0"
-                :max="100"
-                :green-threshold="80"
-                :amber-threshold="50"
-              />
-              <ScoreBar
-                label="Liveness"
-                :value="Math.round((feedback.scores.livenessScore ?? 0) * 100)"
-                :max="100"
-                :green-threshold="75"
-                :amber-threshold="50"
-              />
-              <p class="score-note">
-                Automatic approval needs OCR above 70%, face match above 80% and liveness above 75%.
+            <details class="check-details" :open="!finalDecision">
+              <summary>Verification checks <ChevronDown :size="16" aria-hidden="true" /></summary>
+              <ol class="pipeline-progress" aria-label="Verification checks">
+                <li
+                  v-for="step in pipelineSteps"
+                  :key="step.label"
+                  :class="step.complete ? 'complete' : 'pending-step'"
+                >
+                  <span>{{ step.label }}</span>
+                  <span class="check-state"><Check v-if="step.complete" :size="14" aria-hidden="true" />{{ step.complete ? 'Complete' : 'Pending' }}</span>
+                </li>
+              </ol>
+              <p v-if="feedback?.scores" class="score-note threshold-note">
+                Reference thresholds are 70% for OCR confidence, 80% for face match, and 75% for liveness.
               </p>
-            </div>
+            </details>
           </template>
 
           <p v-if="verificationError" class="error">{{ verificationError }}</p>
@@ -313,13 +305,12 @@
 
 <script setup>
 import { documents } from '../utils/documentGuide.js'
-import { Check, CircleAlert } from '@lucide/vue'
+import { Check, ChevronDown, CircleAlert, Clock3, ShieldCheck } from '@lucide/vue'
 import PasskeyPrompt from '../components/PasskeyPrompt.vue'
 import { computed, onMounted, onBeforeUnmount, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore.js'
 import DocumentCaptureStep from '../components/DocumentCaptureStep.vue'
-import ScoreBar from '../components/ScoreBar.vue'
 import LiveSelfieChallenge from '../components/LiveSelfieChallenge.vue'
 import {
   submitPersonalDetails,
@@ -392,6 +383,18 @@ const passkeyReady = computed(() =>
 )
 // plain-language results from the backend: scores, reasons, whether a retry is allowed
 const feedback = ref(null)
+const scoreFormat = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 })
+const resultMetrics = [
+  { key: 'ocrConfidenceScore', label: 'OCR confidence', max: 1 },
+  { key: 'faceMatchScore', label: 'Face match', max: 100 },
+  { key: 'livenessScore', label: 'Liveness', max: 1 },
+]
+const resultScores = computed(() => resultMetrics.map(({ key, label, max }) => {
+  const raw = feedback.value?.scores?.[key]
+  const value = typeof raw === 'string' && raw.trim() ? Number(raw) : raw
+  const available = Number.isFinite(value) && value >= 0 && value <= max
+  return { label, value: available ? (value / max) * 100 : null }
+}))
 const pipelineState = ref({
   imageQuality: 'pending',
   documentVerification: 'pending',
@@ -1231,17 +1234,34 @@ input[readonly] {
 }
 
 .score-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  padding: 1rem;
-  border: 1px solid var(--surface-muted);
-  border-radius: 10px;
-  background: var(--surface-muted);
-  margin-bottom: 1rem;
+  container-type:inline-size;
+  margin-top:24px;
+  padding:clamp(16px,2vw,28px);
+  border:1px solid #39463e;
+  border-radius:12px;
+  background:#18211b;
+  color:#f2f6ee;
+}
+#app .score-panel h3 { margin:0; color:inherit; font-size:20px; font-weight:500; letter-spacing:-.025em; }
+.result-metrics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:20px 0 0; }
+.result-metric { min-width:0; padding:0 16px; border-inline-start:1px solid #435047; }
+.result-metric:first-child { padding-inline-start:0; border:0; }
+.result-metric:last-child { padding-inline-end:0; }
+.result-metric dt { color:#c4d0c5; font-size:14px; }
+.result-metric dd { margin:4px 0 0; }
+.result-value { display:block; font:500 clamp(24px,5.2cqi,42px)/1.25 var(--ui-font); letter-spacing:-.04em; font-variant-numeric:tabular-nums; }
+.result-value small { margin-inline-start:2px; color:#c4d0c5; font-size:.52em; letter-spacing:0; }
+.result-track { display:block; height:5px; margin-top:14px; overflow:hidden; border-radius:2px; background:#455248; }
+.result-track > span { display:block; height:100%; background:var(--brand-sage); }
+.result-metric .missing-score { color:#c4d0c5; font-size:14px; margin-top:12px; }
+@container (max-width:425px) {
+  .result-metrics { display:block; margin-top:12px; }
+  .result-metric,.result-metric:first-child { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px; align-items:center; padding:12px 0; border:0; border-top:1px solid #435047; }
+  .result-metric:last-child { padding-bottom:0; }
+  .result-metric dd,.result-metric .missing-score { margin:0; text-align:right; }
+  .result-track { margin-top:6px; }
 }
 
-.score-panel h3,
 .feedback-block h3 {
   margin: 0;
   font-size: 0.95rem;
@@ -1277,18 +1297,26 @@ input[readonly] {
   line-height: 1.4;
 }
 
-.pipeline-progress { list-style:none; padding:0; margin:24px 0; border-top:1px solid var(--line); }
+.check-details { margin-top:20px; border-block:1px solid var(--line); }
+.check-details summary { display:flex; justify-content:space-between; align-items:center; padding:12px 0; font-size:14px; font-weight:500; cursor:pointer; list-style:none; }
+.check-details summary::-webkit-details-marker { display:none; }
+.check-details[open] summary svg { transform:rotate(180deg); }
+.pipeline-progress { list-style:none; padding:0; margin:0; border-top:1px solid var(--line); }
 .pipeline-progress li { display:flex; align-items:center; justify-content:space-between; gap:16px; min-height:40px; padding:8px 0; border-bottom:1px solid var(--line); font-size:14px; }
+.pipeline-progress li:last-child { border-bottom:0; }
+.threshold-note { padding:8px 0 12px; }
 .check-state { display:inline-flex; align-items:center; gap:6px; font-size:12px; }
 .complete .check-state { color:var(--success); }
 .pending-step .check-state { color:var(--warning); }
 .banner {
+  display:flex; align-items:center; gap:12px;
   margin: 0 0 1rem;
   padding: 1rem;
   border-radius: 10px;
   font-weight: 700;
 }
 
+.banner svg { flex:none; }
 #app .dashboard .banner-success {
   background: var(--success-bg);
   color: var(--success);

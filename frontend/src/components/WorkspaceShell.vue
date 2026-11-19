@@ -4,6 +4,7 @@
     <button v-if="mobileOpen" class="nav-scrim" aria-label="Close navigation" @click="closeMenu" />
     <aside ref="sidebar" id="workspace-navigation" class="app-sidebar" aria-label="Workspace navigation" @keydown="trapFocus">
       <router-link :to="home" class="brand" aria-label="Verity home"><img class="verity-mark" src="/verity.svg" alt="" /><span class="nav-copy">Verity</span></router-link>
+      <button v-if="mobile && mobileOpen" type="button" class="close-menu" aria-label="Close menu" @click="closeMenu"><X :size="20" /></button>
       <div class="sidebar-label nav-copy">{{ admin ? 'Administration' : 'Agent workspace' }}</div>
       <nav class="sidebar-links" aria-label="Main navigation">
         <router-link v-for="item in links" :key="item.to" :to="item.to" :class="{ selected: selected(item) }" :aria-current="selected(item) ? 'page' : undefined" :title="item.label" @click="mobileOpen = false">
@@ -34,7 +35,7 @@
 <script setup>
 import { computed, ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ShieldCheck, LayoutDashboard, Fingerprint, History, BriefcaseBusiness, ChartNoAxesCombined, Users, Clock3, Flag, ChevronRight, PanelLeft, LogOut, Sun, Moon } from '@lucide/vue'
+import { ShieldCheck, LayoutDashboard, Fingerprint, History, BriefcaseBusiness, ChartNoAxesCombined, Users, Clock3, Flag, ChevronRight, PanelLeft, LogOut, Sun, Moon, X } from '@lucide/vue'
 import { useAuthStore } from '../stores/authStore.js'
 import { useTheme } from '../composables/useTheme.js'
 const route = useRoute(), router = useRouter()

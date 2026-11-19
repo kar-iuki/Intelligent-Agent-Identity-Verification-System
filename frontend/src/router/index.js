@@ -121,7 +121,7 @@ const router = createRouter({
   routes,
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) return savedPosition
-    if (to.meta.landing && ['#how-it-works', '#why-verity', '#questions', '#main-content'].includes(to.hash)) {
+    if (to.meta.landing && ['#how-it-works', '#guide', '#questions', '#main-content'].includes(to.hash)) {
       return { el: to.hash, top: 100, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }
     }
     if (to.path !== from.path) return { top: 0 }

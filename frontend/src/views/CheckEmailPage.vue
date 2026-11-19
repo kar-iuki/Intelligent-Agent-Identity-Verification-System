@@ -1,19 +1,18 @@
 <template>
   <div class="auth-page">
     <div class="auth-card">
-      <div class="icon">✉</div>
+      <span class="entry-symbol" aria-hidden="true"><Mail :size="24" /></span>
       <h1>Check your email</h1>
       <p>
         We sent a confirmation link to
         <strong>{{ email || 'your email' }}</strong>.
       </p>
       <p class="note">
-        Open the email and click the link to verify your account. After that you will
-        finish your profile with phone number and national ID.
+        Open the link, then finish your profile with your phone number and national ID.
       </p>
 
-      <p v-if="info" class="info">{{ info }}</p>
-      <p v-if="error" class="error">{{ error }}</p>
+      <p v-if="info" role="status" class="info">{{ info }}</p>
+      <p v-if="error" role="alert" class="error">{{ error }}</p>
 
       <button
         type="button"
@@ -30,7 +29,7 @@
         }}
       </button>
 
-      <router-link to="/login" class="btn btn-primary">Go to Sign In</router-link>
+      <router-link to="/login" class="btn btn-primary">Go to sign in</router-link>
 
       <p class="footer-link">
         Wrong email?
@@ -41,6 +40,7 @@
 </template>
 
 <script setup>
+import { Mail } from '@lucide/vue'
 import { computed, onBeforeUnmount, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/authStore.js'
@@ -97,38 +97,6 @@ async function handleResend() {
 </script>
 
 <style scoped>
-.auth-page {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  padding: 2rem;
-  background: linear-gradient(135deg, var(--surface-muted) 0%, var(--line) 100%);
-}
-
-.auth-card {
-  width: 100%;
-  max-width: 480px;
-  background: var(--surface);
-  border-radius: 12px;
-  padding: 2.5rem;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
-  text-align: center;
-}
-
-.icon {
-  width: 56px;
-  height: 56px;
-  margin: 0 auto 1.5rem;
-  background: var(--info-bg);
-  color: var(--info);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.4rem;
-}
-
 h1 {
   font-size: 1.5rem;
   color: var(--ink);

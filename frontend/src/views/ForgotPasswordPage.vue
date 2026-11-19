@@ -1,6 +1,7 @@
 <template>
   <div class="auth-page">
     <div class="auth-card">
+      <span class="entry-symbol" aria-hidden="true"><Mail :size="24" /></span>
       <h1>Reset your password</h1>
       <p class="subtitle">Enter the email on your account. We will send a link to choose a new password.</p>
 
@@ -17,14 +18,14 @@
           />
         </div>
 
-        <p v-if="error" class="error">{{ error }}</p>
+        <p v-if="error" role="alert" class="error">{{ error }}</p>
 
         <button type="submit" class="btn btn-primary" :disabled="loading">
           {{ loading ? 'Sending...' : 'Send reset link' }}
         </button>
       </form>
 
-      <p v-else class="info">{{ message }}</p>
+      <p v-else role="status" class="info">{{ message }}</p>
 
       <p class="footer-link">
         <router-link to="/login">Back to sign in</router-link>
@@ -34,6 +35,7 @@
 </template>
 
 <script setup>
+import { Mail } from '@lucide/vue'
 import { ref } from 'vue'
 import { useAuthStore } from '../stores/authStore.js'
 

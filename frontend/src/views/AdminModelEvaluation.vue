@@ -23,8 +23,8 @@
       </div>
 
       <template v-else-if="report">
-        <section class="metric-grid">
-          <article class="metric-card">
+        <section class="metric-grid" aria-label="Test set metrics">
+          <article class="metric-card accuracy-card">
             <p class="metric-label">Accuracy</p>
             <p class="metric-value">{{ percent(report.accuracy) }}</p>
             <p class="metric-note">Share of test records classified correctly</p>
@@ -320,6 +320,7 @@ h2 {
 .model-badge.checking {     background:var(--warning-bg); color:var(--warning); border-color:var(--warning-border); }
 
 .model-content {
+  container-type: inline-size;
   max-width: 1200px;
   margin: 0 auto;
   padding: 1.5rem;
@@ -329,7 +330,7 @@ h2 {
 
 .metric-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1.15fr) repeat(2, minmax(0, 1fr));
   gap: 0.75rem;
 }
 
@@ -509,31 +510,34 @@ h2 {
   margin: 0;
 }
 
-@media (max-width: 1000px) {
-  .metric-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .two-col {
-    grid-template-columns: 1fr;
-  }
+#app .model-page .accuracy-card {
+  grid-row: span 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: var(--sidebar-bg);
+  border-color: var(--sidebar-border);
 }
-
-@media (max-width: 640px) {
-  .model-header {
-    padding: 1rem;
-  }
-
-  .model-content {
-    padding: 1rem;
-  }
-
-  .metric-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .class-table {
-    font-size: 0.8rem;
-  }
+#app .accuracy-card .metric-label { color: var(--sidebar-text); font-size: 15px; }
+#app .accuracy-card .metric-value {
+  color: var(--brand-sage);
+  margin-block: 12px;
+  font-size: clamp(40px, 6cqi, 84px);
+  font-weight: 500;
+  letter-spacing: -.06em;
+  line-height: 1;
+}
+#app .accuracy-card .metric-note { color: var(--sidebar-muted); max-width: 26ch; }
+@container (max-width: 56rem) {
+  .two-col { grid-template-columns: minmax(0, 1fr); }
+}
+@container (max-width: 38rem) {
+  .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #app .model-page .accuracy-card { grid-column: 1 / -1; grid-row: auto; }
+  #app .model-page .metric-card { padding: 16px; }
+  .metric-value { font-size: 24px; }
+}
+@container (max-width: 18rem) {
+  .metric-grid { grid-template-columns: minmax(0, 1fr); }
 }
 </style>

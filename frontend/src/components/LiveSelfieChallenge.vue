@@ -2,49 +2,49 @@
   <div ref="captureRoot" class="live-selfie">
     <h3 class="title">Live selfie check</h3>
     <p class="hint">
-      First we take a clear photo while your face is centred and still.
-      Then you turn your head left or right so we know you are a real person
-      (not a photo held up to the camera).
+      Take a centred photo, then follow the prompt to turn your head.
     </p>
 
-    <div class="challenge-banner" :class="statusClass">
-      <strong>{{ bannerTitle }}</strong>
-      <span>{{ statusText }}</span>
-    </div>
+    <div class="selfie-console">
+      <div class="challenge-banner" :class="statusClass" role="status">
+        <strong>{{ bannerTitle }}</strong>
+        <span>{{ statusText }}</span>
+      </div>
 
-    <!--
-      The stage takes the camera stream's own aspect ratio so the whole frame is
-      visible: the landmark overlay, the guide oval and the captured photo then
-      all share one coordinate system. (object-fit: cover hid the top/bottom of
-      portrait phone streams, so the oval sat below the real face.)
-    -->
-    <div class="stage" :style="{ '--stream-aspect': streamAspect }">
-      <video
-        v-show="phase !== 'success'"
-        ref="videoRef"
-        class="media"
-        autoplay
-        playsinline
-        muted
-        @loadedmetadata="updateStreamAspect"
-        @resize="updateStreamAspect"
-      />
-      <img
-        v-if="previewUrl && phase === 'success'"
-        :src="previewUrl"
-        alt="Captured selfie"
-        class="media preview"
-      />
-      <canvas ref="overlayRef" class="overlay" />
-      <canvas ref="captureRef" class="hidden" />
-      <div v-if="phase === 'center'" class="guide-oval" :class="{ ready: faceCentered }" />
-      <div v-if="phase === 'challenge' && previewUrl" class="thumb-wrap">
-        <img :src="previewUrl" alt="Saved selfie" class="thumb" />
-        <span>Saved photo</span>
+      <!--
+        The stage takes the camera stream's own aspect ratio so the whole frame is
+        visible: the landmark overlay, the guide oval and the captured photo then
+        all share one coordinate system. (object-fit: cover hid the top/bottom of
+        portrait phone streams, so the oval sat below the real face.)
+      -->
+      <div class="stage" :style="{ '--stream-aspect': streamAspect }">
+        <video
+          v-show="phase !== 'success'"
+          ref="videoRef"
+          class="media"
+          autoplay
+          playsinline
+          muted
+          @loadedmetadata="updateStreamAspect"
+          @resize="updateStreamAspect"
+        />
+        <img
+          v-if="previewUrl && phase === 'success'"
+          :src="previewUrl"
+          alt="Captured selfie"
+          class="media preview"
+        />
+        <canvas ref="overlayRef" class="overlay" />
+        <canvas ref="captureRef" class="hidden" />
+        <div v-if="phase === 'center'" class="guide-oval" :class="{ ready: faceCentered }" />
+        <div v-if="phase === 'challenge' && previewUrl" class="thumb-wrap">
+          <img :src="previewUrl" alt="Saved selfie" class="thumb" />
+          <span>Saved photo</span>
+        </div>
       </div>
     </div>
 
-    <p v-if="error" class="error">{{ error }}</p>
+    <p v-if="error" class="error" role="alert">{{ error }}</p>
     <p v-if="loadingModel" class="muted">Loading face tracker…</p>
 
     <div class="actions">
@@ -410,28 +410,24 @@ function emitPassed() {
 .title { margin: 0; color: var(--ink); }
 .hint { margin: 0; color: var(--muted); font-size: 0.9rem; }
 
+.selfie-console {
+  padding: 0 12px 12px;
+  background: var(--media-background);
+  color: var(--sidebar-text);
+  border: 1px solid var(--sidebar-border);
+  border-radius: 12px;
+}
+
 .challenge-banner {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  padding: 0.85rem 1rem;
-  border-radius: 10px;
-
-  border: 1px solid var(--info-border);
-
- background:var(--info-bg); color:var(--info); border-color:var(--info-border); }
-
-.challenge-banner.ready {
-
-
-
- background:var(--success-bg); color:var(--success); border-color:var(--success-border); }
-
-.challenge-banner.ok {
-
-
-
- background:var(--success-bg); color:var(--success); border-color:var(--success-border); }
+  display: grid;
+  gap: 2px;
+  margin-bottom: 12px;
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--sidebar-border);
+}
+.challenge-banner strong { font-size: 15px; }
+.challenge-banner span { font-size: 13px; color: var(--sidebar-muted); }
+.challenge-banner.ready strong, .challenge-banner.ok strong { color: var(--brand-sage); }
 
 .stage {
   position: relative;
@@ -481,7 +477,7 @@ function emitPassed() {
 }
 
 .guide-oval.ready {
-  border-color: var(--success);
+  border-color: var(--brand-sage);
   border-style: solid;
 }
 
@@ -516,6 +512,8 @@ function emitPassed() {
   flex-wrap: wrap;
   justify-content: flex-end;
 }
+
+.actions > :first-child { margin-right: auto; }
 
 .btn {
   border: none;

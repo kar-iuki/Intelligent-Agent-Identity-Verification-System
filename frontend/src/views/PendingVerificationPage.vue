@@ -1,58 +1,24 @@
 <template>
   <div class="pending-page">
     <div class="pending-card">
-      <div class="icon">✓</div>
-      <h1>Registration Received</h1>
+      <span class="entry-symbol" aria-hidden="true"><Clock3 :size="24" /></span>
+      <h1>Registration received</h1>
       <p>
-        Your account has been created successfully. Your identity verification
-        process will begin shortly.
+        Your account is ready. Your identity verification is pending.
       </p>
       <p class="note">
-        You will be notified once your verification outcome is available.
-        Please sign in to check your status.
+        We’ll notify you when your result is available. You can also sign in to check your status.
       </p>
-      <router-link to="/login" class="btn">Go to Sign In</router-link>
+      <router-link to="/login" class="btn">Go to sign in</router-link>
     </div>
   </div>
 </template>
 
 <script setup>
+import { Clock3 } from '@lucide/vue'
 </script>
 
 <style scoped>
-.pending-page {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  padding: 2rem;
-  background: linear-gradient(135deg, var(--surface-muted) 0%, var(--line) 100%);
-}
-
-.pending-card {
-  width: 100%;
-  max-width: 480px;
-  background: var(--surface);
-  border-radius: 12px;
-  padding: 2.5rem;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
-  text-align: center;
-}
-
-.icon {
-  width: 56px;
-  height: 56px;
-  margin: 0 auto 1.5rem;
-  background: var(--success-bg);
-  color: var(--success);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-
 h1 {
   font-size: 1.5rem;
   color: var(--ink);

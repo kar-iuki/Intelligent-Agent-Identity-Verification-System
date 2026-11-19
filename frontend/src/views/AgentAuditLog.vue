@@ -1,65 +1,68 @@
 <template>
   <div class="audit-page workspace">
-    <header class="page-header">
+    <header>
       <div>
-        <h1>My audit trail</h1>
-        <p class="subtitle">Read-only history of actions on your account</p>
+        <h1>Activity history</h1>
+        <p class="subtitle">Verification and account activity, newest first.</p>
       </div>
-
     </header>
-
     <main class="content">
-      <p v-if="error" class="error">{{ error }}</p>
-      <p v-if="loading" class="muted">Loading audit trail...</p>
-
-      <ol v-else class="timeline">
-        <li v-for="log in logs" :key="log.logId" class="timeline-item">
-          <div class="dot" :class="outcomeClass(log.outcome)" />
-          <div class="card">
-            <div class="card-top">
-              <strong>{{ labelForAction(log.action) }}</strong>
-              <span class="badge" :class="outcomeClass(log.outcome)">{{ log.outcome }}</span>
-            </div>
-            <p class="time">{{ formatDate(log.timestamp) }}</p>
-          </div>
-        </li>
-        <li v-if="!logs.length" class="empty">No audit entries yet.</li>
-      </ol>
+      <p v-if="loading" class="history-state" role="status">Loading your activity…</p>
+      <div v-else-if="error" class="history-state">
+        <p role="alert">{{ error }}</p>
+        <button type="button" class="btn ghost" @click="loadLogs">Try again</button>
+      </div>
+      <p v-else-if="!days.length" class="history-state">Your account activity will appear here.</p>
+      <section v-for="day in days" :key="day.label" class="history-day">
+        <h2>{{ day.label }}</h2>
+        <ol>
+          <li v-for="{ log, date } in day.entries" :key="log.logId">
+            <time v-if="date" :datetime="date.toISOString()">{{ clock.format(date) }}</time>
+            <span v-else class="unknown-time">—</span>
+            <strong>{{ labelForAction(log.action) }}</strong>
+            <span class="badge" :class="outcomeClass(log.outcome)">{{ log.outcome }}</span>
+          </li>
+        </ol>
+      </section>
     </main>
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAuthStore } from '../stores/authStore.js'
+import { computed, onMounted, ref } from 'vue'
 import { getMyAuditLogs } from '../services/agentService.js'
 import { labelForAction } from '../utils/auditLabels.js'
-
-const router = useRouter()
-const { logout } = useAuthStore()
 
 const logs = ref([])
 const loading = ref(true)
 const error = ref('')
+const calendar = new Intl.DateTimeFormat(undefined, { dateStyle: 'full' })
+const clock = new Intl.DateTimeFormat(undefined, { timeStyle: 'short' })
+const days = computed(() => {
+  const groups = new Map()
+  for (const log of logs.value) {
+    const parsed = log.timestamp ? new Date(log.timestamp) : null
+    const date = parsed && Number.isFinite(parsed.getTime()) ? parsed : null
+    const label = date ? calendar.format(date) : 'Date unavailable'
+    if (!groups.has(label)) groups.set(label, { label, entries: [] })
+    groups.get(label).entries.push({ log, date })
+  }
+  return [...groups.values()]
+})
 
-onMounted(async () => {
+async function loadLogs() {
   loading.value = true
   error.value = ''
   try {
     const data = await getMyAuditLogs()
     logs.value = data.logs || []
   } catch (err) {
-    error.value = err.response?.data?.error || 'Failed to load audit trail'
+    error.value = err.response?.data?.error || 'Could not load your activity.'
   } finally {
     loading.value = false
   }
-})
-
-function formatDate(value) {
-  if (!value) return '—'
-  return new Date(value).toLocaleString()
 }
+onMounted(loadLogs)
 
 function outcomeClass(outcome) {
   const value = String(outcome || '').toLowerCase()
@@ -68,127 +71,42 @@ function outcomeClass(outcome) {
   if (['failed', 'rejected', 'blocked'].includes(value)) return 'bad'
   return 'neutral'
 }
-
-async function handleLogout() {
-  await logout()
-  router.push('/login')
-}
 </script>
 
 <style scoped>
-.audit-page {
-  min-height: 100vh;
-  background: var(--surface-muted);
-}
-
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  align-items: center;
-  padding: 1.25rem 2rem;
-  background: var(--surface);
-  border-bottom: 1px solid var(--line);
-  flex-wrap: wrap;
-}
-
-h1 {
-  margin: 0;
-  font-size: 1.25rem;
-  color: var(--ink);
-}
-
-.subtitle {
-  margin: 0.25rem 0 0;
-  color: var(--muted);
-  font-size: 0.875rem;
-}
-
-.header-actions {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-}
-
-.btn, .btn-logout {
+.history-state, .history-day { max-width: 64rem; }
+.history-state, .history-day ol {
   border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 0.5rem 0.9rem;
-  background: var(--surface);
-  cursor: pointer;
-  text-decoration: none;
-  color: var(--ink);
-  font-weight: 600;
-}
-
-.content {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 1.5rem;
-}
-
-.timeline {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-}
-
-.timeline-item {
-  display: grid;
-  grid-template-columns: 16px 1fr;
-  gap: 0.85rem;
-  align-items: start;
-}
-
-.dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 999px;
-  margin-top: 0.55rem;
-  background: var(--line);
-}
-
-.dot.ok { background: var(--success); }
-.dot.warn { background: var(--warning); }
-.dot.bad { background: var(--danger); }
-
-.card {
   background: var(--surface);
   border-radius: 12px;
-  padding: 0.9rem 1rem;
-  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
 }
-
-.card-top {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.75rem;
+.history-state { padding: 24px; color: var(--muted); }
+.history-state button { margin-top: 12px; padding-inline: 16px; }
+.history-day + .history-day { margin-top: 32px; }
+.history-day h2 { margin: 0 0 12px; }
+.history-day ol { list-style: none; padding: 0; margin: 0; }
+.history-day li {
+  display: grid;
+  grid-template-columns: 6rem minmax(0, 1fr) auto;
+  grid-template-areas: "time event outcome";
   align-items: center;
+  gap: 16px;
+  padding: 18px 20px;
 }
-
-.time {
-  margin: 0.35rem 0 0;
-  color: var(--muted);
-  font-size: 0.85rem;
-}
-
-.badge {
-  display: inline-block;
-  padding: 0.15rem 0.5rem;
-  border-radius: 999px;
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
+.history-day li + li { border-top: 1px solid var(--line); }
+time, .unknown-time { grid-area: time; font: 12px/1.5 var(--meta-font); color: var(--muted); }
+.history-day strong { grid-area: event; font-size: 14px; font-weight: 550; overflow-wrap: anywhere; }
+.badge { grid-area: outcome; }
 .badge.ok { background: var(--success-bg); color: var(--success); }
 .badge.warn { background: var(--warning-bg); color: var(--warning); }
 .badge.bad { background: var(--danger-bg); color: var(--danger); }
 .badge.neutral { background: var(--surface-muted); color: var(--ink); }
-
-.error { color: var(--danger); }
-.muted, .empty { color: var(--muted); }
+@media (max-width: 600px) {
+  .history-day li {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "event outcome" "time outcome";
+    gap: 4px 12px;
+    padding: 16px;
+  }
+}
 </style>
