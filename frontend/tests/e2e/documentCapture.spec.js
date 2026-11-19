@@ -73,7 +73,7 @@ for (const viewport of [{ width:390, height:844 }, { width:360, height:640 }, { 
 test('a refreshed retry still excludes uploads for passport and driving licence', async ({ page }) => {
   await setupCapture(page, true)
   await page.reload()
-  for (const name of ['Passport', "Driver's licence"]) {
+  for (const name of ['Passport', "Driver[’']s licence"]) {
     await page.getByRole('button', { name:new RegExp(name) }).click()
     await expect(page.getByRole('button', { name:'Upload file', exact:true })).toHaveCount(0)
     await expect(page.locator('input[type="file"]')).toHaveCount(0)

@@ -16,17 +16,14 @@
       <section class="intro" aria-labelledby="hero-title">
         <div class="wrap hero">
           <div class="hero-copy">
-            <h1 id="hero-title">Get verified<br /><span>as an agent.</span></h1>
-            <p>Confirm who you are with a photo ID and a live selfie. Your workspace shows each step and your verification result.</p>
-            <div class="hero-actions"><RouterLink class="start" to="/register">Create an account <ArrowRight :size="19" /></RouterLink><a href="#how-it-works">See the steps <ArrowDown :size="16" /></a></div>
+            <p class="hero-context">Agent identity verification</p>
+            <h1 id="hero-title">Your identity,<br /><em>in focus.</em></h1>
+            <p class="hero-description">Get verified with your photo ID and a live selfie. Try a sample capture first, or create an account to begin.</p>
+            <div class="hero-actions"><RouterLink class="start" to="/register">Create an account <ArrowRight :size="19" /></RouterLink><a href="#how-it-works">View the steps <ArrowDown :size="16" /></a></div>
           </div>
           <section id="guide" class="guide" aria-labelledby="guide-title">
-            <header><h2 id="guide-title"><ScanLine :size="19" />Document guide</h2></header>
-            <div class="choices" role="group" aria-label="Choose an identity document">
-              <button v-for="(item, index) in documents" :key="item.id" :aria-pressed="documentIndex === index" aria-controls="document-instructions" @click="documentIndex = index">{{ item.name }}</button>
-            </div>
-            <div class="document-stage"><img :src="documentInfo.image" :alt="documentInfo.alt" width="680" height="680" fetchpriority="high" /><div class="frame" aria-hidden="true"></div></div>
-            <div id="document-instructions" class="guide-caption" aria-live="polite"><span class="capture-icon"><Camera :size="19" /></span><div><h3>{{ documentInfo.capture }}</h3><p>{{ documentInfo.hint }}</p></div></div>
+            <header class="guide-heading"><h2 id="guide-title">Document guide</h2><span>Sample photos · camera off</span></header>
+            <div ref="practiceRoot"></div>
           </section>
         </div>
       </section>
@@ -52,13 +49,14 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
-import { ArrowDown, ArrowRight, ArrowUpRight, Camera, ContactRound, ListChecks, Menu, Pause, Play, Plus, ScanFace, ScanLine, X } from '@lucide/vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ArrowDown, ArrowRight, ArrowUpRight, ContactRound, ListChecks, Menu, Pause, Play, Plus, ScanFace, X } from '@lucide/vue'
 
-import { documents } from '../utils/documentGuide.js'
+import { mountCapturePractice } from '../components/capturePractice.js'
+import '../capture.css'
 
-const documentIndex = ref(0)
-const documentInfo = computed(() => documents[documentIndex.value])
+const practiceRoot = ref(null)
+let disposePractice
 const steps = [
   { short:'Document', title:'Capture your photo ID', detail:'Choose a national ID, passport, or driver’s licence. Follow the capture prompts and check that the details are readable.', icon:ContactRound },
   { short:'Selfie', title:'Take a live selfie', detail:'Face the camera in good light. Take a centred photo, then turn your head in the direction shown.', icon:ScanFace },
@@ -98,6 +96,7 @@ function closeMenu(event) {
   }
 }
 onMounted(() => {
+  disposePractice = mountCapturePractice(practiceRoot.value)
   originalTitle = document.title
   document.title = 'Verity — Agent identity verification'
   motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -105,6 +104,7 @@ onMounted(() => {
   window.addEventListener('keydown', closeMenu)
 })
 onBeforeUnmount(() => {
+  disposePractice?.()
   stopPlayback()
   motionPreference?.removeEventListener('change', stopPlayback)
   window.removeEventListener('keydown', closeMenu)

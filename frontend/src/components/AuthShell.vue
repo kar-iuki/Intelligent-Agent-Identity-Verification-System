@@ -7,7 +7,7 @@
     <div class="entry-layout" :class="{ 'with-guide': showGuide }">
       <div class="auth-shell"><div class="auth-form-area"><slot /></div></div>
       <aside v-if="showGuide" class="entry-guide">
-        <div class="entry-art"><img src="/guide/national-id.webp" alt="" width="680" height="680" /></div>
+        <div class="entry-art"><img src="/guide/national-id.webp" alt="" width="896" height="552" /></div>
         <div class="entry-checklist">
           <h2>What you’ll need</h2>
           <div><ContactRound /><p><strong>A photo ID</strong>National ID, passport, or driver’s licence.</p></div>

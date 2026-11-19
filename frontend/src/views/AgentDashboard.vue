@@ -89,18 +89,17 @@
 
         <!-- Step 2: document type + quality-gated capture -->
         <section v-else-if="currentStep === 2" class="panel">
-          <h2>Identity document</h2>
+          <h2 v-if="docSubstep === 'choose'">Identity document</h2>
           <p v-if="recaptureMode === 'document'" class="panel-copy recapture-note">
             Your selfie is fine — only recapture the identity document that failed quality checks.
           </p>
-          <p v-else class="panel-copy">
-            Choose your document type. Each photo is quality-checked before you can continue —
-            this helps OCR read your details correctly.
+          <p v-else-if="docSubstep === 'choose'" class="panel-copy">
+            Choose the ID you have with you. We’ll check that each photo is readable before you continue.
           </p>
 
           <div v-if="docSubstep === 'choose'" class="doc-type-grid">
             <button v-for="doc in documents" :key="doc.id" type="button" class="doc-type-card" @click="selectDocKind(doc.id)">
-              <img :src="doc.image" alt="" width="680" height="680" />
+              <img :src="doc.image" alt="" width="896" height="552" />
               <strong>{{ doc.name }}</strong><span>{{ doc.capture }}</span>
             </button>
             <button type="button" class="btn-secondary" @click="currentStep = 1">Back</button>
@@ -1104,7 +1103,7 @@ input[readonly] {
   box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
-.doc-type-card img { width:100%; height:88px; object-fit:contain; background:#151b30; border-radius:6px; margin-bottom:6px; }
+.doc-type-card img { width:100%; aspect-ratio:896/552; height:auto; object-fit:contain; background:#739d92; border-radius:6px; margin-bottom:6px; }
 
 .doc-type-card strong {
   font-size: 1.05rem;

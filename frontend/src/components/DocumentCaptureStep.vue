@@ -1,82 +1,61 @@
 <template>
-  <!-- A verification retry requires a new camera photo instead of a file upload. -->
   <div ref="captureRoot" class="doc-capture">
-    <h3 class="title">{{ title }}</h3>
-    <p class="hint">{{ hint }}</p>
-
-    <div class="mode-toggle">
-      <button type="button" class="chip" :class="{ active: mode === 'camera' }" @click="setMode('camera')">
-        Take photo
-      </button>
-      <button v-if="!cameraOnly" type="button" class="chip" :class="{ active: mode === 'upload' }" @click="setMode('upload')">
-        Upload file
-      </button>
+    <div v-if="!cameraOnly" class="source-switch" role="group" aria-label="Image source">
+      <button type="button" :aria-pressed="mode === 'camera'" :disabled="busy" @click="setMode('camera')">Take photo</button>
+      <button type="button" :aria-pressed="mode === 'upload'" :disabled="busy" @click="setMode('upload')">Upload file</button>
     </div>
-    <p v-if="cameraOnly" class="hint">For this verification retry, take a new document photo. File uploads are disabled.</p>
-
-    <div v-if="mode === 'camera'" class="camera-block">
-      <!-- frame keeps the stream's aspect ratio so what you see is exactly what is captured -->
-      <div class="media-frame" :style="{ '--stream-aspect': streamAspect }">
-        <video
-          v-show="!previewUrl"
-          ref="videoRef"
-          class="media"
-          autoplay
-          playsinline
-          muted
-          @loadedmetadata="updateStreamAspect"
-          @resize="updateStreamAspect"
-        />
-        <img v-if="previewUrl" :src="previewUrl" alt="Captured document" class="media" />
+    <div v-if="mode === 'camera'" class="capture-console" :data-layout="layout">
+      <div class="capture-toolbar">
+        <span class="capture-label">Document camera</span>
+        <div class="capture-switch" role="group" aria-label="Capture layout">
+          <button v-for="view in ['guided','focus']" :key="view" type="button" :aria-pressed="layout === view" @click="selectLayout(view)">{{ view === 'guided' ? 'Guided' : 'Focus' }}</button>
+        </div>
       </div>
-      <canvas ref="canvasRef" class="hidden" />
-
-      <div class="actions">
-        <button v-if="!streamActive && !previewUrl" type="button" class="btn secondary" @click="startCamera">
-          Open camera
-        </button>
-        <button v-if="!previewUrl" type="button" class="btn" :disabled="!streamActive || busy" @click="capture">
-          Capture
-        </button>
-        <button v-else type="button" class="btn secondary" :disabled="busy" @click="retake">Retake</button>
+      <div class="capture-body">
+        <div class="capture-copy">
+          <h3 class="title">{{ title }}</h3>
+          <p>{{ previewUrl ? 'Check that the smallest print is legible and every edge is visible.' : hint }}</p>
+        </div>
+        <div class="capture-scene live-scene">
+          <div class="media-frame" :style="{ '--stream-aspect': streamAspect }">
+            <video v-show="!previewUrl" ref="videoRef" class="media" autoplay playsinline muted @loadedmetadata="updateStreamAspect" @resize="updateStreamAspect" />
+            <img v-if="previewUrl" :src="previewUrl" alt="Captured document" class="media" @load="updatePhotoAspect" />
+            <div v-if="streamActive && !previewUrl" class="capture-marks" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+          </div>
+          <span v-if="!streamActive && !previewUrl" class="camera-standby" role="status">{{ cameraError ? 'Camera unavailable' : 'Waiting for camera…' }}</span>
+          <canvas ref="canvasRef" class="hidden" />
+        </div>
+        <div class="capture-operations">
+          <button v-if="previewUrl" type="button" class="capture-secondary" :disabled="busy" @click="retake">Retake</button>
+          <template v-else>
+            <button type="button" class="capture-primary" :disabled="!streamActive || busy" @click="capture">Capture</button>
+            <button v-if="cameraError" type="button" class="capture-secondary" @click="startCamera">Open camera</button>
+          </template>
+        </div>
       </div>
-      <p v-if="cameraError" class="error">{{ cameraError }}</p>
     </div>
-
     <div v-else-if="!cameraOnly">
-      <ImageUpload
-        :label="title"
-        accept="image/jpeg,image/png"
-        :max-size="5"
-        @file-selected="onFileSelected"
-      />
+      <h3 class="title">{{ title }}</h3>
+      <p class="upload-hint">{{ hint }}</p>
+      <div :inert="busy"><ImageUpload :label="title" accept="image/jpeg,image/png" :max-size="5" @file-selected="onFileSelected" /></div>
     </div>
-
-    <div v-if="checking" class="status">Checking image quality…</div>
-    <ul v-if="failures.length" class="failures">
-      <li v-for="(item, idx) in failures" :key="idx">{{ item }}</li>
-    </ul>
-    <ul v-if="warnings.length" class="warnings">
-      <li v-for="(item, idx) in warnings" :key="idx">{{ item }}</li>
-    </ul>
-    <p v-if="passed" class="ok">Image quality looks good for OCR.</p>
-
+    <p v-if="mode === 'camera' && cameraError" class="notice" role="alert">{{ cameraError }}</p>
+    <div v-if="failures.length" class="notice" role="alert">
+      <strong>{{ checkUnavailable ? 'Quality check unavailable' : 'Your photo needs another look' }}</strong>
+      <ul><li v-for="item in failures" :key="item">{{ item }}</li></ul>
+    </div>
+    <ul v-if="warnings.length" class="notice"><li v-for="item in warnings" :key="item">{{ item }}</li></ul>
+    <p v-if="checking || passed" role="status">{{ checking ? 'Checking image quality…' : 'Photo quality check passed.' }}</p>
     <div class="footer-actions">
-      <button type="button" class="btn secondary" :disabled="busy" @click="$emit('back')">Back</button>
-      <button
-        type="button"
-        class="btn"
-        :disabled="!selectedFile || busy"
-        @click="runQualityCheck"
-      >
-        {{ checking ? 'Checking…' : passed ? 'Continue' : 'Check quality & continue' }}
-      </button>
+      <button type="button" class="step-back" :disabled="busy" @click="$emit('back')">Back</button>
+      <button type="button" class="step-next" :disabled="!selectedFile || busy" @click="runQualityCheck">{{ checking ? 'Checking…' : passed ? 'Continue' : 'Check quality & continue' }}</button>
     </div>
   </div>
 </template>
 
 <script setup>
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import '../capture.css'
 import ImageUpload from './ImageUpload.vue'
 import { checkImageQuality } from '../services/agentService.js'
 import { markCameraCapture, documentCaptureSource } from '../utils/documentCaptureSource.js'
@@ -93,6 +72,8 @@ const props = defineProps({
 const emit = defineEmits(['back', 'passed'])
 
 const mode = ref('camera')
+const layout = ref('focus')
+const checkUnavailable = ref(false)
 const captureRoot = ref(null)
 const videoRef = ref(null)
 const canvasRef = ref(null)
@@ -104,6 +85,10 @@ function updateStreamAspect() {
   if (video?.videoWidth && video?.videoHeight) {
     streamAspect.value = video.videoWidth / video.videoHeight
   }
+}
+function updatePhotoAspect(event) {
+  const img = event.currentTarget
+  if (img.naturalWidth && img.naturalHeight) streamAspect.value = img.naturalWidth / img.naturalHeight
 }
 const streamActive = ref(false)
 const previewUrl = ref(null)
@@ -117,8 +102,12 @@ const busy = ref(false)
 
 let mediaStream = null
 let cameraGeneration = 0
+let qualityGeneration = 0
 
 onMounted(() => {
+  try {
+    if (sessionStorage.getItem('verity-capture-layout') === 'guided') layout.value = 'guided'
+  } catch { /* Camera capture also works when session storage is unavailable. */ }
   captureRoot.value?.scrollIntoView?.({ block: 'start' })
   if (props.initialFile && (!props.cameraOnly || documentCaptureSource(props.initialFile) === 'camera')) {
     selectedFile.value = props.initialFile
@@ -129,6 +118,7 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
+  qualityGeneration += 1
   stopCamera()
   revokePreview()
 })
@@ -147,11 +137,20 @@ watch(
 )
 
 watch(() => props.cameraOnly, (required) => {
-  if (required && (mode.value === 'upload' || documentCaptureSource(selectedFile.value) === 'upload')) setMode('camera')
+  if (required && (mode.value === 'upload' || documentCaptureSource(selectedFile.value) === 'upload')) {
+    clearPreview()
+    mode.value = 'camera'
+    nextTick(startCamera)
+  }
 })
 
+function selectLayout(view) {
+  layout.value = view
+  try { sessionStorage.setItem('verity-capture-layout', view) } catch {}
+}
+
 async function setMode(next) {
-  if (busy.value || (props.cameraOnly && next === 'upload')) return
+  if (busy.value || next === mode.value || (props.cameraOnly && next === 'upload')) return
   mode.value = next
   clearPreview()
   stopCamera()
@@ -206,6 +205,9 @@ function revokePreview() {
 }
 
 function clearPreview() {
+  qualityGeneration += 1
+  checking.value = false
+  busy.value = false
   selectedFile.value = null
   passed.value = false
   failures.value = []
@@ -228,8 +230,9 @@ async function capture() {
   const ctx = canvas.getContext('2d')
   ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
 
+  const generation = cameraGeneration
   const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.92))
-  if (!blob) return
+  if (!blob || generation !== cameraGeneration) return
 
   const file = markCameraCapture(new File([blob], `document-${Date.now()}.jpg`, { type: 'image/jpeg' }))
   selectedFile.value = file
@@ -242,6 +245,7 @@ async function capture() {
 
 function onFileSelected(file) {
   if (props.cameraOnly || busy.value) return
+  warnings.value = []
   selectedFile.value = file
   passed.value = false
   failures.value = []
@@ -258,11 +262,15 @@ async function runQualityCheck() {
     return
   }
 
+  const generation = ++qualityGeneration
+  checkUnavailable.value = false
+  warnings.value = []
   checking.value = true
   busy.value = true
   failures.value = []
   try {
     const result = await checkImageQuality(selectedFile.value, 'document', props.documentKind)
+    if (generation !== qualityGeneration) return
     warnings.value = result.warnings || []
     if (result.passed) {
       passed.value = true
@@ -274,118 +282,32 @@ async function runQualityCheck() {
         : ['Image quality is not good enough. Please retake.']
     }
   } catch (err) {
-    failures.value = [err.response?.data?.error || err.message || 'Quality check failed']
+    if (generation !== qualityGeneration) return
+    checkUnavailable.value = true
+    failures.value = [err.response?.data?.error || err.message || 'Try the quality check again.']
   } finally {
-    checking.value = false
-    busy.value = false
+    if (generation === qualityGeneration) {
+      checking.value = false
+      busy.value = false
+    }
   }
 }
 </script>
 
 <style scoped>
-.doc-capture {
-  scroll-margin-top: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-}
-
-.title {
-  margin: 0;
-  color: var(--ink);
-}
-
-.hint {
-  margin: 0;
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-
-.mode-toggle {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.chip {
-  border: 1px solid var(--line);
-  background: var(--surface);
-  border-radius: 999px;
-  padding: 0.4rem 0.85rem;
-  cursor: pointer;
-}
-
-.chip.active {
-  background: var(--action);
-  border-color: var(--action);
-  color: var(--on-brand);
-}
-
-.media-frame {
-  position: relative;
-  width: min(100%, 400px, calc(32svh * var(--stream-aspect)));
-  margin: 0 auto;
-  aspect-ratio: var(--stream-aspect);
-  border-radius: 12px;
-  overflow: hidden;
-  background: var(--media-background);
-}
-
-.media {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  /* letterbox rather than crop, so the full captured frame is always visible */
-  object-fit: contain;
-}
-
-.hidden { display: none; }
-
-.actions, .footer-actions {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-}
-
-.footer-actions {
-  margin-top: 0.5rem;
-}
-
-.btn {
-  border: none;
-  border-radius: 8px;
-  padding: 0.55rem 0.9rem;
-  background: var(--action);
-  color: var(--on-brand);
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.btn.secondary {
-  background: var(--surface-muted);
-  color: var(--ink);
-}
-
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.failures {
-  margin: 0;
-  padding-left: 1.1rem;
-  color: var(--danger);
-}
-
-.warnings {
-  margin: 0;
-  padding-left: 1.1rem;
-  color: var(--warning);
-  font-size: 0.85rem;
-}
-
-.ok { color: var(--success); margin: 0; }
-.status { color: var(--ink); }
-.error { color: var(--danger); margin: 0; }
+.doc-capture { scroll-margin-top:1rem; display:grid; gap:12px; max-width:680px; margin-inline:auto; }
+.source-switch { display:flex; gap:4px; }
+.source-switch button,.footer-actions button { min-height:44px; padding:8px 16px; font:inherit; font-weight:600; border-radius:24px; }
+.source-switch button,.step-back { background:var(--surface); color:var(--ink); border:1px solid var(--line); }
+.source-switch button[aria-pressed="true"] { background:var(--selected-bg); color:var(--selected-text); border-color:var(--selected-border); }
+.live-scene { display:grid; place-items:center; min-height:108px; }
+.media-frame { position:relative; width:min(100%, 560px, calc(32svh * var(--stream-aspect))); aspect-ratio:var(--stream-aspect); margin:auto; }
+.media { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; }
+.hidden { display:none; }
+.camera-standby { position:absolute; left:12px; right:12px; text-align:center; color:#e4ebe1; font-size:14px; }
+.footer-actions { display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px; }
+.step-next { background:var(--action); border:1px solid var(--action); color:var(--on-brand); }
+.notice { padding:12px 16px; border-left:3px solid var(--warning-border); color:var(--warning); background:var(--warning-bg); font-size:14px; }
+.notice ul { padding-left:18px; margin-top:4px; }
+.upload-hint { color:var(--muted); margin-block:5px 12px; }
 </style>
