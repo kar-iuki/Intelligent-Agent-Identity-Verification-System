@@ -1,0 +1,42 @@
+{
+  "seed": 120141,
+  "class_counts": {"Verified": 3000, "Manual Review": 2400, "Rejected": 1600},
+  "provenance": "LFW detected genuine pairs define the clear-face centre and robust spread. The uncertain and difficult-mismatch components, adjudication outcomes and frequencies are experimental assumptions. All score distributions overlap.",
+  "face_borderline": [41, 8],
+  "face_difficult_impostor": [18.5, 6.5],
+  "live_borderline": [0.65, 0.17],
+  "live_difficult_attack": [0.43, 0.24],
+  "ocr_borderline": [0.53, 0.19],
+  "ocr_mismatch": [0.22, 0.17],
+  "clear_ocr_quantile": 0.5,
+  "poor_quality_shift": [-0.65, -20, -7],
+  "quality_observation_noise": [0.12, 4, 2],
+  "face_measurement_sd": 3,
+  "live_measurement_sd": 0.025,
+  "ocr_measurement_sd": 0.04,
+  "ocr_quality_penalty": 0.16,
+  "quality_logblur_reference": 3.4,
+  "quality_contrast_reference": 25,
+  "face_clear_estimator": "median_iqr",
+  "sampling": "inverse_cdf",
+  "scenarios": {
+    "Verified": [
+      ["clear_genuine", 1, "clear_genuine", "real", "clear", false]
+    ],
+    "Manual Review": [
+      ["uncertain_face", 0.49, "borderline", "real", "clear", false],
+      ["uncertain_face_poor_capture", 0.08, "borderline", "real", "clear", true],
+      ["uncertain_document", 0.15, "genuine", "real", "borderline", false],
+      ["uncertain_presentation", 0.13, "genuine", "borderline", "clear", false],
+      ["recapture_needed", 0.1, "genuine", "real", "clear", true],
+      ["multiple_uncertainties", 0.05, "borderline", "borderline", "borderline", false]
+    ],
+    "Rejected": [
+      ["identity_mismatch", 0.15, "impostor", "real", "clear", false],
+      ["photo_attack", 0.22, "genuine", "attack", "clear", false],
+      ["document_mismatch", 0.31, "genuine", "real", "mismatch", false],
+      ["difficult_identity_mismatch", 0.17, "difficult_impostor", "real", "clear", false],
+      ["difficult_presentation_attack", 0.15, "genuine", "difficult_attack", "clear", false]
+    ]
+  }
+}

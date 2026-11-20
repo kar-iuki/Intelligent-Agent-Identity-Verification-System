@@ -1,0 +1,290 @@
+{
+  "model_version": "3.1.1",
+  "baseline_version": "3.1.0",
+  "class_order": [
+    "Verified",
+    "Manual Review",
+    "Rejected"
+  ],
+  "seeds": {
+    "train": 120141,
+    "development": 120142,
+    "evaluation": 120143
+  },
+  "quality_profiles": [
+    [
+      35,
+      110,
+      30
+    ],
+    [
+      80,
+      150,
+      45
+    ],
+    [
+      200,
+      185,
+      55
+    ]
+  ],
+  "candidate_sha256": "966ad20a0abc97ad16580fc54a1e0fcef17b1c6577accb3d9e63becb871f0a31",
+  "baseline": {
+    "original": {
+      "matrix": [
+        [
+          814,
+          62,
+          24
+        ],
+        [
+          169,
+          92,
+          39
+        ],
+        [
+          22,
+          33,
+          245
+        ]
+      ],
+      "accuracy": 0.7673333333333333,
+      "macro_f1": 0.6794458790362757,
+      "strong_evidence": {
+        "below_25": {
+          "Verified": 0,
+          "Manual Review": 0,
+          "Rejected": 4
+        },
+        "25_through_50": {
+          "Verified": 16,
+          "Manual Review": 0,
+          "Rejected": 0
+        },
+        "above_50": {
+          "Verified": 59,
+          "Manual Review": 0,
+          "Rejected": 0
+        }
+      }
+    },
+    "revised": {
+      "matrix": [
+        [
+          1645,
+          127,
+          28
+        ],
+        [
+          386,
+          174,
+          40
+        ],
+        [
+          45,
+          96,
+          459
+        ]
+      ],
+      "accuracy": 0.7593333333333333,
+      "macro_f1": 0.6708040862127355,
+      "strong_evidence": {
+        "below_25": {
+          "Verified": 2,
+          "Manual Review": 0,
+          "Rejected": 13
+        },
+        "25_through_50": {
+          "Verified": 27,
+          "Manual Review": 1,
+          "Rejected": 0
+        },
+        "above_50": {
+          "Verified": 136,
+          "Manual Review": 0,
+          "Rejected": 0
+        }
+      }
+    },
+    "perfect_evidence": {
+      "below_25": {
+        "Verified": 11,
+        "Manual Review": 0,
+        "Rejected": 64
+      },
+      "25_through_50": {
+        "Verified": 78,
+        "Manual Review": 0,
+        "Rejected": 0
+      },
+      "above_50": {
+        "Verified": 150,
+        "Manual Review": 0,
+        "Rejected": 0
+      }
+    },
+    "new_profiles": {
+      "below_25": {
+        "Verified": 15,
+        "Manual Review": 0,
+        "Rejected": 60
+      },
+      "25_through_50": {
+        "Verified": 75,
+        "Manual Review": 0,
+        "Rejected": 0
+      },
+      "above_50": {
+        "Verified": 150,
+        "Manual Review": 0,
+        "Rejected": 0
+      }
+    },
+    "strong_face_weak_liveness_or_text": {
+      "Verified": 0,
+      "Manual Review": 1,
+      "Rejected": 216
+    },
+    "benchmark_face_with_simulated_other_inputs": {
+      "genuine": {
+        "Verified": 477,
+        "Manual Review": 0,
+        "Rejected": 23
+      },
+      "impostor": {
+        "Verified": 0,
+        "Manual Review": 0,
+        "Rejected": 500
+      }
+    }
+  },
+  "candidate": {
+    "original": {
+      "matrix": [
+        [
+          623,
+          260,
+          17
+        ],
+        [
+          124,
+          139,
+          37
+        ],
+        [
+          16,
+          36,
+          248
+        ]
+      ],
+      "accuracy": 0.6733333333333333,
+      "macro_f1": 0.6504666348865781,
+      "strong_evidence": {
+        "below_25": {
+          "Verified": 0,
+          "Manual Review": 0,
+          "Rejected": 4
+        },
+        "25_through_50": {
+          "Verified": 0,
+          "Manual Review": 16,
+          "Rejected": 0
+        },
+        "above_50": {
+          "Verified": 57,
+          "Manual Review": 2,
+          "Rejected": 0
+        }
+      }
+    },
+    "revised": {
+      "matrix": [
+        [
+          1668,
+          116,
+          16
+        ],
+        [
+          132,
+          419,
+          49
+        ],
+        [
+          25,
+          80,
+          495
+        ]
+      ],
+      "accuracy": 0.8606666666666667,
+      "macro_f1": 0.8211453573624711,
+      "strong_evidence": {
+        "below_25": {
+          "Verified": 0,
+          "Manual Review": 0,
+          "Rejected": 15
+        },
+        "25_through_50": {
+          "Verified": 0,
+          "Manual Review": 28,
+          "Rejected": 0
+        },
+        "above_50": {
+          "Verified": 130,
+          "Manual Review": 6,
+          "Rejected": 0
+        }
+      }
+    },
+    "perfect_evidence": {
+      "below_25": {
+        "Verified": 0,
+        "Manual Review": 4,
+        "Rejected": 71
+      },
+      "25_through_50": {
+        "Verified": 1,
+        "Manual Review": 76,
+        "Rejected": 1
+      },
+      "above_50": {
+        "Verified": 143,
+        "Manual Review": 7,
+        "Rejected": 0
+      }
+    },
+    "new_profiles": {
+      "below_25": {
+        "Verified": 0,
+        "Manual Review": 7,
+        "Rejected": 68
+      },
+      "25_through_50": {
+        "Verified": 1,
+        "Manual Review": 74,
+        "Rejected": 0
+      },
+      "above_50": {
+        "Verified": 146,
+        "Manual Review": 4,
+        "Rejected": 0
+      }
+    },
+    "strong_face_weak_liveness_or_text": {
+      "Verified": 0,
+      "Manual Review": 2,
+      "Rejected": 215
+    },
+    "benchmark_face_with_simulated_other_inputs": {
+      "genuine": {
+        "Verified": 458,
+        "Manual Review": 19,
+        "Rejected": 23
+      },
+      "impostor": {
+        "Verified": 0,
+        "Manual Review": 0,
+        "Rejected": 500
+      }
+    }
+  }
+}

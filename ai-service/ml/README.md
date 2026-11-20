@@ -1,4 +1,6 @@
-> Current installed model: **v3.0.0**. See [v3 results](experiments/v3/SUMMARY.md) and [offline improvement workflow](experiments/v3/README.md). On the same fresh evaluation set, accuracy changed from 75.733% to 75.800% (one additional correct decision); this is not statistically conclusive. The original v2 methodology below is preserved for reproduction. Running `train_model.py` replaces artifacts with the v2 training workflow; use the v3 instructions for the improvement experiment.
+The AI service loads model **v3.1.0**. The **v3.1.1** face-review candidate is available for offline evaluation. [Candidate training and results](experiments/face_review/README.md)
+
+Earlier experiments include the [v3.0.0 comparison](experiments/v3/SUMMARY.md) and its [offline improvement workflow](experiments/v3/README.md). The v2 training commands below overwrite the installed model artifacts.
 
 # KYC experiment v2: reproducibility and deployment
 

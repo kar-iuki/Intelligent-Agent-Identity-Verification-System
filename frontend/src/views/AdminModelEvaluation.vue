@@ -3,15 +3,16 @@
     <header class="model-header">
       <div>
         <h1>Model Evaluation</h1>
-        <p class="subtitle">SVM KYC classifier — held-out test set performance</p>
+        <p class="subtitle">Saved SVM evaluation<template v-if="report?.model_version"> · v{{ report.model_version }}</template> · Synthetic test cases</p>
       </div>
       <span
         class="model-badge"
-        :class="status.loading ? 'checking' : status.modelLoaded ? 'active' : 'fallback'"
+        :class="status.loading ? 'checking' : status.unknown ? 'checking' : status.modelLoaded ? 'active' : 'fallback'"
       >
         <span class="model-dot" aria-hidden="true" />
-        <span v-if="status.loading">Checking model…</span>
-        <span v-else-if="status.modelLoaded">SVM active<template v-if="status.modelVersion"> · v{{ status.modelVersion }}</template></span>
+        <span v-if="status.loading">Checking live model…</span>
+        <span v-else-if="status.unknown">Live status unavailable</span>
+        <span v-else-if="status.modelLoaded">Live SVM<template v-if="status.modelVersion"> · v{{ status.modelVersion }}</template></span>
         <span v-else>Using threshold rules</span>
       </span>
     </header>
@@ -23,33 +24,37 @@
       </div>
 
       <template v-else-if="report">
+        <p v-if="status.modelLoaded && status.modelVersion && report.model_version && status.modelVersion !== report.model_version" class="version-note">
+          The live service reports v{{ status.modelVersion }}. These results are for v{{ report.model_version }}.
+        </p>
         <section class="metric-grid" aria-label="Test set metrics">
           <article class="metric-card accuracy-card">
             <p class="metric-label">Accuracy</p>
             <p class="metric-value">{{ percent(report.accuracy) }}</p>
-            <p class="metric-note">Share of test records classified correctly</p>
+            <p v-if="report.correct_predictions != null" class="metric-note">{{ formatNumber(report.correct_predictions) }} of {{ formatNumber(report.split_sizes.test) }} test cases classified correctly</p>
+            <p v-else class="metric-note">Share of test cases classified correctly</p>
           </article>
           <article class="metric-card">
             <p class="metric-label">Macro F1-score</p>
-            <p class="metric-value">{{ percent(report.macro_f1) }}</p>
+            <p class="metric-value">{{ f1Score(report.macro_f1) }}</p>
             <p class="metric-note">Unweighted mean F1 across the three classes</p>
           </article>
           <article class="metric-card">
             <p class="metric-label">Weighted F1-score</p>
-            <p class="metric-value">{{ percent(report.weighted_f1) }}</p>
+            <p class="metric-value">{{ f1Score(report.weighted_f1) }}</p>
             <p class="metric-note">F1 weighted by class support</p>
           </article>
           <article class="metric-card">
-            <p class="metric-label">Training date</p>
-            <p class="metric-value small">{{ formatDate(report.training_date) }}</p>
-            <p class="metric-note">Model version {{ report.model_version || '—' }}</p>
+            <p class="metric-label">Test cases</p>
+            <p class="metric-value">{{ formatNumber(report.split_sizes?.test) }}</p>
+            <p class="metric-note">Held out for final evaluation</p>
           </article>
           <article class="metric-card">
-            <p class="metric-label">Dataset size</p>
+            <p class="metric-label">Total synthetic cases</p>
             <p class="metric-value">{{ formatNumber(report.dataset_size) }}</p>
             <p v-if="report.split_sizes" class="metric-note">
               {{ formatNumber(report.split_sizes.train) }} train ·
-              {{ formatNumber(report.split_sizes.validation) }} validation ·
+              {{ formatNumber(report.split_sizes.validation) }} development ·
               {{ formatNumber(report.split_sizes.test) }} test
             </p>
           </article>
@@ -81,8 +86,7 @@
               </tbody>
             </table>
             <p class="footnote">
-              Precision: of the agents the model put in a class, how many belonged there.
-              Recall: of the agents in a class, how many the model found.
+              Precision measures how often a predicted class was correct. Recall measures how many cases in that class the model identified.
             </p>
           </section>
 
@@ -118,13 +122,37 @@
               </template>
             </div>
             <p class="footnote">
-              Shading shows each cell's share of its actual class. Diagonal cells are correct
-              decisions; off-diagonal cells with errors are outlined in red. The most costly error is a
-              Rejected agent predicted as Verified (bottom-left).
+              Rows show the assigned outcomes. Columns show the model predictions. Each percentage is a share of its row.
             </p>
           </section>
         </div>
 
+        <div v-if="report.comparisons?.length" class="two-col">
+          <section class="panel">
+            <h2>Version comparison</h2>
+            <table class="class-table">
+              <thead><tr><th scope="col">Test set</th><th scope="col">Model</th><th scope="col" class="num">Accuracy</th><th scope="col" class="num">Macro F1</th></tr></thead>
+              <tbody v-for="sample in report.comparisons" :key="sample.sample">
+                <tr>
+                  <th scope="rowgroup" rowspan="2">{{ sample.sample }}<small class="sample-size">{{ formatNumber(sample.current.cases) }} cases</small></th>
+                  <td>v{{ report.baseline_version }}</td>
+                  <td class="num">{{ percent(sample.baseline.accuracy) }}</td><td class="num">{{ f1Score(sample.baseline.macro_f1) }}</td>
+                </tr>
+                <tr>
+                  <td>v{{ report.model_version }}</td>
+                  <td class="num strong">{{ percent(sample.current.accuracy) }}</td><td class="num strong">{{ f1Score(sample.current.macro_f1) }}</td>
+                </tr>
+              </tbody>
+            </table>
+            <p class="footnote">Both models saw the same cases within each test set. The headline metrics use the revised scenarios.</p>
+          </section>
+          <section v-if="report.face_review_probes" class="panel">
+            <h2>Face matches sent to review</h2>
+            <p class="probe-result">{{ report.face_review_probes['Manual Review'] }} <span>of {{ probeCount }} cases</span></p>
+            <p class="probe-detail">Face similarity between 25 and 50, with perfect OCR and liveness across three held-out image-quality profiles.</p>
+            <p class="footnote">v{{ report.model_version }} verified {{ report.face_review_probes.Verified }} and rejected {{ report.face_review_probes.Rejected }}. v{{ report.baseline_version }} sent {{ report.baseline_face_review_probes['Manual Review'] }} to review.</p>
+          </section>
+        </div>
         <section v-if="report.best_params" class="panel meta-panel">
           <h2>Model configuration</h2>
           <dl class="meta-list">
@@ -146,10 +174,7 @@
             </div>
           </dl>
           <p class="footnote">
-            Metrics are measured on the held-out test split of the synthetic training dataset,
-            informed by local LFW, NUAA and MIDV-500 measurements. Scenario frequencies and
-            adjudication outcomes are modelling assumptions. These metrics and probabilities
-            do not establish real-world performance or fraud prevalence.
+            The simulator uses measurements from LFW, NUAA and MIDV-500. Its scenario frequencies and outcome labels are modeling assumptions. Accuracy on real applicants remains unmeasured.
           </p>
         </section>
       </template>
@@ -170,7 +195,7 @@ const CLASS_ORDER = [
 const report = ref(null)
 const loading = ref(true)
 const error = ref('')
-const status = reactive({ loading: true, modelLoaded: false, modelVersion: null })
+const status = reactive({ loading: true, modelLoaded: false, modelVersion: null, unknown: false })
 let statusTimer = null
 
 const classRows = computed(() =>
@@ -182,6 +207,10 @@ const matrixLabels = computed(() => {
   if (!keys) return CLASS_ORDER
   return keys.map((key) => CLASS_ORDER.find((cls) => cls.key === key) || { key, label: key, short: key })
 })
+
+const probeCount = computed(() =>
+  Object.values(report.value?.face_review_probes || {}).reduce((total, count) => total + count, 0)
+)
 
 const matrixRows = computed(() =>
   (report.value?.confusion_matrix || []).map((row) => {
@@ -198,7 +227,7 @@ onMounted(async () => {
   } catch (err) {
     error.value =
       err.response?.status === 404
-        ? 'No evaluation report found. Train the model with `python ml/train_model.py` in the ai-service folder.'
+        ? 'The saved evaluation report is unavailable.'
         : err.response?.data?.error || 'Failed to load the evaluation report.'
   } finally {
     loading.value = false
@@ -212,9 +241,12 @@ onBeforeUnmount(() => {
 async function loadStatus() {
   try {
     const data = await getModelStatus()
+    status.unknown = data.aiServiceReachable === false || typeof data.modelLoaded !== 'boolean'
     status.modelLoaded = Boolean(data.modelLoaded)
     status.modelVersion = data.modelVersion
   } catch {
+    status.unknown = true
+    status.modelVersion = null
     status.modelLoaded = false
   } finally {
     status.loading = false
@@ -232,31 +264,32 @@ function cellStyle(cell) {
 }
 
 function percent(value) {
-  const n = Number(value)
+  const n = value == null ? NaN : Number(value)
   if (!Number.isFinite(n)) return '—'
   return `${(n * 100).toFixed(n === 1 || n === 0 ? 0 : 2)}%`
 }
 
 function decimal(value) {
-  const n = Number(value)
+  const n = value == null ? NaN : Number(value)
   return Number.isFinite(n) ? n.toFixed(4) : '—'
 }
 
 function formatNumber(value) {
-  const n = Number(value)
+  const n = value == null ? NaN : Number(value)
   return Number.isFinite(n) ? n.toLocaleString() : '—'
 }
 
-function formatDate(value) {
-  if (!value) return '—'
-  const date = new Date(value)
-  return Number.isNaN(date.getTime())
-    ? value
-    : date.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })
+function f1Score(value) {
+  return Number.isFinite(value) ? value.toFixed(3) : '—'
 }
 </script>
 
 <style scoped>
+.version-note { color: var(--warning); margin: 0; }
+.sample-size { display: block; font-weight: 400; color: var(--muted); }
+.probe-result { font-size: 2.25rem; font-weight: 600; color: var(--ink); margin: .75rem 0; }
+.probe-result span { font-size: 1rem; color: var(--muted); }
+.probe-detail { line-height: 1.5; margin: 0; color: var(--ink); }
 .model-page {
   min-height: 100vh;
   background: var(--surface-muted);

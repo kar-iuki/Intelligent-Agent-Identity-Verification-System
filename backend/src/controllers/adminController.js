@@ -1,6 +1,4 @@
 import { readFile } from 'node:fs/promises'
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
 import supabase from '../utils/supabaseClient.js'
 import { getSVMStatus } from '../services/verificationService.js'
 import { enforceAccessDecision } from '../services/accessControlService.js'
@@ -765,10 +763,7 @@ export async function resetAgentStrikes(req, res) {
 
 const EVALUATION_REPORT_PATH =
   process.env.MODEL_EVALUATION_REPORT_PATH ||
-  path.resolve(
-    path.dirname(fileURLToPath(import.meta.url)),
-    '../../../ai-service/ml/reports/evaluation_report.json'
-  )
+  new URL('../data/model-evaluation-3.1.1.json', import.meta.url)
 
 /**
  * GET /api/admin/model/status — SVM availability for the dashboard indicator.
@@ -795,7 +790,7 @@ export async function getModelStatus(req, res) {
 }
 
 /**
- * GET /api/admin/model/evaluation — the report written by ai-service/ml/train_model.py.
+ * GET /api/admin/model/evaluation — the saved offline evaluation shipped with the backend.
  */
 export async function getModelEvaluation(req, res) {
   let raw
@@ -804,7 +799,7 @@ export async function getModelEvaluation(req, res) {
   } catch (err) {
     if (err.code === 'ENOENT') {
       return res.status(404).json({
-        error: 'Evaluation report not found. Run `python ml/train_model.py` in ai-service.',
+        error: 'The saved model evaluation report is unavailable.',
       })
     }
     return res.status(500).json({ error: err.message })
