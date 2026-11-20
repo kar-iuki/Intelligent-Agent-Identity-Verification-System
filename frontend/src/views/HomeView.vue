@@ -41,7 +41,7 @@
       <section id="guide" class="wrap guide-layout" aria-labelledby="guide-title">
         <div class="guide-intro section-title">
           <h2 id="guide-title">Document guide</h2>
-          <p>Try a capture with a sample document before using your own. Choose an ID and check how it looks in the frame.</p>
+          <p>Practise with a fictional document. Keep all four corners in the frame and check that the portrait and print are clear.</p>
           <p class="camera-note"><CameraOff :size="16" aria-hidden="true" /> Your camera stays off during practice</p>
         </div>
         <div ref="practiceRoot" class="practice-mount"></div>
