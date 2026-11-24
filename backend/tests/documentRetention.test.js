@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { auditExpiresAt, auditWindow } from '../src/utils/auditWindow.js'
+import { auditExpiresAt, auditWindow, fileExpiresAt } from '../src/utils/auditWindow.js'
 import { purgeExpiredDocuments } from '../src/services/documentRetentionService.js'
 
 test('three full Nairobi business days skip weekends and cross months', () => {
@@ -25,8 +25,7 @@ function fixture({ status = 'verified', storageFailure = false } = {}) {
   const verifiedAt = '2026-10-02T10:00:00Z'
   const rows = {
     agents: [{ agent_id: 'agent-1' }],
-    verification_requests: { request_id: 'request-1', status },
-    kyc_decisions: { final_decision: 'verified', decided_at: verifiedAt },
+    verification_requests: status ? [{ created_at: verifiedAt, status, kyc_decisions: { final_decision: status, decided_at: verifiedAt } }] : [],
     documents: [{ document_id: 'doc-1', file_url: 'agent-1/documents/front.jpg', uploaded_at: verifiedAt }],
   }
   const client = {
@@ -60,13 +59,26 @@ test('purges expired and superseded images while preserving metadata and newer u
   assert.deepEqual(f.updates, [{ file_url: '' }])
 })
 
-test('does not delete files inside the window or for pending/review/rejected requests', async () => {
-  for (const status of ['pending', 'review', 'rejected', 'verified']) {
+test('all outcomes keep files until their exact Nairobi business-day deadline', async () => {
+  for (const [status, day] of [[null, 7], ['pending', 7], ['verified', 7], ['review', 9], ['rejected', 9]]) {
     const f = fixture({ status })
-    await purgeExpiredDocuments(f.client, new Date(status === 'verified' ? '2026-10-05T10:00:00Z' : '2026-10-08T10:00:00Z'))
-    assert.deepEqual(f.removed, [])
-    assert.deepEqual(f.updates, [])
+    const deadline = Date.UTC(2026, 9, day, 10)
+    await purgeExpiredDocuments(f.client, new Date(deadline - 1))
+    assert.deepEqual(f.updates, [], status)
+    await purgeExpiredDocuments(f.client, new Date(deadline))
+    assert.deepEqual(f.updates, [{ file_url: '' }], status)
   }
+})
+
+test('a retry does not reset an older file and unsubmitted uploads start their own window', () => {
+  const requests = [
+    { created_at: '2026-10-02T12:00:00Z', status: 'review' },
+    { created_at: '2026-10-08T12:00:00Z', status: 'verified',
+      kyc_decisions: { final_decision: 'verified', decided_at: '2026-10-09T12:00:00Z' } },
+  ]
+  assert.equal(fileExpiresAt('2026-10-02T10:00:00Z', requests), '2026-10-09T12:00:00.000Z')
+  assert.equal(fileExpiresAt('2026-10-08T10:00:00Z', requests), '2026-10-14T12:00:00.000Z')
+  assert.equal(fileExpiresAt('2026-10-09T09:00:00Z', requests), '2026-10-14T09:00:00.000Z')
 })
 
 test('failed storage deletion preserves file references for retry', async () => {

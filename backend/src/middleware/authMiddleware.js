@@ -34,6 +34,8 @@ export default async function authMiddleware(req, res, next) {
     role: userRecord?.role || null,
     profileComplete: !!userRecord,
     suggestedFullName,
+    verificationConsentAt: user.app_metadata?.verification_consent_version === 1
+      ? user.app_metadata.verification_consent_at : null,
     ...(userRecord || {}),
   }
 

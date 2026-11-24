@@ -74,6 +74,7 @@ export function useAuthStore() {
       const { getDeviceFingerprint } = await import('../utils/deviceFingerprint.js')
       const { data } = await api.post('/api/auth/register', {
         fullName: formData.fullName,
+        verificationConsent: formData.verificationConsent === true,
         email: formData.email,
         password: formData.password,
         confirmPassword: formData.confirmPassword,
@@ -187,6 +188,7 @@ export function useAuthStore() {
     try {
       const { data } = await api.post('/api/auth/complete-profile', {
         fullName: formData.fullName,
+        verificationConsent: formData.verificationConsent === true,
         phoneNumber: formData.phoneNumber,
         nationalID: formData.nationalID,
         dateOfBirth: formData.dateOfBirth,

@@ -2,7 +2,8 @@
   <div ref="captureRoot" class="live-selfie">
     <h3 class="title">Live selfie check</h3>
     <p class="hint">
-      Take a centred photo, then follow the prompt to turn your head.
+      <strong>Remove your glasses and hat before taking your selfie.</strong>
+      Centre your face, take the photo, then follow the prompt to turn your head.
     </p>
 
     <div class="selfie-console">

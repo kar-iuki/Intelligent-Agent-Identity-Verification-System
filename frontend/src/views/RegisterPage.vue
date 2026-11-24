@@ -54,9 +54,11 @@
           <span v-if="errors.confirmPassword" class="field-error">{{ errors.confirmPassword }}</span>
         </div>
 
+        <VerificationConsent v-model="form.verificationConsent" />
+
         <p v-if="errors.general" class="error">{{ errors.general }}</p>
 
-        <button type="submit" class="btn btn-primary" :disabled="loading">
+        <button type="submit" class="btn btn-primary" :disabled="loading || !form.verificationConsent">
           {{ loading ? 'Registering...' : 'Register' }}
         </button>
       </form>
@@ -66,7 +68,7 @@
       </div>
 
       <div class="oauth-buttons">
-        <button type="button" class="btn btn-oauth" :disabled="loading" @click="handleGoogleSignup">
+        <button type="button" class="btn btn-oauth" :disabled="loading || !form.verificationConsent" @click="handleGoogleSignup">
           Sign up with Google
         </button>
       </div>
@@ -81,6 +83,7 @@
 
 <script setup>
 import { reactive, ref } from 'vue'
+import VerificationConsent from '../components/VerificationConsent.vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore.js'
 import { messageFromGuardrailError } from '../utils/deviceFingerprint.js'
@@ -89,6 +92,7 @@ const router = useRouter()
 const { register, loginWithOAuth } = useAuthStore()
 
 const form = reactive({
+  verificationConsent: false,
   fullName: '',
   email: '',
   password: '',

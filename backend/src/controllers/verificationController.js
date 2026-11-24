@@ -1,3 +1,4 @@
+import { fileExpiresAt, loadRetentionRequests } from '../utils/auditWindow.js'
 import supabase from '../utils/supabaseClient.js'
 import {
   assessImageQuality,
@@ -682,7 +683,7 @@ export async function initiateVerification(req, res) {
       : req.deviceFingerprint || null
     const ipAddress = req.clientIP || null
 
-    const { data: documents, error: docsError } = await supabase
+    const { data: uploadedDocuments, error: docsError } = await supabase
       .from('documents')
       .select('*')
       .eq('agent_id', agent.agent_id)
@@ -691,6 +692,10 @@ export async function initiateVerification(req, res) {
       return res.status(500).json({ error: docsError.message })
     }
 
+    const requests = await loadRetentionRequests(supabase, agent.agent_id)
+    const now = Date.now()
+    const documents = (uploadedDocuments || []).filter(doc =>
+      doc.file_url && Date.parse(fileExpiresAt(doc.uploaded_at, requests)) > now)
     const identityDoc =
       documents?.find((doc) => doc.document_type === 'id_front')
       || documents?.find((doc) => doc.document_type === 'passport')

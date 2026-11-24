@@ -266,6 +266,7 @@ export async function uploadDocuments(req, res) {
         .from('documents')
         .select('document_type')
         .eq('agent_id', agent.agent_id)
+        .neq('file_url', '')
 
       if (existingError) {
         return res.status(500).json({ error: existingError.message })

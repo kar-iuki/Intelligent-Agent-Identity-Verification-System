@@ -60,9 +60,11 @@
           <span v-if="errors.dateOfBirth" class="field-error">{{ errors.dateOfBirth }}</span>
         </div>
 
+        <VerificationConsent v-if="!previousConsent" v-model="form.verificationConsent" />
+
         <p v-if="errors.general" class="error">{{ errors.general }}</p>
 
-        <button type="submit" class="btn btn-primary" :disabled="loading">
+        <button type="submit" class="btn btn-primary" :disabled="loading || (!previousConsent && !form.verificationConsent)">
           {{ loading ? 'Saving...' : 'Save and Continue' }}
         </button>
       </form>
@@ -72,6 +74,7 @@
 
 <script setup>
 import { reactive, ref, onMounted, computed } from 'vue'
+import VerificationConsent from '../components/VerificationConsent.vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore.js'
 
@@ -80,9 +83,11 @@ const { state, completeProfile, fetchCurrentUser, getDashboardRoute } = useAuthS
 
 const email = ref(state.user?.email || localStorage.getItem('oauth_email') || '')
 const loading = ref(false)
+const previousConsent = ref(false)
 const suggestedName = ref(localStorage.getItem('suggested_full_name') || '')
 
 const form = reactive({
+  verificationConsent: false,
   fullName: suggestedName.value,
   phoneNumber: '',
   nationalID: '',
@@ -107,6 +112,7 @@ onMounted(async () => {
   const initialName = form.fullName
   try {
     const data = await fetchCurrentUser()
+    previousConsent.value = data?.verificationConsentAccepted === true
     if (data?.email) {
       email.value = data.email
       localStorage.setItem('oauth_email', data.email)

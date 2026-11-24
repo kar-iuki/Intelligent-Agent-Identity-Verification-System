@@ -45,6 +45,10 @@ export async function registerAgent(req, res) {
     deviceFingerprint,
   } = req.body
 
+  if (req.body.verificationConsent !== true) {
+    return res.status(400).json({ error: 'Consent to identity verification is required.' })
+  }
+
   if (!fullName || !email || !password) {
     return res.status(400).json({ error: 'Full name, email, and password are required' })
   }
@@ -103,6 +107,15 @@ export async function registerAgent(req, res) {
     return res.status(400).json({
       error: 'An account with this email already exists. Please sign in or verify your email.',
     })
+  }
+
+  // Only a server-issued receipt can carry acceptance into profile completion.
+  // If auth metadata is unavailable, the profile form collects consent again.
+  if (authData.user?.id) {
+    const { error: consentError } = await supabase.auth.admin.updateUserById(authData.user.id, {
+      app_metadata: { verification_consent_at: new Date().toISOString(), verification_consent_version: 1 },
+    })
+    if (consentError) console.warn('Signup consent receipt could not be saved')
   }
 
   // Confirm-email disabled: session exists immediately → finish profile next
@@ -370,6 +383,7 @@ export async function getMe(req, res) {
   if (!req.user.profileComplete) {
     return res.json({
       needsProfile: true,
+      verificationConsentAccepted: Boolean(req.user.verificationConsentAt),
       email: req.user.email,
       suggestedFullName: req.user.suggestedFullName || null,
       user: null,
@@ -410,6 +424,11 @@ export async function getMe(req, res) {
 
 export async function completeOAuthProfile(req, res) {
   const { fullName, phoneNumber, nationalID, dateOfBirth } = req.body
+
+  if (!req.user.verificationConsentAt && req.body.verificationConsent !== true) {
+    return res.status(400).json({ error: 'Consent to identity verification is required.' })
+  }
+  const consentAt = req.user.verificationConsentAt || new Date().toISOString()
 
   const resolvedName = (fullName || req.user.suggestedFullName || '').trim()
 
@@ -471,6 +490,7 @@ export async function completeOAuthProfile(req, res) {
 
   // Keep auth metadata in sync
   await supabase.auth.admin.updateUserById(userId, {
+    app_metadata: { verification_consent_at: consentAt, verification_consent_version: 1 },
     user_metadata: {
       full_name: resolvedName,
       phone_number: String(phoneNumber).trim(),
@@ -485,7 +505,7 @@ export async function completeOAuthProfile(req, res) {
     outcome: OUTCOMES.SUCCESS,
     performedBy: userId,
     ipAddress: req.clientIP,
-    details: { email, source: 'complete_profile' },
+    details: { email, source: 'complete_profile', verificationConsentAt: consentAt, consentVersion: 1 },
   })
 
   return res.status(201).json({

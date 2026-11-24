@@ -111,7 +111,7 @@
       <section v-if="tab === 'agents' || tab === 'recent'" class="panel">
         <div class="toolbar">
           <div><h2>{{ tab === 'recent' ? 'Verified · open audit window' : 'Agent directory' }}</h2>
-            <p v-if="tab === 'recent'" class="muted">Files retained for 3 business days after verification. Weekends excluded.</p></div>
+            <p v-if="tab === 'recent'" class="muted">Verified files are kept for 3 business days after the decision. Weekends are excluded.</p></div>
           <div class="filters">
             <input v-model="search" aria-label="Search agents" type="search" placeholder="Search name or national ID" />
             <select v-if="tab !== 'recent'" aria-label="Filter agents by status" v-model="statusFilter" @change="loadAgents">
@@ -319,7 +319,7 @@
 
         <section class="drawer-section">
           <h4>Document images</h4>
-          <p v-if="detail.history?.[0]?.auditWindow?.expiresAt" class="muted">Audit deadline: {{ formatDate(detail.history[0].auditWindow.expiresAt) }}. {{ detail.history[0].auditWindow.open ? 'Files available during the 3-business-day review window.' : 'Retention period ended; files are scheduled for automatic deletion.' }}</p>
+          <p v-if="detail.history?.[0]?.auditWindow?.expiresAt" class="muted">Case deadline: {{ formatDate(detail.history[0].auditWindow.expiresAt) }}. {{ detail.history[0].auditWindow.open ? 'Pending and verified files have a 3-business-day window. Review and rejected files have 5 business days.' : 'Retention period ended; files are scheduled for automatic deletion.' }}</p>
           <div v-if="imagesLoading" class="image-grid">
             <div class="skeleton" />
             <div class="skeleton" />

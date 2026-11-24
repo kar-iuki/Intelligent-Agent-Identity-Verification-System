@@ -4,7 +4,7 @@ import { getSVMStatus } from '../services/verificationService.js'
 import { enforceAccessDecision } from '../services/accessControlService.js'
 import { logAction, ACTIONS, OUTCOMES } from '../utils/auditLogger.js'
 import { resetStrikes, getStrikeCount } from '../services/strikeService.js'
-import { auditWindow } from '../utils/auditWindow.js'
+import { auditWindow, fileExpiresAt, loadRetentionRequests } from '../utils/auditWindow.js'
 
 async function resolvePerformerLabel(performedBy) {
   if (!performedBy || performedBy === 'system') {
@@ -100,7 +100,7 @@ export async function getAgentVerificationDetail(req, res) {
           .maybeSingle(),
       ])
 
-      history.push({ request, scores, decision, access, auditWindow: auditWindow(request.status, decision) })
+      history.push({ request, scores, decision, access, auditWindow: auditWindow(request.status, decision, new Date(), request.created_at) })
     }
 
     const { data: auditLogs } = await supabase
@@ -350,7 +350,7 @@ export async function getAllAgents(req, res) {
       }
 
       if (statusFilter && status !== statusFilter) continue
-      const window = auditWindow(status, decision)
+      const window = auditWindow(status, decision, new Date(), latestRequest?.created_at)
       if (req.query.auditWindow === 'open' && !window.open) continue
 
       results.push({
@@ -483,23 +483,7 @@ function startOfTodayIso() {
 export async function getAgentDocumentImages(req, res) {
   try {
     const { agentID } = req.params
-    const { data: latestRequest, error: requestError } = await supabase.from('verification_requests')
-      .select('request_id, status').eq('agent_id', agentID)
-      .order('created_at', { ascending: false }).limit(1).maybeSingle()
-    if (requestError) throw requestError
-    let signedUrlSeconds = 3600
-    if (latestRequest?.status === 'verified') {
-      const { data: decision, error: decisionError } = await supabase.from('kyc_decisions')
-        .select('final_decision, decided_at').eq('request_id', latestRequest.request_id).maybeSingle()
-      if (decisionError) throw decisionError
-      const window = auditWindow(latestRequest.status, decision)
-      if (window.expiresAt) {
-        signedUrlSeconds = Math.min(3600, Math.floor((new Date(window.expiresAt).getTime() - Date.now()) / 1000))
-        if (signedUrlSeconds <= 0) {
-          return res.json({ documentImage: null, documentBackImage: null, selfieImage: null, retentionExpired: true })
-        }
-      }
-    }
+    const requests = await loadRetentionRequests(supabase, agentID)
 
     const { data: documents, error } = await supabase
       .from('documents')
@@ -510,16 +494,20 @@ export async function getAgentDocumentImages(req, res) {
 
     if (error) return res.status(500).json({ error: error.message })
 
+    const available = (documents || []).filter(doc => doc.file_url && Date.parse(fileExpiresAt(doc.uploaded_at, requests)) > Date.now())
     const primaryDoc =
-      documents?.find((doc) => doc.document_type === 'id_front')
-      || documents?.find((doc) => doc.document_type === 'passport')
-      || documents?.find((doc) => doc.document_type === 'drivers_licence')
-      || documents?.find((doc) => doc.document_type === 'national_id')
-    const backDoc = documents?.find((doc) => doc.document_type === 'id_back')
-    const selfieDoc = documents?.find((doc) => doc.document_type === 'selfie')
+      available.find((doc) => doc.document_type === 'id_front')
+      || available.find((doc) => doc.document_type === 'passport')
+      || available.find((doc) => doc.document_type === 'drivers_licence')
+      || available.find((doc) => doc.document_type === 'national_id')
+    const backDoc = available.find((doc) => doc.document_type === 'id_back')
+    const selfieDoc = available.find((doc) => doc.document_type === 'selfie')
 
     async function signDocument(doc) {
       if (!doc?.file_url) return null
+      const deadline = fileExpiresAt(doc.uploaded_at, requests)
+      const signedUrlSeconds = Math.min(3600, Math.floor((Date.parse(deadline) - Date.now()) / 1000))
+      if (!(signedUrlSeconds > 0)) return null
       const path = storagePathFromFileUrl(doc.file_url)
       const { data, error: signError } = await supabase.storage
         .from(BUCKET)
@@ -551,6 +539,7 @@ export async function getAgentDocumentImages(req, res) {
       documentImage,
       documentBackImage,
       selfieImage,
+      retentionExpired: Boolean(documents?.length && !available.length),
     })
   } catch (err) {
     return res.status(500).json({ error: err.message })

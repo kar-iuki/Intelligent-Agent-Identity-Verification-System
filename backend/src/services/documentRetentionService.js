@@ -1,9 +1,8 @@
-import { auditWindow } from '../utils/auditWindow.js'
+import { fileExpiresAt, loadRetentionRequests } from '../utils/auditWindow.js'
 
 const BUCKET = 'agent-documents'
 const DOCUMENT_TYPES = ['national_id', 'id_front', 'id_back', 'passport', 'drivers_licence', 'selfie']
 
-// Verified identity files are removed after three Nairobi business days.
 function storagePath(value, agentId) {
   if (!value) return null
   let path = value
@@ -26,21 +25,17 @@ export async function purgeExpiredDocuments(client, now = new Date()) {
     if (error) throw error
     for (const agent of agents || []) {
       try {
-        const { data: request, error: requestError } = await client.from('verification_requests')
-          .select('request_id, status').eq('agent_id', agent.agent_id)
-          .order('created_at', { ascending: false }).limit(1).maybeSingle()
-        if (requestError) throw requestError
-        if (request?.status !== 'verified') continue
-        const { data: decision, error: decisionError } = await client.from('kyc_decisions')
-          .select('final_decision, decided_at').eq('request_id', request.request_id).maybeSingle()
-        if (decisionError) throw decisionError
-        const window = auditWindow(request.status, decision, now)
-        if (!window.expiresAt || new Date(window.expiresAt) > now) continue
-
+        const requests = await loadRetentionRequests(client, agent.agent_id)
+        const expired = uploadedAt => {
+          const deadline = fileExpiresAt(uploadedAt, requests)
+          return deadline !== null && new Date(deadline) <= now
+        }
         const { data: documents, error: documentsError } = await client.from('documents')
           .select('document_id, file_url, uploaded_at').eq('agent_id', agent.agent_id)
-          .in('document_type', DOCUMENT_TYPES).lte('uploaded_at', window.verifiedAt).neq('file_url', '')
+          .in('document_type', DOCUMENT_TYPES).neq('file_url', '')
         if (documentsError) throw documentsError
+        const retainedPaths = new Set((documents || []).filter(doc => !expired(doc.uploaded_at))
+          .map(doc => storagePath(doc.file_url, agent.agent_id)))
         // Include superseded uploads, which no longer have a documents row.
         // New uploads use unique names so cleanup cannot delete a replacement.
         const paths = new Set()
@@ -52,7 +47,7 @@ export async function purgeExpiredDocuments(client, now = new Date()) {
             if (listError) throw listError
             for (const file of files || []) {
               const modifiedAt = file.updated_at || file.created_at
-              if (file.id && modifiedAt && new Date(modifiedAt) <= new Date(window.verifiedAt)) {
+              if (file.id && expired(modifiedAt)) {
                 paths.add(`${prefix}/${file.name}`)
               }
             }
@@ -61,15 +56,17 @@ export async function purgeExpiredDocuments(client, now = new Date()) {
         }
         for (const document of documents || []) {
           const path = storagePath(document.file_url, agent.agent_id)
-          if (path) paths.add(path)
+          if (path && expired(document.uploaded_at)) paths.add(path)
         }
-        if (paths.size) {
-          const { error: removeError } = await client.storage.from(BUCKET).remove([...paths])
+        for (const path of retainedPaths) paths.delete(path)
+        const expiredPaths = [...paths]
+        for (let i = 0; i < expiredPaths.length; i += 100) {
+          const { error: removeError } = await client.storage.from(BUCKET).remove(expiredPaths.slice(i, i + 100))
           if (removeError) throw removeError
         }
         for (const document of documents || []) {
           const path = storagePath(document.file_url, agent.agent_id)
-          if (!path) continue
+          if (!paths.has(path)) continue
           const { error: updateError } = await client.from('documents').update({ file_url: '' })
             .eq('document_id', document.document_id).eq('file_url', document.file_url)
             .eq('uploaded_at', document.uploaded_at)
