@@ -74,6 +74,7 @@ export function useAuthStore() {
       const { getDeviceFingerprint } = await import('../utils/deviceFingerprint.js')
       const { data } = await api.post('/api/auth/register', {
         fullName: formData.fullName,
+        dateOfBirth: formData.dateOfBirth,
         verificationConsent: formData.verificationConsent === true,
         email: formData.email,
         password: formData.password,

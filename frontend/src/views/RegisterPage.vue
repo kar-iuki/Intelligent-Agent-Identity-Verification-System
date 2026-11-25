@@ -19,6 +19,16 @@
         </div>
 
         <div class="form-group">
+          <label for="dateOfBirth">Date of birth</label>
+          <input id="dateOfBirth" ref="birthInput" v-model="form.dateOfBirth" type="date"
+            autocomplete="bday" :max="latestEligibleBirthDate()" required
+            aria-describedby="age-hint age-error" :aria-invalid="Boolean(errors.dateOfBirth)"
+            @input="errors.dateOfBirth = ''" @change="checkAge" @invalid="checkAge" />
+          <small id="age-hint">You must be at least 18 to register as an agent.</small>
+          <span id="age-error" class="field-error" aria-live="polite">{{ errors.dateOfBirth }}</span>
+        </div>
+
+        <div class="form-group">
           <label for="email">Email</label>
           <input
             id="email"
@@ -88,6 +98,9 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore.js'
 import { messageFromGuardrailError } from '../utils/deviceFingerprint.js'
 
+import { latestEligibleBirthDate, validateDateOfBirth } from '../utils/agentAge.js'
+
+const birthInput = ref(null)
 const router = useRouter()
 const { register, loginWithOAuth } = useAuthStore()
 
@@ -95,6 +108,7 @@ const form = reactive({
   verificationConsent: false,
   fullName: '',
   email: '',
+  dateOfBirth: '',
   password: '',
   confirmPassword: '',
 })
@@ -102,12 +116,18 @@ const form = reactive({
 const errors = reactive({
   fullName: '',
   email: '',
+  dateOfBirth: '',
   password: '',
   confirmPassword: '',
   general: '',
 })
 
 const loading = ref(false)
+
+function checkAge() {
+  errors.dateOfBirth = validateDateOfBirth(form.dateOfBirth) || ''
+  return !errors.dateOfBirth
+}
 
 function validate() {
   let valid = true
@@ -142,10 +162,14 @@ function validate() {
     valid = false
   }
 
-  return valid
+  return checkAge() && valid
 }
 
 async function handleGoogleSignup() {
+  if (!checkAge()) {
+    birthInput.value?.focus()
+    return
+  }
   loading.value = true
   errors.general = ''
   try {

@@ -42,6 +42,7 @@ export async function registerAgent(req, res) {
     email,
     password,
     confirmPassword,
+    dateOfBirth,
     deviceFingerprint,
   } = req.body
 
@@ -64,6 +65,9 @@ export async function registerAgent(req, res) {
   if (String(password).length < 8) {
     return res.status(400).json({ error: 'Password must be at least 8 characters' })
   }
+
+  const dobError = validateDateOfBirth(dateOfBirth)
+  if (dobError) return res.status(400).json({ error: dobError })
 
   if (isBlockedEmailDomain(email)) {
     await logAction({
@@ -95,6 +99,7 @@ export async function registerAgent(req, res) {
       emailRedirectTo: `${frontendUrl()}/login`,
       data: {
         full_name: String(fullName).trim(),
+        date_of_birth: dateOfBirth.trim(),
       },
     },
   })
@@ -384,6 +389,7 @@ export async function getMe(req, res) {
     return res.json({
       needsProfile: true,
       verificationConsentAccepted: Boolean(req.user.verificationConsentAt),
+      suggestedDateOfBirth: req.user.suggestedDateOfBirth,
       email: req.user.email,
       suggestedFullName: req.user.suggestedFullName || null,
       user: null,

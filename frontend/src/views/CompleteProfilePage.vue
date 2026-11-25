@@ -53,7 +53,7 @@
             id="dateOfBirth"
             v-model="form.dateOfBirth"
             type="date"
-            :max="maxDateOfBirth"
+            :max="latestEligibleBirthDate()"
             required
           />
           <span class="hint">Must match the date on your ID or passport</span>
@@ -73,7 +73,8 @@
 </template>
 
 <script setup>
-import { reactive, ref, onMounted, computed } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
+import { latestEligibleBirthDate, validateDateOfBirth } from '../utils/agentAge.js'
 import VerificationConsent from '../components/VerificationConsent.vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore.js'
@@ -102,17 +103,12 @@ const errors = reactive({
   general: '',
 })
 
-const maxDateOfBirth = computed(() => {
-  const d = new Date()
-  d.setFullYear(d.getFullYear() - 18)
-  return d.toISOString().slice(0, 10)
-})
-
 onMounted(async () => {
   const initialName = form.fullName
   try {
     const data = await fetchCurrentUser()
     previousConsent.value = data?.verificationConsentAccepted === true
+    if (!form.dateOfBirth && data?.suggestedDateOfBirth) form.dateOfBirth = data.suggestedDateOfBirth
     if (data?.email) {
       email.value = data.email
       localStorage.setItem('oauth_email', data.email)
@@ -149,23 +145,8 @@ function validate() {
     valid = false
   }
 
-  if (!form.dateOfBirth) {
-    errors.dateOfBirth = 'Date of birth is required'
-    valid = false
-  } else {
-    const date = new Date(`${form.dateOfBirth}T00:00:00`)
-    if (Number.isNaN(date.getTime())) {
-      errors.dateOfBirth = 'Enter a valid date of birth'
-      valid = false
-    } else {
-      const now = new Date()
-      const ageYears = (now - date) / (365.25 * 24 * 60 * 60 * 1000)
-      if (ageYears < 18) {
-        errors.dateOfBirth = 'You must be at least 18 years old'
-        valid = false
-      }
-    }
-  }
+  errors.dateOfBirth = validateDateOfBirth(form.dateOfBirth) || ''
+  if (errors.dateOfBirth) valid = false
 
   return valid
 }

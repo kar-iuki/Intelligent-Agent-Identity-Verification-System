@@ -1,36 +1,29 @@
-/**
- * Validate an ISO date string (YYYY-MM-DD) for agent registration.
- * @returns {string|null} Error message or null if valid
- */
-export function validateDateOfBirth(value) {
-  if (!value || typeof value !== 'string') {
-    return 'Date of birth is required'
-  }
+const kenyaCalendar = new Intl.DateTimeFormat('sv-SE', {
+  timeZone: 'Africa/Nairobi', year: 'numeric', month: '2-digit', day: '2-digit',
+})
 
-  const trimmed = value.trim()
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+function yearsBefore(today, years) {
+  const year = Number(today.slice(0, 4)) - years
+  const monthDay = today.slice(4)
+  // On a leap day, the earlier year may only have 28 days in February.
+  if (monthDay === '-02-29' && new Date(Date.UTC(year, 1, 29)).getUTCMonth() !== 1) {
+    return year + '-02-28'
+  }
+  return year + monthDay
+}
+
+export function validateDateOfBirth(value, now = new Date()) {
+  if (typeof value !== 'string' || !value.trim()) return 'Date of birth is required'
+  const dob = value.trim()
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dob)) return 'Enter a valid date of birth'
+  const date = new Date(dob + 'T00:00:00Z')
+  if (Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== dob) {
     return 'Enter a valid date of birth'
   }
-
-  const date = new Date(`${trimmed}T00:00:00`)
-  if (Number.isNaN(date.getTime())) {
-    return 'Enter a valid date of birth'
-  }
-
-  const now = new Date()
-  if (date >= now) {
-    return 'Date of birth must be in the past'
-  }
-
-  const ageMs = now.getTime() - date.getTime()
-  const ageYears = ageMs / (365.25 * 24 * 60 * 60 * 1000)
-  if (ageYears < 18) {
-    return 'You must be at least 18 years old'
-  }
-  if (ageYears > 120) {
-    return 'Enter a valid date of birth'
-  }
-
+  const today = kenyaCalendar.format(now)
+  if (dob > today) return 'Date of birth must be in the past'
+  if (dob > yearsBefore(today, 18)) return 'You must be at least 18 years old to register as an agent'
+  if (dob < yearsBefore(today, 120)) return 'Enter a valid date of birth'
   return null
 }
 

@@ -18,7 +18,7 @@
         </div>
         <div class="capture-scene live-scene">
           <div class="media-frame" :style="{ '--stream-aspect': streamAspect }">
-            <video v-show="!previewUrl" ref="videoRef" class="media" autoplay playsinline muted @loadedmetadata="updateStreamAspect" @resize="updateStreamAspect" />
+            <video v-show="!previewUrl" ref="videoRef" class="media" :class="{ flipped: flipDocument }" autoplay playsinline muted @loadedmetadata="updateStreamAspect" @resize="updateStreamAspect" />
             <img v-if="previewUrl" :src="previewUrl" alt="Captured document" class="media" @load="updatePhotoAspect" />
             <div v-if="streamActive && !previewUrl" class="capture-marks" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
           </div>
@@ -29,6 +29,9 @@
           <button v-if="previewUrl" type="button" class="capture-secondary" :disabled="busy" @click="retake">Retake</button>
           <template v-else>
             <button type="button" class="capture-primary" :disabled="!streamActive || busy" @click="capture">Capture</button>
+            <button v-if="streamActive" type="button" class="capture-secondary flip-control"
+              :aria-pressed="flipDocument" title="Use this if the document text looks backwards"
+              @click="toggleDocumentFlip">Flip horizontally</button>
             <button v-if="cameraError" type="button" class="capture-secondary" @click="startCamera">Open camera</button>
           </template>
         </div>
@@ -90,6 +93,14 @@ function updatePhotoAspect(event) {
   const img = event.currentTarget
   if (img.naturalWidth && img.naturalHeight) streamAspect.value = img.naturalWidth / img.naturalHeight
 }
+const flipDocument = ref(false)
+let flipPreferenceKey = ''
+
+function toggleDocumentFlip() {
+  flipDocument.value = !flipDocument.value
+  try { sessionStorage.setItem(flipPreferenceKey, String(flipDocument.value)) } catch {}
+}
+
 const streamActive = ref(false)
 const previewUrl = ref(null)
 const cameraError = ref('')
@@ -178,6 +189,13 @@ async function startCamera() {
       return
     }
     mediaStream = stream
+    const deviceId = stream.getVideoTracks?.()[0]?.getSettings?.().deviceId || 'default'
+    const preferenceKey = 'verity-document-flip:' + deviceId
+    if (flipPreferenceKey !== preferenceKey) {
+      flipPreferenceKey = preferenceKey
+      flipDocument.value = false
+      try { flipDocument.value = sessionStorage.getItem(preferenceKey) === 'true' } catch {}
+    }
     if (videoRef.value) {
       videoRef.value.srcObject = mediaStream
       updateStreamAspect()
@@ -228,11 +246,13 @@ async function capture() {
   canvas.width = video.videoWidth || 1280
   canvas.height = video.videoHeight || 720
   const ctx = canvas.getContext('2d')
+  const flipped = flipDocument.value
+  if (flipped) ctx.setTransform(-1, 0, 0, 1, canvas.width, 0)
   ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
 
   const generation = cameraGeneration
   const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.92))
-  if (!blob || generation !== cameraGeneration) return
+  if (!blob || generation !== cameraGeneration || flipped !== flipDocument.value) return
 
   const file = markCameraCapture(new File([blob], `document-${Date.now()}.jpg`, { type: 'image/jpeg' }))
   selectedFile.value = file
@@ -303,6 +323,8 @@ async function runQualityCheck() {
 .live-scene { display:grid; place-items:center; min-height:108px; }
 .media-frame { position:relative; width:min(100%, 560px, calc(32svh * var(--stream-aspect))); aspect-ratio:var(--stream-aspect); margin:auto; }
 .media { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; }
+.media.flipped { transform:scaleX(-1); }
+.flip-control[aria-pressed="true"] { background:var(--fg); color:var(--panel); border-radius:8px; }
 .hidden { display:none; }
 .camera-standby { position:absolute; left:12px; right:12px; text-align:center; color:#e4ebe1; font-size:14px; }
 .footer-actions { display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px; }

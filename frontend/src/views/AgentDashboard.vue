@@ -83,7 +83,7 @@
                 id="dateOfBirth"
                 v-model="personalForm.dateOfBirth"
                 type="date"
-                :max="maxDateOfBirth"
+                :max="latestEligibleBirthDate()"
               />
               <span class="field-hint">Must match the date on your ID, passport, or driver's licence</span>
               <span v-if="personalErrors.dateOfBirth" class="field-error">{{ personalErrors.dateOfBirth }}</span>
@@ -309,6 +309,7 @@
 </template>
 
 <script setup>
+import { latestEligibleBirthDate, validateDateOfBirth } from '../utils/agentAge.js'
 import { verificationScoreScales } from '../utils/verificationScoreScales.js'
 import { documents } from '../utils/documentGuide.js'
 import { Check, ChevronDown, CircleAlert, Clock3, ShieldCheck } from '@lucide/vue'
@@ -450,12 +451,6 @@ const personalErrors = reactive({
   nationalID: '',
   dateOfBirth: '',
   general: '',
-})
-
-const maxDateOfBirth = computed(() => {
-  const d = new Date()
-  d.setFullYear(d.getFullYear() - 18)
-  return d.toISOString().slice(0, 10)
 })
 
 const displayName = computed(() => {
@@ -645,18 +640,6 @@ async function onSelfiePassed({ file, challenge }) {
   } finally {
     uploading.value = false
   }
-}
-
-function validateDateOfBirth(value) {
-  if (!value) return 'Date of birth is required'
-  const date = new Date(`${value}T00:00:00`)
-  if (Number.isNaN(date.getTime())) return 'Enter a valid date of birth'
-  const now = new Date()
-  if (date >= now) return 'Date of birth must be in the past'
-  const ageYears = (now - date) / (365.25 * 24 * 60 * 60 * 1000)
-  if (ageYears < 18) return 'You must be at least 18 years old'
-  if (ageYears > 120) return 'Enter a valid date of birth'
-  return ''
 }
 
 function validatePersonalDetails() {

@@ -26,10 +26,14 @@ async function setupCapture(page, cameraOnly) {
       const canvas = document.createElement('canvas')
       canvas.width = 720; canvas.height = 1280
       const ctx = canvas.getContext('2d')
-      ctx.fillStyle = '#627d98'; ctx.fillRect(0, 0, 720, 1280)
+      function drawFrame() {
+        ctx.fillStyle = 'red'; ctx.fillRect(0, 0, 360, 1280)
+        ctx.fillStyle = 'blue'; ctx.fillRect(360, 0, 360, 1280)
+      }
+      drawFrame()
       const stream = canvas.captureStream(10)
       // Emit a frame after the video has attached to the stream.
-      setTimeout(() => ctx.fillRect(0, 0, 720, 1280), 100)
+      setTimeout(drawFrame, 100)
       return stream
     }
   })
@@ -86,4 +90,31 @@ test('first attempt still offers the file picker', async ({ page }) => {
   await page.getByRole('button', { name:/Passport/ }).click()
   await page.getByRole('button', { name:'Upload file', exact:true }).click()
   await expect(page.locator('input[type="file"]')).toHaveCount(1)
+})
+
+test('document flip matches the saved JPEG and carries over to the back of the ID', async ({ page }) => {
+  await setupCapture(page, true)
+  await page.getByRole('button', { name: /National ID/ }).click()
+  const flip = page.getByRole('button', { name: 'Flip horizontally' })
+  const capture = page.getByRole('button', { name: 'Capture', exact: true })
+  for (const flipped of [false, true]) {
+    if (flipped) await flip.click()
+    await expect(flip).toHaveAttribute('aria-pressed', String(flipped))
+    await expect(page.locator('.media-frame video')).toHaveCSS('transform', flipped ? 'matrix(-1, 0, 0, 1, 0, 0)' : 'none')
+    await expect.poll(() => page.locator('.media-frame video').evaluate(video => video.readyState)).toBeGreaterThanOrEqual(2)
+    await capture.click()
+    const photo = page.getByAltText('Captured document')
+    const colourOnLeft = await photo.evaluate(async img => {
+      await img.decode()
+      const ctx = document.createElement('canvas').getContext('2d')
+      ctx.drawImage(img, 0, 0, 100, 100)
+      const [red, , blue] = ctx.getImageData(25, 50, 1, 1).data
+      return red > blue ? 'red' : 'blue'
+    })
+    expect(colourOnLeft).toBe(flipped ? 'blue' : 'red')
+    if (!flipped) await page.getByRole('button', { name: 'Retake' }).click()
+  }
+  await page.getByRole('button', { name: 'Check quality & continue' }).click()
+  await expect(page.getByRole('heading', { name: 'ID back' })).toBeVisible()
+  await expect(flip).toHaveAttribute('aria-pressed', 'true')
 })
