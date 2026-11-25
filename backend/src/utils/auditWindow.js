@@ -13,8 +13,8 @@ export function auditExpiresAt(startedAt, businessDays = 3) {
   return new Date(date.getTime() - 3 * 60 * 60 * 1000).toISOString()
 }
 
-export function auditWindow(status, decision, now = new Date(), submittedAt = null) {
-  const decidedAt = decision?.final_decision === status ? decision.decided_at : null
+export function auditWindow(status, decision, now = new Date(), submittedAt = null, reviewedAt = null) {
+  const decidedAt = reviewedAt || (decision?.final_decision === status ? decision.decided_at : null)
   const verifiedAt = status === 'verified' ? decidedAt : null
   const start = decidedAt || submittedAt
   const expiresAt = auditExpiresAt(start, ['review', 'rejected'].includes(status) ? 5 : 3)
@@ -29,14 +29,14 @@ export function fileExpiresAt(uploadedAt, requests) {
   const request = requests.find(row => new Date(row.created_at).getTime() >= time)
   if (!request || request.status === 'pending') return auditExpiresAt(uploadedAt)
   const decision = Array.isArray(request.kyc_decisions) ? request.kyc_decisions[0] : request.kyc_decisions
-  return auditWindow(request.status, decision, new Date(), request.created_at).expiresAt
+  return auditWindow(request.status, decision, new Date(), request.created_at, request.admin_reviewed_at).expiresAt
 }
 
 export async function loadRetentionRequests(client, agentId) {
   const requests = []
   for (let offset = 0; ; offset += 100) {
     const { data, error } = await client.from('verification_requests')
-      .select('status, created_at, kyc_decisions(final_decision, decided_at)').eq('agent_id', agentId)
+      .select('status, created_at, admin_reviewed_at, kyc_decisions(final_decision, decided_at)').eq('agent_id', agentId)
       .order('created_at').order('request_id').range(offset, offset + 99)
     if (error) throw error
     requests.push(...(data || []))

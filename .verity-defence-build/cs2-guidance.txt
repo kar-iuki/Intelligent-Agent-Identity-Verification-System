@@ -1,0 +1,64 @@
+P0: CS Project II Final Defense Slide Guide
+P1: Use slides to set up the demonstration. In a 15-minute presentation before Q&A, aim for about 3 minutes of slides and 12 minutes for the demo and evidence. Follow the time allocated by your panel.
+P2: Recommended Presentation Structure
+P3: Slide 1. Cover
+P4: Include
+P5: Final project title.
+P6: Name, admission number and class. List both students for an approved paired project.
+P7: Supervisor’s name.
+P8: Project type: Individual Internal or Capstone.
+P9: What the panel is looking for
+P10: A clear title and complete project identification.
+P11: Slide 2. Problem Statement and Justification
+P12: Include
+P13: Problem statement. Identify who is affected and what the current approach fails to address.
+P14: Justification. Explain why the problem matters, using one relevant piece of evidence from your report.
+P15: What the panel is looking for
+P16: A specific problem and a clear reason it was worth solving.
+P17: Slide 3. Objectives and Research Question
+P18: Include
+P19: State the approved main objective in one line. Mention a specific objective only if it helps explain the demo.
+P20: State the main research question in one line and link it to what the solution was designed to address.
+P21: What the panel is looking for
+P22: A clear link from the problem to what you will demonstrate. Keep the full list of objectives for Q&A.
+P23: Slide 4. System Architecture
+P24: Include
+P25: One labelled architecture diagram of the implemented system. Trace an input through the main components and interfaces to the output.
+P26: Explain what each main component does. Point out one design decision or dependency that matters to the demo.
+P27: What the panel is looking for
+P28: Clear component responsibilities and data or control flow. The panel should be able to trace the demo workflow on the diagram.
+P29: Architecture by Project Type
+P30: Software, web and mobile. Trace a user request from the interface through application logic or an API to storage or an external service, where applicable.
+P31: IoT and embedded systems. Trace a signal from the sensor through the controller and communication link to the dashboard, alert or actuator.
+P32: AI and machine learning. Show the dataset source and role, then trace input through preprocessing and inference to the application output.
+P33: Cybersecurity. Show the protected asset, the relevant trust boundary and where the defensive control observes or enforces access.
+P34: Blockchain and distributed systems. Trace a transaction from the client through validation or a smart contract to confirmation and the resulting state.
+P35: Slide 5. Demonstration of the Developed Solution
+P36: Include
+P37: A short scenario title. Switch to the working solution immediately.
+P38: One complete workflow, from a realistic input or user action to a visible result.
+P39: One relevant edge case, error or recovery behaviour, where applicable.
+P40: One or two measured results from your tests or evaluation. Briefly state the test conditions and compare with a target, baseline or acceptance criterion where applicable.
+P41: What the panel is looking for
+P42: A working solution that addresses the stated problem, with evidence of what works and one important limitation.
+P43: Demonstration by Project Type
+P44: Use the example that fits your project. For a hybrid project, demonstrate how its main components work together in one scenario.
+P45: Software, web and mobile. Complete a core user task and show the resulting state change. Use relevant functional, usability or performance evidence.
+P46: IoT and embedded systems. Show the hardware and trace a sensor input or other trigger through to the reading, alert or action. Use evidence such as accuracy, delay or recovery.
+P47: AI and machine learning. Show a representative input, output and error case. Report a relevant held-out metric against a meaningful baseline and show how the model fits into the solution.
+P48: Cybersecurity. Show a defensive control in operation, such as detection, access enforcement or alerting. Use relevant evidence such as coverage, false alerts or response time.
+P49: Blockchain and distributed systems. Show a transaction through to confirmation or a state change. Use relevant evidence such as correctness, latency, cost or reliability.
+P50: Worthy Mentions
+P51: Secure authentication. If implemented, briefly mention sign-in or registration with GitHub, Microsoft or another provider. Move straight to the core workflow and save authentication details for Q&A unless authentication is central to your project.
+P52: Large models. Name the model and state whether you trained it from scratch, fine-tuned it or used it as provided. Briefly mention the training setup, if applicable, and how you evaluated it.
+P53: Resources and paid plans. State what you actually used, such as hardware, training time, compute hours or cost. If you used a paid or Pro plan, say what it enabled.
+P54: Deployment. Briefly mention where the solution is deployed, how you released it and what you verified after deployment.
+P55: Other technical accomplishments. Mention one other feature or decision that shows your technical contribution, such as a useful integration, automation or a performance improvement you can substantiate.
+P56: Before the Defense
+P57: Follow Tab 8 for demo format. Mobile apps run live on a physical device. IoT recordings play at the panel’s cue.
+P58: Rehearse with your demo accounts, sample inputs and tested build. Keep clearly labelled backup evidence ready if the panel asks for it.
+P59: Prepare demo logins. Save your demo account passwords in a password manager in advance and sign in before you start sharing your screen.
+P60: Show user and admin interactions. Open two browsers, one signed in as the user and the other as the system administrator. Keep both windows ready to switch between.
+P61: Check the live deployment. Demo the live deployment only if you have tested it and are confident it will work. Have a tested local build or appropriate backup evidence ready if needed.
+P62: Design readable slides. Use strongly contrasting text and background colours. Put only the main points on each slide and keep the explanation in private speaker notes.
+P63: Keep detailed architecture, methodology, results and the repository or release reference available for Q&A.

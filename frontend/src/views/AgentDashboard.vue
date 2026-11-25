@@ -203,7 +203,7 @@
 
           <template v-else-if="verificationPhase === 'passed' || verificationPhase === 'decision'">
             <template v-if="finalDecision === 'verified'">
-              <h2 class="banner banner-success"><ShieldCheck :size="24" aria-hidden="true" />Your identity has been verified</h2>
+              <h2 class="banner banner-success"><ShieldCheck :size="24" aria-hidden="true" />{{ adminReviewedAt ? 'Approved by admin' : 'Your identity has been verified' }}</h2>
               <p class="panel-copy">
                 You now have full platform access. Continue to the agent workspace to get started.
               </p>
@@ -228,6 +228,7 @@
 
             <template v-else-if="finalDecision === 'rejected'">
               <h2 class="banner banner-rejected"><CircleAlert :size="24" aria-hidden="true" />Your verification was unsuccessful</h2>
+              <p v-if="adminReviewedAt" class="panel-copy">Rejected by admin</p>
               <p class="panel-copy">{{ feedback?.summary || 'Your identity could not be verified with the documents provided.' }}</p>
 
               <div v-if="feedback?.reasons?.length" class="feedback-block">
@@ -379,6 +380,7 @@ const qualityFailures = ref([])
 const failedImages = ref([])
 const verificationError = ref('')
 const finalDecision = ref(null)
+const adminReviewedAt = ref(null)
 // Ask for a passkey only after the AI decision confirms the account.
 const passkeyReady = computed(() =>
   !bootLoading.value
@@ -719,6 +721,7 @@ async function handlePersonalDetails() {
 async function refreshVerificationStatus() {
   try {
     const status = await getVerificationStatus()
+    adminReviewedAt.value = status.decision?.adminReviewedAt || null
     if (status.pipeline) {
       pipelineState.value = { ...pipelineState.value, ...status.pipeline }
     }
@@ -730,7 +733,7 @@ async function refreshVerificationStatus() {
       finalDecision.value = status.decision.finalDecision
       verificationPhase.value = 'decision'
       pipelineState.value.verificationDecision = 'complete'
-      stopPolling()
+      if (finalDecision.value !== 'review') stopPolling()
       return status
     }
 
@@ -742,7 +745,7 @@ async function refreshVerificationStatus() {
     } else if (['verified', 'review', 'rejected'].includes(status.status)) {
       finalDecision.value = status.status
       verificationPhase.value = 'decision'
-      stopPolling()
+      if (finalDecision.value !== 'review') stopPolling()
     }
 
     return status
@@ -755,7 +758,7 @@ function startPollingIfNeeded() {
   stopPolling()
   pollTimer = setInterval(async () => {
     const status = await refreshVerificationStatus()
-    if (status?.isFinal || ['verified', 'review', 'rejected'].includes(status?.status)) {
+    if (['verified', 'rejected'].includes(status?.status)) {
       stopPolling()
     }
   }, 5000)
@@ -774,6 +777,7 @@ async function handleProceedToVerification() {
   qualityFailures.value = []
   failedImages.value = []
   finalDecision.value = null
+  adminReviewedAt.value = null
   feedback.value = null
   pipelineState.value = {
     imageQuality: 'pending',
@@ -805,7 +809,8 @@ async function handleProceedToVerification() {
       finalDecision.value = result.finalDecision || result.decision.finalDecision
       verificationPhase.value = 'decision'
       pipelineState.value.verificationDecision = 'complete'
-      stopPolling()
+      if (finalDecision.value === 'review') startPollingIfNeeded()
+      else stopPolling()
       return
     }
 
@@ -822,6 +827,7 @@ async function handleProceedToVerification() {
 function handleRetryVerification() {
   stopPolling()
   finalDecision.value = null
+  adminReviewedAt.value = null
   feedback.value = null
   failedImages.value = ['document', 'selfie']
   handleReupload()

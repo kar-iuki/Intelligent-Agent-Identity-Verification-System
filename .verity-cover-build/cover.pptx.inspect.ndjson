@@ -1,0 +1,18 @@
+{"kind":"deck","id":"pr/35r741","name":"Deck"}
+{"kind":"layout","id":"ly/o72dsvmh","editable":false,"name":"Master","type":"master"}
+{"kind":"layout","id":"ly/mdknmpkv","editable":false,"name":"Title Slide","type":"title","placeholders":[{"name":"title","type":"title"},{"name":"subtitle","type":"subtitle"}]}
+{"kind":"layout","id":"ly/9cf2hwze","editable":false,"name":"Section Header","type":"sectionHeader","placeholders":[{"name":"title","type":"title"}]}
+{"kind":"layout","id":"ly/oze5wbm5","editable":false,"name":"Title and Body","type":"tx","placeholders":[{"name":"title","type":"title"},{"name":"body","type":"body"}]}
+{"kind":"layout","id":"ly/4bitwfq9","editable":false,"name":"Title and Two Column","type":"twoColTx","placeholders":[{"name":"title","type":"title"},{"name":"Left column","type":"body"},{"name":"Right column","type":"body"}]}
+{"kind":"layout","id":"ly/8fyp8fad","editable":false,"name":"Title and One Column","type":"tx","placeholders":[{"name":"title","type":"title"},{"name":"body","type":"body"}]}
+{"kind":"layout","id":"ly/ru583y58","editable":false,"name":"Blank","type":"blank"}
+{"kind":"slide","id":"sl/h006x9","slideIndex":0,"layout":{"id":"ly/ru583y58","name":"Blank"},"title":"Project proposal  /  November 2026","textShapes":7,"backgroundColor":"rgba(16,21,19,1)"}
+{"kind":"textbox","id":"sh/yd0nm58z","slideIndex":0,"position":{"left":76,"top":65,"width":680,"height":40},"name":"Proposal and date","text":"Project proposal  /  November 2026","geometry":"rect","lineWidth":0,"style":{"fontSize":24,"typeface":"Aptos","color":"#D5F98B","alignment":"left"}}
+{"kind":"textbox","id":"sh/ze94vapk","slideIndex":0,"position":{"left":68,"top":140,"width":690,"height":154},"name":"Verity title","text":"VERITY","geometry":"rect","lineWidth":0,"style":{"fontSize":136,"typeface":"Aptos","color":"#F4F5EF","bold":true,"alignment":"left"}}
+{"kind":"textbox","id":"sh/8j25sfqh","slideIndex":0,"position":{"left":76,"top":319,"width":670,"height":115},"name":"Project title","text":"Intelligent Agent\nIdentity Verification System","geometry":"rect","lineWidth":0,"style":{"fontSize":41.33,"typeface":"Aptos","color":"#F4F5EF","alignment":"left"}}
+{"kind":"textbox","id":"sh/9kbm1k72","slideIndex":0,"position":{"left":76,"top":550,"width":620,"height":31},"name":"Student","text":"Isaac Kariuki Irungu  ·  151442","geometry":"rect","lineWidth":0,"style":{"fontSize":22.67,"typeface":"Aptos","color":"#F4F5EF","bold":true,"alignment":"left"}}
+{"kind":"textbox","id":"sh/mh0nqp8b","slideIndex":0,"position":{"left":76,"top":582,"width":640,"height":31},"name":"Supervisor","text":"Supervisor: Dr. Stephen Obonyo","geometry":"rect","lineWidth":0,"style":{"fontSize":22.67,"typeface":"Aptos","color":"#E2E8DF","alignment":"left"}}
+{"kind":"textbox","id":"sh/ni94zupw","slideIndex":0,"position":{"left":76,"top":614,"width":620,"height":31},"name":"University","text":"Strathmore University","geometry":"rect","lineWidth":0,"style":{"fontSize":22.67,"typeface":"Aptos","color":"#E2E8DF","alignment":"left"}}
+{"kind":"textbox","id":"sh/w725wzqd","slideIndex":0,"position":{"left":1010,"top":568,"width":194,"height":91},"name":"Identity evidence decision","text":"IDENTITY\nEVIDENCE\nDECISION","geometry":"rect","lineWidth":0,"style":{"fontSize":20,"typeface":"Aptos","color":"#D5E5D7","alignment":"right"}}
+{"kind":"image","id":"im/8nqxszet","slideIndex":0,"position":{"left":0,"top":0,"width":1280,"height":720},"fit":"cover","name":"","alt":"Full-bleed dark forest-green fingerprint texture adapted from Verity website artwork"}
+{"kind":"notes","id":"nt/h006x9","slideIndex":0,"text":""}

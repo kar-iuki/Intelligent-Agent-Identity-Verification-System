@@ -1,0 +1,1610 @@
+{
+  "recordCount": 78,
+  "records": [
+    {
+      "kind": "slide",
+      "id": "sl/b6ixkn",
+      "slideIndex": 0,
+      "layout": {
+        "id": "ly/elovi587",
+        "name": "Blank"
+      },
+      "title": "Final project defence  /  November 2026",
+      "textShapes": 7,
+      "backgroundColor": "rgba(16,21,19,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/twvyl8z6",
+      "slideIndex": 0,
+      "position": {
+        "left": 76,
+        "top": 54,
+        "width": 1000,
+        "height": 36
+      },
+      "name": "Final project defence  /  November 2026",
+      "text": "Final project defence  /  November 2026",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "#D5F98B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/8vmhs3yl",
+      "slideIndex": 0,
+      "position": {
+        "left": 64,
+        "top": 133,
+        "width": 760,
+        "height": 160
+      },
+      "name": "VERITY",
+      "text": "VERITY",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 136,
+        "typeface": "Aptos",
+        "color": "#F4F5EF",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/vydgnihw",
+      "slideIndex": 0,
+      "position": {
+        "left": 76,
+        "top": 313,
+        "width": 790,
+        "height": 116
+      },
+      "name": "Intelligent Agent\nIdentity Verification System",
+      "text": "Intelligent Agent\nIdentity Verification System",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 42,
+        "typeface": "Aptos",
+        "color": "#F4F5EF",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/ux4zudgb",
+      "slideIndex": 0,
+      "position": {
+        "left": 76,
+        "top": 505,
+        "width": 1000,
+        "height": 36
+      },
+      "name": "Isaac Kariuki Irungu  ·  151442  ·  ICS 4D",
+      "text": "Isaac Kariuki Irungu  ·  151442  ·  ICS 4D",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "#F4F5EF",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/h0vypsz2",
+      "slideIndex": 0,
+      "position": {
+        "left": 76,
+        "top": 547,
+        "width": 1000,
+        "height": 33
+      },
+      "name": "Supervisor: Dr. Stephen Obonyo",
+      "text": "Supervisor: Dr. Stephen Obonyo",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 23,
+        "typeface": "Aptos",
+        "color": "#F4F5EF",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/gzmhwnyh",
+      "slideIndex": 0,
+      "position": {
+        "left": 76,
+        "top": 588,
+        "width": 1100,
+        "height": 33
+      },
+      "name": "Capstone  /  BSc Informatics and Computer Science",
+      "text": "Capstone  /  BSc Informatics and Computer Science",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 22,
+        "typeface": "Aptos",
+        "color": "#F4F5EF",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/3mxgr2h8",
+      "slideIndex": 0,
+      "position": {
+        "left": 76,
+        "top": 629,
+        "width": 850,
+        "height": 32
+      },
+      "name": "Strathmore University",
+      "text": "Strathmore University",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 23,
+        "typeface": "Aptos",
+        "color": "#F4F5EF",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "slide",
+      "id": "sl/oqcpb8",
+      "slideIndex": 1,
+      "layout": {
+        "id": "ly/elovi587",
+        "name": "Blank"
+      },
+      "title": "Why Verity was developed",
+      "textShapes": 15,
+      "backgroundColor": "rgba(244,245,239,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/5g3apo7m",
+      "slideIndex": 1,
+      "position": {
+        "left": 64,
+        "top": 28,
+        "width": 1000,
+        "height": 25
+      },
+      "name": "Why Verity was developed",
+      "text": "Why Verity was developed",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Aptos",
+        "color": "#536059",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/idsretov",
+      "slideIndex": 1,
+      "position": {
+        "left": 64,
+        "top": 73,
+        "width": 1152,
+        "height": 102
+      },
+      "name": "Problem statement and justification",
+      "text": "Problem statement and justification",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 46,
+        "typeface": "Aptos",
+        "color": "#17201B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/sjutk36d",
+      "slideIndex": 1,
+      "position": {
+        "left": 64,
+        "top": 681,
+        "width": 1040,
+        "height": 20
+      },
+      "name": "Verity  /  Final project defence",
+      "text": "Verity  /  Final project defence",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 13,
+        "typeface": "Aptos",
+        "color": "#536059",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/tk3at87i",
+      "slideIndex": 1,
+      "position": {
+        "left": 1160,
+        "top": 679,
+        "width": 56,
+        "height": 22
+      },
+      "name": "02",
+      "text": "02",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 15,
+        "typeface": "Aptos",
+        "color": "#274534",
+        "alignment": "right"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/6hcbito7",
+      "slideIndex": 1,
+      "position": {
+        "left": 64,
+        "top": 199,
+        "width": 620,
+        "height": 182
+      },
+      "name": "Remote agents need\nverified identities\nbefore platform access.",
+      "text": "Remote agents need\nverified identities\nbefore platform access.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 47,
+        "typeface": "Aptos",
+        "color": "#274534",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/7ilsryps",
+      "slideIndex": 1,
+      "position": {
+        "left": 64,
+        "top": 430,
+        "width": 580,
+        "height": 170
+      },
+      "name": "SalesMesh uses independent agents beyond direct supervision. Manual do",
+      "text": "SalesMesh uses independent agents beyond direct supervision. Manual document checks cannot consistently establish who is present or prevent impersonation and duplicate registration.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Aptos",
+        "color": "#17201B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/gnuto369",
+      "slideIndex": 1,
+      "position": {
+        "left": 748,
+        "top": 196,
+        "width": 468,
+        "height": 36
+      },
+      "name": "Document consistency",
+      "text": "Document consistency",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Aptos",
+        "color": "#274534",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/1onax87u",
+      "slideIndex": 1,
+      "position": {
+        "left": 748,
+        "top": 239,
+        "width": 468,
+        "height": 61
+      },
+      "name": "Do the ID details match the registration?",
+      "text": "Do the ID details match the registration?",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "#536059",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/kfed832l",
+      "slideIndex": 1,
+      "position": {
+        "left": 748,
+        "top": 307,
+        "width": 468,
+        "height": 36
+      },
+      "name": "Presence and identity",
+      "text": "Presence and identity",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Aptos",
+        "color": "#274534",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/ze5wzi10",
+      "slideIndex": 1,
+      "position": {
+        "left": 748,
+        "top": 350,
+        "width": 468,
+        "height": 61
+      },
+      "name": "Is the person live and the face a match?",
+      "text": "Is the person live and the face a match?",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "#536059",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/9k7e5sj2",
+      "slideIndex": 1,
+      "position": {
+        "left": 748,
+        "top": 418,
+        "width": 468,
+        "height": 36
+      },
+      "name": "Enforced access",
+      "text": "Enforced access",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Aptos",
+        "color": "#274534",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/8jyxcn2x",
+      "slideIndex": 1,
+      "position": {
+        "left": 748,
+        "top": 461,
+        "width": 468,
+        "height": 61
+      },
+      "name": "Does the recorded decision control entry?",
+      "text": "Does the recorded decision control entry?",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "#536059",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/7ipw3i1c",
+      "slideIndex": 1,
+      "position": {
+        "left": 748,
+        "top": 547,
+        "width": 468,
+        "height": 31
+      },
+      "name": "Evidence from the report",
+      "text": "Evidence from the report",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 23,
+        "typeface": "Aptos",
+        "color": "#274534",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/mhgfadkr",
+      "slideIndex": 1,
+      "position": {
+        "left": 748,
+        "top": 586,
+        "width": 468,
+        "height": 55
+      },
+      "name": "An unreadable card capture stopped before a decision; recapture was re",
+      "text": "An unreadable card capture stopped before a decision; recapture was required.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 22,
+        "typeface": "Aptos",
+        "color": "#17201B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/ponetojy",
+      "slideIndex": 1,
+      "position": {
+        "left": 64,
+        "top": 638,
+        "width": 1152,
+        "height": 23
+      },
+      "name": "Sources: final report §§1.2–1.4; hosted workflow, 5 November 2026 (v3.",
+      "text": "Sources: final report §§1.2–1.4; hosted workflow, 5 November 2026 (v3.1.0)",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 14,
+        "typeface": "Aptos",
+        "color": "#536059",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "slide",
+      "id": "sl/p1f241",
+      "slideIndex": 2,
+      "layout": {
+        "id": "ly/elovi587",
+        "name": "Blank"
+      },
+      "title": "What the project set out to establish",
+      "textShapes": 9,
+      "backgroundColor": "rgba(16,21,19,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/qtsfi9sn",
+      "slideIndex": 2,
+      "position": {
+        "left": 64,
+        "top": 28,
+        "width": 1000,
+        "height": 25
+      },
+      "name": "What the project set out to establish",
+      "text": "What the project set out to establish",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Aptos",
+        "color": "#D5F98B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/dgjyd4re",
+      "slideIndex": 2,
+      "position": {
+        "left": 64,
+        "top": 73,
+        "width": 1152,
+        "height": 102
+      },
+      "name": "Objective and research question",
+      "text": "Objective and research question",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 46,
+        "typeface": "Aptos",
+        "color": "#F4F5EF",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/zilgfe94",
+      "slideIndex": 2,
+      "position": {
+        "left": 64,
+        "top": 681,
+        "width": 1040,
+        "height": 20
+      },
+      "name": "Verity  /  Final project defence",
+      "text": "Verity  /  Final project defence",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 13,
+        "typeface": "Aptos",
+        "color": "#C4CEC4",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/ehcfm98z",
+      "slideIndex": 2,
+      "position": {
+        "left": 1160,
+        "top": 679,
+        "width": 56,
+        "height": 22
+      },
+      "name": "03",
+      "text": "03",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 15,
+        "typeface": "Aptos",
+        "color": "#D5F98B",
+        "alignment": "right"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/1k3yhora",
+      "slideIndex": 2,
+      "position": {
+        "left": 64,
+        "top": 189,
+        "width": 1152,
+        "height": 36
+      },
+      "name": "Approved general objective",
+      "text": "Approved general objective",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 25,
+        "typeface": "Aptos",
+        "color": "#D5F98B",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/0juhojqp",
+      "slideIndex": 2,
+      "position": {
+        "left": 64,
+        "top": 243,
+        "width": 1120,
+        "height": 152
+      },
+      "name": "To develop an Intelligent Agent Identity Verification System that enha",
+      "text": "To develop an Intelligent Agent Identity Verification System that enhances identity verification, strengthens onboarding security, and controls platform access within distributed agent onboarding environments.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 34,
+        "typeface": "Aptos",
+        "color": "#F4F5EF",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/mlczqt8v",
+      "slideIndex": 2,
+      "position": {
+        "left": 64,
+        "top": 462,
+        "width": 1152,
+        "height": 36
+      },
+      "name": "Research question · evaluation focus",
+      "text": "Research question · evaluation focus",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 25,
+        "typeface": "Aptos",
+        "color": "#D5F98B",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/wbqpwnq1",
+      "slideIndex": 2,
+      "position": {
+        "left": 64,
+        "top": 516,
+        "width": 1120,
+        "height": 113
+      },
+      "name": "How effective is the developed Intelligent Agent Identity Verification",
+      "text": "How effective is the developed Intelligent Agent Identity Verification System when tested and validated, and how accurate is its decision model?",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 33,
+        "typeface": "Aptos",
+        "color": "#F4F5EF",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/xcz6ps7m",
+      "slideIndex": 2,
+      "position": {
+        "left": 64,
+        "top": 638,
+        "width": 1152,
+        "height": 23
+      },
+      "name": "Source: final report, General Objective and Research Question 5",
+      "text": "Source: final report, General Objective and Research Question 5",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 14,
+        "typeface": "Aptos",
+        "color": "#C4CEC4",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "slide",
+      "id": "sl/xxlrz0",
+      "slideIndex": 3,
+      "layout": {
+        "id": "ly/elovi587",
+        "name": "Blank"
+      },
+      "title": "Trace one verification request",
+      "textShapes": 17,
+      "backgroundColor": "rgba(244,245,239,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/6xs3qhk7",
+      "slideIndex": 3,
+      "position": {
+        "left": 64,
+        "top": 28,
+        "width": 1000,
+        "height": 25
+      },
+      "name": "Trace one verification request",
+      "text": "Trace one verification request",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Aptos",
+        "color": "#536059",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/t0jm1wjy",
+      "slideIndex": 3,
+      "position": {
+        "left": 64,
+        "top": 73,
+        "width": 1152,
+        "height": 102
+      },
+      "name": "System architecture",
+      "text": "System architecture",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 46,
+        "typeface": "Aptos",
+        "color": "#17201B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/fml43614",
+      "slideIndex": 3,
+      "position": {
+        "left": 64,
+        "top": 681,
+        "width": 1040,
+        "height": 20
+      },
+      "name": "Verity  /  Final project defence",
+      "text": "Verity  /  Final project defence",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 13,
+        "typeface": "Aptos",
+        "color": "#536059",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/uls3u1kj",
+      "slideIndex": 3,
+      "position": {
+        "left": 1160,
+        "top": 679,
+        "width": 56,
+        "height": 22
+      },
+      "name": "04",
+      "text": "04",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 15,
+        "typeface": "Aptos",
+        "color": "#274534",
+        "alignment": "right"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/ho3m5wju",
+      "slideIndex": 3,
+      "position": {
+        "left": 64,
+        "top": 181,
+        "width": 1152,
+        "height": 32
+      },
+      "name": "Offline model development",
+      "text": "Offline model development",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 25,
+        "typeface": "Aptos",
+        "color": "#274534",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/gnulwr2p",
+      "slideIndex": 3,
+      "position": {
+        "left": 64,
+        "top": 224,
+        "width": 1152,
+        "height": 61
+      },
+      "name": "LFW, NUAA and MIDV-500 measurements → synthetic scores\n7,000 training ",
+      "text": "LFW, NUAA and MIDV-500 measurements → synthetic scores\n7,000 training / 1,500 development / 3,000 evaluation cases",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "#17201B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/ap83ixkf",
+      "slideIndex": 3,
+      "position": {
+        "left": 84,
+        "top": 339,
+        "width": 150,
+        "height": 34
+      },
+      "name": "Vue / Vercel",
+      "text": "Vue / Vercel",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 25,
+        "typeface": "Aptos",
+        "color": "#274534",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/cbaxovah",
+      "slideIndex": 3,
+      "position": {
+        "left": 84,
+        "top": 381,
+        "width": 150,
+        "height": 106
+      },
+      "name": "Profile details\nID + live selfie",
+      "text": "Profile details\nID + live selfie",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 22,
+        "typeface": "Aptos",
+        "color": "#17201B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/q98fmlsr",
+      "slideIndex": 3,
+      "position": {
+        "left": 317,
+        "top": 339,
+        "width": 179,
+        "height": 34
+      },
+      "name": "Express API",
+      "text": "Express API",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 25,
+        "typeface": "Aptos",
+        "color": "#F4F5EF",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/ra1gvqtc",
+      "slideIndex": 3,
+      "position": {
+        "left": 317,
+        "top": 381,
+        "width": 179,
+        "height": 106
+      },
+      "name": "Token + role checks\nAI orchestration\nStore decisions",
+      "text": "Token + role checks\nAI orchestration\nStore decisions",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 21,
+        "typeface": "Aptos",
+        "color": "#F4F5EF",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/10jy10re",
+      "slideIndex": 3,
+      "position": {
+        "left": 579,
+        "top": 339,
+        "width": 327,
+        "height": 34
+      },
+      "name": "Flask / Azure",
+      "text": "Flask / Azure",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 25,
+        "typeface": "Aptos",
+        "color": "#274534",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/edsfq5sn",
+      "slideIndex": 3,
+      "position": {
+        "left": 579,
+        "top": 381,
+        "width": 327,
+        "height": 106
+      },
+      "name": "Quality → OCR, face, liveness\nSix scores → scaling\nRBF SVM v3.1.1",
+      "text": "Quality → OCR, face, liveness\nSix scores → scaling\nRBF SVM v3.1.1",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 22,
+        "typeface": "Aptos",
+        "color": "#17201B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/g3qxgbap",
+      "slideIndex": 3,
+      "position": {
+        "left": 989,
+        "top": 339,
+        "width": 207,
+        "height": 34
+      },
+      "name": "Outcome",
+      "text": "Outcome",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 25,
+        "typeface": "Aptos",
+        "color": "#274534",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/h4zypgbu",
+      "slideIndex": 3,
+      "position": {
+        "left": 989,
+        "top": 381,
+        "width": 207,
+        "height": 106
+      },
+      "name": "Verified → access\nReview → admin\nRejected → denied",
+      "text": "Verified → access\nReview → admin\nRejected → denied",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 21,
+        "typeface": "Aptos",
+        "color": "#17201B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/ls7m18zi",
+      "slideIndex": 3,
+      "position": {
+        "left": 311,
+        "top": 576,
+        "width": 601,
+        "height": 32
+      },
+      "name": "Supabase · Auth, PostgreSQL and private image storage",
+      "text": "Supabase · Auth, PostgreSQL and private image storage",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 22,
+        "typeface": "Aptos",
+        "color": "#274534",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/jqp4zihs",
+      "slideIndex": 3,
+      "position": {
+        "left": 969,
+        "top": 552,
+        "width": 247,
+        "height": 70
+      },
+      "name": "Pretrained image models;\nproject-trained SVM.",
+      "text": "Pretrained image models;\nproject-trained SVM.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 23,
+        "typeface": "Aptos",
+        "color": "#536059",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/ypgn6dg7",
+      "slideIndex": 3,
+      "position": {
+        "left": 64,
+        "top": 638,
+        "width": 1152,
+        "height": 23
+      },
+      "name": "Deployment: Vercel + Render + Azure + Supabase. Recorded AI allocation",
+      "text": "Deployment: Vercel + Render + Azure + Supabase. Recorded AI allocation: 4 vCPU / 8 GiB.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 14,
+        "typeface": "Aptos",
+        "color": "#536059",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "slide",
+      "id": "sl/tsiwoj",
+      "slideIndex": 4,
+      "layout": {
+        "id": "ly/elovi587",
+        "name": "Blank"
+      },
+      "title": "Demonstration of the developed solution",
+      "textShapes": 22,
+      "backgroundColor": "rgba(244,245,239,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/i50bqd8n",
+      "slideIndex": 4,
+      "position": {
+        "left": 64,
+        "top": 28,
+        "width": 1000,
+        "height": 25
+      },
+      "name": "Demonstration of the developed solution",
+      "text": "Demonstration of the developed solution",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Aptos",
+        "color": "#536059",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/58bu1sre",
+      "slideIndex": 4,
+      "position": {
+        "left": 64,
+        "top": 73,
+        "width": 1152,
+        "height": 102
+      },
+      "name": "From identity evidence to platform access",
+      "text": "From identity evidence to platform access",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 40,
+        "typeface": "Aptos",
+        "color": "#17201B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/7atc3i94",
+      "slideIndex": 4,
+      "position": {
+        "left": 64,
+        "top": 681,
+        "width": 1040,
+        "height": 20
+      },
+      "name": "Verity  /  Final project defence",
+      "text": "Verity  /  Final project defence",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 13,
+        "typeface": "Aptos",
+        "color": "#536059",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/69kbud8j",
+      "slideIndex": 4,
+      "position": {
+        "left": 1160,
+        "top": 679,
+        "width": 56,
+        "height": 22
+      },
+      "name": "05",
+      "text": "05",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 15,
+        "typeface": "Aptos",
+        "color": "#274534",
+        "alignment": "right"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/tcbu5sra",
+      "slideIndex": 4,
+      "position": {
+        "left": 64,
+        "top": 192,
+        "width": 50,
+        "height": 33
+      },
+      "name": "01",
+      "text": "01",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 22,
+        "typeface": "Aptos",
+        "color": "#274534",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/sb2twnqp",
+      "slideIndex": 4,
+      "position": {
+        "left": 64,
+        "top": 237,
+        "width": 272,
+        "height": 34
+      },
+      "name": "Capture identity",
+      "text": "Capture identity",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 25,
+        "typeface": "Aptos",
+        "color": "#274534",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/fetc729g",
+      "slideIndex": 4,
+      "position": {
+        "left": 64,
+        "top": 282,
+        "width": 272,
+        "height": 55
+      },
+      "name": "Profile, ID and live selfie",
+      "text": "Profile, ID and live selfie",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 21,
+        "typeface": "Aptos",
+        "color": "#536059",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/udkvyx8v",
+      "slideIndex": 4,
+      "position": {
+        "left": 360,
+        "top": 192,
+        "width": 50,
+        "height": 33
+      },
+      "name": "02",
+      "text": "02",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 22,
+        "typeface": "Aptos",
+        "color": "#274534",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/4za9sjy9",
+      "slideIndex": 4,
+      "position": {
+        "left": 360,
+        "top": 237,
+        "width": 272,
+        "height": 34
+      },
+      "name": "Process evidence",
+      "text": "Process evidence",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 25,
+        "typeface": "Aptos",
+        "color": "#274534",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/50jqlofu",
+      "slideIndex": 4,
+      "position": {
+        "left": 360,
+        "top": 282,
+        "width": 272,
+        "height": 55
+      },
+      "name": "Quality gate and six scores",
+      "text": "Quality gate and six scores",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 21,
+        "typeface": "Aptos",
+        "color": "#536059",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/idsrq9g3",
+      "slideIndex": 4,
+      "position": {
+        "left": 656,
+        "top": 192,
+        "width": 50,
+        "height": 33
+      },
+      "name": "03",
+      "text": "03",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 22,
+        "typeface": "Aptos",
+        "color": "#274534",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/3y18jexo",
+      "slideIndex": 4,
+      "position": {
+        "left": 656,
+        "top": 237,
+        "width": 272,
+        "height": 34
+      },
+      "name": "Record the decision",
+      "text": "Record the decision",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 25,
+        "typeface": "Aptos",
+        "color": "#274534",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/s3u9wjy5",
+      "slideIndex": 4,
+      "position": {
+        "left": 656,
+        "top": 282,
+        "width": 272,
+        "height": 55
+      },
+      "name": "Outcome, basis and audit",
+      "text": "Outcome, basis and audit",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 21,
+        "typeface": "Aptos",
+        "color": "#536059",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/d43qpofq",
+      "slideIndex": 4,
+      "position": {
+        "left": 952,
+        "top": 192,
+        "width": 50,
+        "height": 33
+      },
+      "name": "04",
+      "text": "04",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 22,
+        "typeface": "Aptos",
+        "color": "#274534",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/q1sru9gz",
+      "slideIndex": 4,
+      "position": {
+        "left": 952,
+        "top": 237,
+        "width": 272,
+        "height": 34
+      },
+      "name": "Inspect access",
+      "text": "Inspect access",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 25,
+        "typeface": "Aptos",
+        "color": "#274534",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/r2l8nexk",
+      "slideIndex": 4,
+      "position": {
+        "left": 952,
+        "top": 282,
+        "width": 272,
+        "height": 55
+      },
+      "name": "Agent and admin views",
+      "text": "Agent and admin views",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 21,
+        "typeface": "Aptos",
+        "color": "#536059",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/183at8f2",
+      "slideIndex": 4,
+      "position": {
+        "left": 64,
+        "top": 378,
+        "width": 610,
+        "height": 34
+      },
+      "name": "Accuracy · 3,000 held-out synthetic cases",
+      "text": "Accuracy · 3,000 held-out synthetic cases",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "#274534",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/obqhozm9",
+      "slideIndex": 4,
+      "position": {
+        "left": 704,
+        "top": 378,
+        "width": 512,
+        "height": 35
+      },
+      "name": "Observed recovery",
+      "text": "Observed recovery",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 25,
+        "typeface": "Aptos",
+        "color": "#274534",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/nax0vulo",
+      "slideIndex": 4,
+      "position": {
+        "left": 704,
+        "top": 421,
+        "width": 512,
+        "height": 79
+      },
+      "name": "Small card image → recapture before a decision. Hosted case: 5 Nov 202",
+      "text": "Small card image → recapture before a decision. Hosted case: 5 Nov 2026, v3.1.0.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 24,
+        "typeface": "Aptos",
+        "color": "#17201B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/29ozmp43",
+      "slideIndex": 4,
+      "position": {
+        "left": 704,
+        "top": 519,
+        "width": 512,
+        "height": 35
+      },
+      "name": "Important limitation",
+      "text": "Important limitation",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 25,
+        "typeface": "Aptos",
+        "color": "#9C553A",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/xgzi143q",
+      "slideIndex": 4,
+      "position": {
+        "left": 704,
+        "top": 562,
+        "width": 512,
+        "height": 74
+      },
+      "name": "157 / 1,200 non-Verified labels were incorrectly verified. Real-applic",
+      "text": "157 / 1,200 non-Verified labels were incorrectly verified. Real-applicant accuracy remains unestablished.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 23,
+        "typeface": "Aptos",
+        "color": "#17201B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/cfqhsjm5",
+      "slideIndex": 4,
+      "position": {
+        "left": 64,
+        "top": 638,
+        "width": 1152,
+        "height": 23
+      },
+      "name": "Sources: final report Tables 5.11–5.15; saved v3.1.1 evaluation. Curre",
+      "text": "Sources: final report Tables 5.11–5.15; saved v3.1.1 evaluation. Current model macro F1: 0.8211.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 14,
+        "typeface": "Aptos",
+        "color": "#536059",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "chart",
+      "id": "ch/9wvuhcjq",
+      "slideIndex": 4,
+      "position": {
+        "left": 55,
+        "top": 419,
+        "width": 575,
+        "height": 203
+      },
+      "name": "",
+      "chartType": "bar"
+    },
+    {
+      "kind": "slide",
+      "id": "sl/ibi5dg",
+      "slideIndex": 5,
+      "layout": {
+        "id": "ly/elovi587",
+        "name": "Blank"
+      },
+      "title": "Thank You",
+      "textShapes": 1,
+      "backgroundColor": "rgba(16,21,19,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/9kbyhkn6",
+      "slideIndex": 5,
+      "position": {
+        "left": 64,
+        "top": 270,
+        "width": 950,
+        "height": 180
+      },
+      "name": "Thank You",
+      "text": "Thank You",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 116,
+        "typeface": "Aptos",
+        "color": "#F4F5EF",
+        "alignment": "left"
+      }
+    }
+  ],
+  "truncated": false,
+  "metadata": {
+    "target": {
+      "id": "pr/r802et"
+    },
+    "omittedRecords": 0,
+    "abbreviatedRecords": 0,
+    "notices": []
+  }
+}

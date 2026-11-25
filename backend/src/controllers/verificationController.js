@@ -1,3 +1,4 @@
+import { automatedDecision } from '../utils/decisionEvidence.js'
 import { fileExpiresAt, loadRetentionRequests } from '../utils/auditWindow.js'
 import supabase from '../utils/supabaseClient.js'
 import {
@@ -392,6 +393,7 @@ export async function makeAccessDecision({
     .from('verification_requests')
     .update({ status: decisionResult.finalDecision })
     .eq('request_id', verificationRequest.request_id)
+    .is('admin_reviewed_at', null)
 
   if (statusError) {
     throw new Error(statusError.message)
@@ -543,6 +545,8 @@ export async function getVerificationStatus(req, res) {
     }
 
     const finalStatuses = ['verified', 'review', 'rejected']
+    const prediction = automatedDecision(decision)
+    const outcome = request.admin_reviewed_at ? request.status : decision?.final_decision
     const isFinal = finalStatuses.includes(request.status) && Boolean(decision)
 
     let feedback = null
@@ -565,7 +569,7 @@ export async function getVerificationStatus(req, res) {
       }
       decisionReasons = latest[ACTIONS.KYC_DECISION_MADE]?.reasons || []
       feedback = buildAgentFeedback({
-        finalDecision: decision?.final_decision || (finalStatuses.includes(request.status) ? request.status : null),
+        finalDecision: outcome || (finalStatuses.includes(request.status) ? request.status : null),
         scores: {
           ocrConfidenceScore: scores.ocr_confidence_score,
           faceMatchScore: scores.face_match_score,
@@ -598,12 +602,14 @@ export async function getVerificationStatus(req, res) {
         : null,
       decision: decision
         ? {
-            finalDecision: decision.final_decision,
+            finalDecision: outcome,
+            automatedDecision: prediction.final_decision,
+            adminReviewedAt: request.admin_reviewed_at || null,
             decisionBasis: decision.decision_basis || 'placeholder_threshold',
-            verifiedProbability: decision.verified_probability,
-            reviewProbability: decision.review_probability,
-            rejectedProbability: decision.rejected_probability,
-            decidedAt: decision.decided_at,
+            verifiedProbability: prediction.verified_probability,
+            reviewProbability: prediction.review_probability,
+            rejectedProbability: prediction.rejected_probability,
+            decidedAt: prediction.decided_at,
             reasons: decisionReasons,
           }
         : null,
@@ -662,7 +668,7 @@ export async function getVerificationResult(req, res) {
 
     return res.json({
       request,
-      decision,
+      decision: automatedDecision(decision),
       access,
       scores,
     })

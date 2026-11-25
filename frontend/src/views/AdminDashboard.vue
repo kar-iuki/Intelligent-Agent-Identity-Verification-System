@@ -145,7 +145,7 @@
               >
                 <td>{{ item.agent.full_name }}</td>
                 <td>{{ item.agent.national_id }}</td>
-                <td><span class="badge" :class="item.status">{{ item.status }}</span></td>
+                <td><span class="badge" :class="item.status">{{ reviewLabel(item.request) || item.status }}</span></td>
                 <td>{{ formatDate(tab === 'recent' ? item.auditWindow?.verifiedAt : item.request?.created_at || item.agent.created_at) }}</td>
                 <td><span v-if="item.auditWindow?.expiresAt" :class="{ muted: !item.auditWindow.open }">{{ formatDate(item.auditWindow.expiresAt) }}<small class="audit-state">{{ item.auditWindow.open ? 'Available for review' : 'Retention period ended' }}</small></span><span v-else class="muted">—</span></td>
                 <td><button class="btn ghost" @click.stop="openDetail(item.agent.agent_id)">View</button></td>
@@ -466,9 +466,10 @@
         <section class="drawer-section">
           <h4>Decision</h4>
           <div v-if="latestRequest" class="decision-block">
-            <span class="badge" :class="latestRequest.status">{{ latestRequest.status }}</span>
+            <span class="badge" :class="latestRequest.status">{{ reviewLabel(latestRequest) || latestRequest.status }}</span>
+            <p v-if="latestRequest.admin_reviewed_at" class="muted">Reviewed {{ formatDate(latestRequest.admin_reviewed_at) }}</p>
             <p v-if="latestDecision?.decided_at" class="muted">
-              Decided {{ formatDate(latestDecision.decided_at) }}
+              Automated result: {{ decisionLabel(latestDecision.final_decision) }} · {{ formatDate(latestDecision.decided_at) }}
             </p>
             <p
               v-if="latestDecision"
@@ -497,8 +498,8 @@
               <p class="muted">Previous decisions</p>
               <ul>
                 <li v-for="item in previousDecisions" :key="item.decision.decision_id">
-                  <span class="badge" :class="item.decision.final_decision">{{ item.decision.final_decision }}</span>
-                  <span class="muted">{{ formatDate(item.decision.decided_at) }}</span>
+                  <span class="badge" :class="item.request.status">{{ reviewLabel(item.request) || item.request.status }}</span>
+                  <span v-if="item.decision.final_decision" class="muted">Automated result: {{ decisionLabel(item.decision.final_decision) }} · {{ formatDate(item.decision.decided_at) }}</span>
                   <span class="basis-label" :class="decisionBasisInfo(item.decision.decision_basis).tone">
                     {{ decisionBasisInfo(item.decision.decision_basis).label }}
                   </span>
@@ -663,9 +664,19 @@ const modelStatusTitle = computed(() => {
 let modelStatusTimer = null
 
 const DECISION_BASIS = {
-  svm_model: { label: 'Decision made by SVM classifier', tone: 'svm' },
+  legacy_admin_override: { label: 'Original automated prediction unavailable', tone: 'neutral' },
+  svm_model: { label: 'SVM prediction', tone: 'svm' },
   placeholder_threshold: { label: 'Decision made by threshold rules', tone: 'threshold' },
   image_quality_failure: { label: 'Rejected at image quality check', tone: 'neutral' },
+}
+
+function reviewLabel(request) {
+  if (!request?.admin_reviewed_at) return null
+  return request.status === 'verified' ? 'Approved by admin' : 'Rejected by admin'
+}
+
+function decisionLabel(value) {
+  return { verified: 'Verified', review: 'Manual Review', rejected: 'Rejected' }[value]
 }
 
 function decisionBasisInfo(basis) {

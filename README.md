@@ -22,7 +22,8 @@ database/     → Supabase (PostgreSQL)
 1. Create a new project at [supabase.com](https://supabase.com/).
 2. Open **SQL Editor** in the Supabase dashboard.
 3. Paste and run the contents of [`database/schema.sql`](database/schema.sql).
-4. Copy your project URL and API keys from **Settings → API**.
+4. Run [database/manual_review.sql](database/manual_review.sql) to enable administrator review decisions and recover historical predictions where audit records are available.
+5. Copy your project URL and API keys from **Settings → API**.
 
 ## Backend Setup
 

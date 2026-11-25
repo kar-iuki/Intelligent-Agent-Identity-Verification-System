@@ -1,0 +1,32 @@
+{
+  "factual_authority": "documentation/IsaacIrungu_151442_Documentation_v3_1_1.docx",
+  "academic_guidance": "/Users/test/Downloads/Research Writing for CS 2 Projects - 2026.docx",
+  "supplementary_evaluation": "ai-service/ml/experiments/face_review/comparison_models.json",
+  "scope": "17 slides in the user's requested order; no demonstration, research-question or Q&A slide; final slide contains only Thank You",
+  "guide_alignment": {
+    "identification": "Title, student, admission number, supervisor, university, November 2026 and Capstone; class/cohort requested separately",
+    "problem": "Identify distributed onboarding operators and independent agents; explain impersonation, presentation attacks and inconsistent manual checks",
+    "objective": "Preserve the approved main objective and connect each specific objective to completed evidence",
+    "architecture": "Trace identity evidence through browser, Express, Flask and Supabase; explain interfaces and trust boundary",
+    "model": "Distinguish pretrained OCR, face and anti-spoofing components from the project's trained six-feature LIBSVM classifier",
+    "evidence": "Report matched held-out comparisons, consequential errors, one historical hosted case and dated local tests separately",
+    "edge_case": "Document recapture and valid-score fallback without inventing a live demonstration",
+    "resources": "Name actual hosting and recorded Azure 4-vCPU/8-GiB allocation; do not invent costs or training time",
+    "readability": "Main points on slides, detailed methods and evidence in speaker notes"
+  },
+  "critical_accuracy_checks": [
+    "v3.1.1: 7,000 training + 1,500 development + 3,000 final evaluation cases, independently seeded, synthetic labels",
+    "v3.1.1: LIBSVM C-SVC RBF, C=10, gamma=1; training-only MinMax scaling and inverse-frequency class weights",
+    "v3.1.1: 86.07% accuracy, macro F1 0.821145, review recall 69.83%; 157 of 1,200 non-Verified cases incorrectly verified",
+    "Matched revised comparison: 75.93% v3.1.0 versus 86.07% v3.1.1; matched original comparison: 76.73% versus 67.33%",
+    "The 25–50 face band is a probe region, not a hard v3.1.1 runtime threshold; 74/75 referred, 1/75 verified",
+    "The 46 passing automated tests were recorded on 23 October 2026; no claim that all were rerun against v3.1.1",
+    "The 5 November hosted case used v3.1.0; 13.6 seconds is one observed run, not a latency benchmark",
+    "Latest report documents v3.1.1 image publication on 19 November and matching saved/live version badges; local legacy loaders still reference v3.1.0 and cannot establish current deployment",
+    "OCR is agreement with registered identity text, not document authenticity or raw OCR confidence",
+    "Fingerprint artwork is branding, not a biometric collected by this system",
+    "Actual verified-image expiry is three Nairobi business days; 30-day other-image and 180-day metadata controls are incomplete requirements",
+    "Consent/withdrawal, backup restoration, production-origin separation, accessible CAPTCHA alternative and broad operational testing remain unresolved",
+    "Additional current-split comparator metrics are supported by the saved comparison JSON and are labelled as supplementary evidence"
+  ]
+}

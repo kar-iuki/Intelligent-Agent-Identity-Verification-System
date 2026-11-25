@@ -37,7 +37,8 @@
         />
         <canvas ref="overlayRef" class="overlay" />
         <canvas ref="captureRef" class="hidden" />
-        <div v-if="phase === 'center'" class="guide-oval" :class="{ ready: faceCentered }" />
+        <div v-if="phase === 'center'" class="guide-oval" :class="{ ready: faceCentered }"
+          :style="{ left: guide.x * 100 + '%', top: guide.y * 100 + '%', width: guide.width * 100 + '%', height: guide.height * 100 + '%' }" />
         <div v-if="phase === 'challenge' && previewUrl" class="thumb-wrap">
           <img :src="previewUrl" alt="Saved selfie" class="thumb" />
           <span>Saved photo</span>
@@ -87,6 +88,8 @@ import {
   DrawingUtils,
 } from '@mediapipe/tasks-vision'
 
+import { faceYaw, selfieFraming, selfieGuide } from '../utils/selfieFraming.js'
+
 const emit = defineEmits(['back', 'passed'])
 
 const videoRef = ref(null)
@@ -95,6 +98,7 @@ const overlayRef = ref(null)
 const captureRef = ref(null)
 // CSS aspect-ratio of the live stream, e.g. '720 / 1280' on a phone held upright
 const streamAspect = ref(4 / 3)
+const guide = computed(() => selfieGuide(streamAspect.value))
 
 function updateStreamAspect() {
   const video = videoRef.value
@@ -110,7 +114,16 @@ const challenge = ref('turn_left')
 const phase = ref('loading')
 const completedFile = ref(null)
 const previewUrl = ref(null)
-const faceCentered = ref(false)
+const framing = ref('searching')
+const faceCentered = computed(() => framing.value === 'ready')
+const framingHints = {
+  searching: 'Sit comfortably and look straight at the camera.',
+  tooClose: 'Move back slightly so your whole face fits inside the oval.',
+  tooFar: 'Move a little closer so your face is clear. You can leave space around it.',
+  offCentre: 'Line up the centre of your face with the centre of the oval.',
+  turnForward: 'Look straight at the camera before taking your photo.',
+  ready: 'Hold still for the photo, or tap Take photo.',
+}
 const yawBaseline = ref(null)
 
 let faceLandmarker = null
@@ -135,9 +148,7 @@ const bannerTitle = computed(() => {
 const statusText = computed(() => {
   if (loadingModel.value) return 'Preparing camera…'
   if (phase.value === 'center') {
-    return faceCentered.value
-      ? 'Face looks centred — hold still, then tap Take photo.'
-      : 'Look straight at the camera and place your face inside the oval.'
+    return framingHints[framing.value]
   }
   if (phase.value === 'challenge') {
     if (challenge.value === 'turn_left') return 'Slowly look to your left (photo already saved).'
@@ -177,7 +188,7 @@ function pickChallenge() {
   challenge.value = CHALLENGES[Math.floor(Math.random() * CHALLENGES.length)]
   yawBaseline.value = null
   centeredSince = null
-  faceCentered.value = false
+  framing.value = 'searching'
 }
 
 function restartChallenge() {
@@ -242,8 +253,8 @@ function loop() {
   drawOverlay(result)
 
   if (!result.faceLandmarks?.length) {
-    error.value = 'Keep your face inside the frame'
-    faceCentered.value = false
+    error.value = phase.value === 'challenge' ? 'Keep your face in view as you turn.' : ''
+    framing.value = 'searching'
     centeredSince = null
     latestLandmarks = null
     return
@@ -263,32 +274,9 @@ function loop() {
   }
 }
 
-function isFaceCentered(landmarks) {
-  // Approximate face box from cheeks + forehead / chin landmarks
-  const xs = [landmarks[33].x, landmarks[263].x, landmarks[1].x, landmarks[234].x, landmarks[454].x]
-  const ys = [landmarks[10].y, landmarks[152].y, landmarks[1].y]
-  const minX = Math.min(...xs)
-  const maxX = Math.max(...xs)
-  const minY = Math.min(...ys)
-  const maxY = Math.max(...ys)
-  const cx = (minX + maxX) / 2
-  const cy = (minY + maxY) / 2
-  const width = maxX - minX
-  const height = maxY - minY
-
-  const inCenter = Math.abs(cx - 0.5) < 0.12 && Math.abs(cy - 0.48) < 0.14
-  const reasonableSize = width > 0.18 && width < 0.72 && height > 0.22 && height < 0.85
-  // Prefer facing camera roughly straight for a sharp portrait
-  const yaw = Math.abs(estimateYaw(landmarks))
-  const facingForward = yaw < 0.04
-
-  return inCenter && reasonableSize && facingForward
-}
-
 function updateCenterStatus(landmarks, now) {
-  const centered = isFaceCentered(landmarks)
-  faceCentered.value = centered
-  if (!centered) {
+  framing.value = selfieFraming(landmarks, guide.value)
+  if (!faceCentered.value) {
     centeredSince = null
     return
   }
@@ -299,39 +287,26 @@ function updateCenterStatus(landmarks, now) {
   }
 }
 
-function estimateYaw(landmarks) {
-  // Positive yaw ≈ face turned toward subject's left (camera right)
-  const leftCheek = landmarks[234]
-  const rightCheek = landmarks[454]
-  const nose = landmarks[1]
-  const midX = (leftCheek.x + rightCheek.x) / 2
-  return nose.x - midX
-}
-
 function evaluateChallenge(landmarks) {
-  const yaw = estimateYaw(landmarks)
-  if (yawBaseline.value === null) {
-    // Baseline should be near-centre facing after photo
-    yawBaseline.value = yaw
-    return
-  }
-
+  const yaw = faceYaw(landmarks)
+  if (!Number.isFinite(yaw) || yawBaseline.value === null) return
   const delta = yaw - yawBaseline.value
-  if (challenge.value === 'turn_left' && delta > 0.045) {
+  if (challenge.value === 'turn_left' && delta > 0.18) {
     finishChallenge()
   }
-  if (challenge.value === 'turn_right' && delta < -0.045) {
+  if (challenge.value === 'turn_right' && delta < -0.18) {
     finishChallenge()
   }
 }
 
 async function captureCenteredSelfie() {
   if (busy.value || phase.value !== 'center') return
-  if (!faceCentered.value && !latestLandmarks) {
+  if (!faceCentered.value || !latestLandmarks) {
     error.value = 'Centre your face in the oval first'
     return
   }
 
+  const capturedYaw = faceYaw(latestLandmarks)
   busy.value = true
   error.value = ''
 
@@ -359,7 +334,7 @@ async function captureCenteredSelfie() {
     completedFile.value = new File([blob], `live-selfie-${Date.now()}.jpg`, { type: 'image/jpeg' })
     previewUrl.value = URL.createObjectURL(completedFile.value)
 
-    yawBaseline.value = null
+    yawBaseline.value = capturedYaw
     phase.value = 'challenge'
   } finally {
     busy.value = false
@@ -432,7 +407,7 @@ function emitPassed() {
 
 .stage {
   position: relative;
-  width: min(100%, 360px, calc(32svh * var(--stream-aspect)));
+  width: min(100%, 640px, calc(32svh * var(--stream-aspect)));
   margin: 0 auto;
   aspect-ratio: var(--stream-aspect);
   border-radius: 12px;
@@ -466,10 +441,7 @@ function emitPassed() {
 
 .guide-oval {
   position: absolute;
-  left: 50%;
-  top: 46%;
-  width: min(52%, 220px);
-  aspect-ratio: 3 / 4;
+  box-sizing: border-box;
   transform: translate(-50%, -50%);
   border: 2px dashed rgba(255, 255, 255, 0.55);
   border-radius: 50%;

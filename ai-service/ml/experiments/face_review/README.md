@@ -39,3 +39,16 @@ python run.py evaluate --out /tmp/verity-face-review
 ```
 
 The recorded run used native LIBSVM 3.10. Library versions can affect calibration and exact model bytes. The local baseline calculation used the archived SVM parameters and reproduced the full published v3.1.0 confusion matrix. The runner uses joblib for the baseline when that environment is available. The candidate is stored in standard LIBSVM text format with a separate scaler and class mapping. The comparison JSON gives the confusion matrices and prediction counts.
+
+## Comparison models on the revised splits
+
+Run `OMP_NUM_THREADS=1 python compare_models.py` in this directory with NumPy, pandas, scikit-learn and libsvm-official installed. The script regenerates the 7,000 training, 1,500 development and 3,000 evaluation cases from the release seeds. It checks the saved six-input SVM against the published confusion matrix and probe counts. The identity-only SVM uses face match, liveness and OCR with the same scaling, class weighting, C and gamma. Five-fold training-only cross-validation selects the tree by macro F1. The sigmoid-calibrated variant fits a probability calibration on the development set with the tree frozen.
+
+| Model | Test accuracy | Macro F1 | Incorrect approvals / 1,200 | Review decisions / 3,000 |
+|---|---:|---:|---:|---:|
+| Released six-input SVM | 86.07% | 0.8211 | 157 | 615 |
+| Identity-only SVM | 85.87% | 0.8179 | 163 | 615 |
+| Decision Tree | 85.17% | 0.8159 | 124 | 684 |
+| Sigmoid-calibrated Decision Tree | 86.37% | 0.8240 | 152 | 599 |
+
+An incorrect approval is a Verified prediction on a case labelled Manual Review or Rejected. All four models referred the 28 held-out cases with face scores of 25–50 and OCR and liveness scores of at least 0.90. On the separate perfect-evidence probes, the released SVM referred 74 of 75 in that band and each comparator referred 75. The calibrated tree gained nine correct classifications over the released SVM. The paired 95% bootstrap interval for the accuracy difference spans −0.50 to +1.10 percentage points on the revised synthetic distribution. Full confusion matrices, weighted F1, log loss, probe results and package versions are in [comparison_models.json](comparison_models.json).

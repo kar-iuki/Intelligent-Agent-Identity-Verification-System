@@ -1,0 +1,22 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { Presentation, PresentationFile } from '@oai/artifact-tool';
+
+const dir = path.dirname(fileURLToPath(import.meta.url));
+const presentation = Presentation.create({slideSize:{width:1280,height:720}});
+const s=presentation.slides.add();
+s.background.fill='#101513';
+const bytes=await fs.readFile(path.join(dir,'assets/verity-fingerprint-cover.png'));
+s.images.add({blob:bytes,contentType:'image/png',alt:'Full-bleed dark forest-green fingerprint texture adapted from Verity website artwork',fit:'cover',position:{left:0,top:0,width:1280,height:720}});
+const add=(name,text,position,fontSize,color,bold=false,alignment='left')=>s.shapes.add({geometry:'textbox',name,position,fill:'none',line:{fill:'none',width:0},text:{text,style:{fontSize,typeface:'Aptos',color,bold,alignment,verticalAlignment:'top',insets:0,autoFit:'none',wrap:'none'}}});
+add('Proposal and date','Project proposal  /  November 2026',{left:76,top:65,width:680,height:40},'18pt','#D5F98B');
+add('Verity title','VERITY',{left:68,top:140,width:690,height:154},'102pt','#F4F5EF',true);
+add('Project title','Intelligent Agent\nIdentity Verification System',{left:76,top:319,width:670,height:115},'31pt','#F4F5EF');
+add('Student','Isaac Kariuki Irungu  ·  151442',{left:76,top:550,width:620,height:31},'17pt','#F4F5EF',true);
+add('Supervisor','Supervisor: Dr. Stephen Obonyo',{left:76,top:582,width:640,height:31},'17pt','#E2E8DF');
+add('University','Strathmore University',{left:76,top:614,width:620,height:31},'17pt','#E2E8DF');
+add('Identity evidence decision','IDENTITY\nEVIDENCE\nDECISION',{left:1010,top:568,width:194,height:91},'15pt','#D5E5D7',false,'right');
+await (await PresentationFile.exportPptx(presentation)).save(path.join(dir,'cover.pptx'));
+await fs.writeFile(path.join(dir,'cover.png'),new Uint8Array(await (await presentation.export({slide:s,format:'png',scale:1})).arrayBuffer()));
+console.log('Editable cover exported.');

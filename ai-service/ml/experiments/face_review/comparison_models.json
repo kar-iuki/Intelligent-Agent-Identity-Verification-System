@@ -1,0 +1,308 @@
+{
+  "svm_version": "3.1.1",
+  "saved_model_sha256": "966ad20a0abc97ad16580fc54a1e0fcef17b1c6577accb3d9e63becb871f0a31",
+  "classes": [
+    "Verified",
+    "Manual Review",
+    "Rejected"
+  ],
+  "seeds": {
+    "train": 120141,
+    "development": 120142,
+    "evaluation": 120143
+  },
+  "library_versions": {
+    "libsvm-official": "3.37.0",
+    "scikit-learn": "1.9.1",
+    "pandas": "2.2.3",
+    "numpy": "2.5.5"
+  },
+  "split_counts_in_class_order": {
+    "train": [
+      3000,
+      2400,
+      1600
+    ],
+    "development": [
+      900,
+      300,
+      300
+    ],
+    "test": [
+      1800,
+      600,
+      600
+    ]
+  },
+  "tree_selection": {
+    "best_parameters": {
+      "max_depth": 5,
+      "min_samples_leaf": 5
+    },
+    "mean_cv_macro_f1": 0.8045659690537061
+  },
+  "identity_svm": {
+    "features": [
+      "face_match_score",
+      "liveness_score",
+      "ocr_confidence_score"
+    ],
+    "C": 10,
+    "gamma": 1,
+    "class_weights": [
+      0.7777777777777778,
+      0.9722222222222222,
+      1.4583333333333333
+    ]
+  },
+  "models": {
+    "full_svm": {
+      "matrix": [
+        [
+          1668,
+          116,
+          16
+        ],
+        [
+          132,
+          419,
+          49
+        ],
+        [
+          25,
+          80,
+          495
+        ]
+      ],
+      "accuracy": 0.8606666666666667,
+      "macro_f1": 0.8211453573624711,
+      "weighted_f1": 0.8607975592450687,
+      "log_loss": 0.38387587286384656,
+      "incorrect_verifications": 157,
+      "predicted_review": 615,
+      "strong_evidence": {
+        "below_25": {
+          "Verified": 0,
+          "Manual Review": 0,
+          "Rejected": 15
+        },
+        "25_through_50": {
+          "Verified": 0,
+          "Manual Review": 28,
+          "Rejected": 0
+        },
+        "above_50": {
+          "Verified": 130,
+          "Manual Review": 6,
+          "Rejected": 0
+        }
+      },
+      "perfect_evidence_probes": {
+        "below_25": {
+          "Verified": 0,
+          "Manual Review": 7,
+          "Rejected": 68
+        },
+        "25_through_50": {
+          "Verified": 1,
+          "Manual Review": 74,
+          "Rejected": 0
+        },
+        "above_50": {
+          "Verified": 146,
+          "Manual Review": 4,
+          "Rejected": 0
+        }
+      }
+    },
+    "identity_only_svm": {
+      "matrix": [
+        [
+          1671,
+          109,
+          20
+        ],
+        [
+          132,
+          421,
+          47
+        ],
+        [
+          31,
+          85,
+          484
+        ]
+      ],
+      "accuracy": 0.8586666666666667,
+      "macro_f1": 0.817886568521699,
+      "weighted_f1": 0.8585910495334925,
+      "log_loss": 0.38993517962890883,
+      "incorrect_verifications": 163,
+      "predicted_review": 615,
+      "strong_evidence": {
+        "below_25": {
+          "Verified": 0,
+          "Manual Review": 0,
+          "Rejected": 15
+        },
+        "25_through_50": {
+          "Verified": 0,
+          "Manual Review": 28,
+          "Rejected": 0
+        },
+        "above_50": {
+          "Verified": 134,
+          "Manual Review": 2,
+          "Rejected": 0
+        }
+      },
+      "perfect_evidence_probes": {
+        "below_25": {
+          "Verified": 0,
+          "Manual Review": 3,
+          "Rejected": 72
+        },
+        "25_through_50": {
+          "Verified": 0,
+          "Manual Review": 75,
+          "Rejected": 0
+        },
+        "above_50": {
+          "Verified": 141,
+          "Manual Review": 9,
+          "Rejected": 0
+        }
+      },
+      "paired_accuracy_difference_vs_full_95pct": [
+        -0.008,
+        0.004
+      ]
+    },
+    "decision_tree": {
+      "matrix": [
+        [
+          1615,
+          165,
+          20
+        ],
+        [
+          103,
+          440,
+          57
+        ],
+        [
+          21,
+          79,
+          500
+        ]
+      ],
+      "accuracy": 0.8516666666666667,
+      "macro_f1": 0.8158877090910798,
+      "weighted_f1": 0.8546075053642269,
+      "log_loss": 0.4693728275005378,
+      "incorrect_verifications": 124,
+      "predicted_review": 684,
+      "strong_evidence": {
+        "below_25": {
+          "Verified": 0,
+          "Manual Review": 1,
+          "Rejected": 14
+        },
+        "25_through_50": {
+          "Verified": 0,
+          "Manual Review": 28,
+          "Rejected": 0
+        },
+        "above_50": {
+          "Verified": 127,
+          "Manual Review": 9,
+          "Rejected": 0
+        }
+      },
+      "perfect_evidence_probes": {
+        "below_25": {
+          "Verified": 0,
+          "Manual Review": 3,
+          "Rejected": 72
+        },
+        "25_through_50": {
+          "Verified": 0,
+          "Manual Review": 75,
+          "Rejected": 0
+        },
+        "above_50": {
+          "Verified": 138,
+          "Manual Review": 12,
+          "Rejected": 0
+        }
+      },
+      "paired_accuracy_difference_vs_full_95pct": [
+        -0.018,
+        0.0003333333333333333
+      ]
+    },
+    "calibrated_decision_tree": {
+      "matrix": [
+        [
+          1671,
+          109,
+          20
+        ],
+        [
+          124,
+          419,
+          57
+        ],
+        [
+          28,
+          71,
+          501
+        ]
+      ],
+      "accuracy": 0.8636666666666667,
+      "macro_f1": 0.823983319172823,
+      "weighted_f1": 0.8633659782550047,
+      "log_loss": 0.427702075000254,
+      "incorrect_verifications": 152,
+      "predicted_review": 599,
+      "strong_evidence": {
+        "below_25": {
+          "Verified": 0,
+          "Manual Review": 1,
+          "Rejected": 14
+        },
+        "25_through_50": {
+          "Verified": 0,
+          "Manual Review": 28,
+          "Rejected": 0
+        },
+        "above_50": {
+          "Verified": 127,
+          "Manual Review": 9,
+          "Rejected": 0
+        }
+      },
+      "perfect_evidence_probes": {
+        "below_25": {
+          "Verified": 0,
+          "Manual Review": 3,
+          "Rejected": 72
+        },
+        "25_through_50": {
+          "Verified": 0,
+          "Manual Review": 75,
+          "Rejected": 0
+        },
+        "above_50": {
+          "Verified": 138,
+          "Manual Review": 12,
+          "Rejected": 0
+        }
+      },
+      "paired_accuracy_difference_vs_full_95pct": [
+        -0.005,
+        0.011
+      ]
+    }
+  }
+}

@@ -1,8 +1,8 @@
 import { readFile } from 'node:fs/promises'
 import supabase from '../utils/supabaseClient.js'
 import { getSVMStatus } from '../services/verificationService.js'
-import { enforceAccessDecision } from '../services/accessControlService.js'
-import { logAction, ACTIONS, OUTCOMES } from '../utils/auditLogger.js'
+import { automatedDecision } from '../utils/decisionEvidence.js'
+import { ACTIONS } from '../utils/auditLogger.js'
 import { resetStrikes, getStrikeCount } from '../services/strikeService.js'
 import { auditWindow, fileExpiresAt, loadRetentionRequests } from '../utils/auditWindow.js'
 
@@ -50,7 +50,7 @@ export async function getPendingReviewCases(req, res) {
         request,
         agent,
         scores,
-        decision,
+        decision: automatedDecision(decision),
       })
     }
 
@@ -88,19 +88,15 @@ export async function getAgentVerificationDetail(req, res) {
 
     const history = []
     for (const request of requests || []) {
-      const [{ data: scores }, { data: decision }, { data: access }] = await Promise.all([
+      const [{ data: scores }, { data: decision }] = await Promise.all([
         supabase.from('verification_scores').select('*').eq('request_id', request.request_id).maybeSingle(),
         supabase.from('kyc_decisions').select('*').eq('request_id', request.request_id).maybeSingle(),
-        supabase
-          .from('access_control_records')
-          .select('*')
-          .eq('agent_id', agentID)
-          .order('enforced_at', { ascending: false })
-          .limit(1)
-          .maybeSingle(),
       ])
+      const { data: access } = decision
+        ? await supabase.from('access_control_records').select('*').eq('decision_id', decision.decision_id).maybeSingle()
+        : { data: null }
 
-      history.push({ request, scores, decision, access, auditWindow: auditWindow(request.status, decision, new Date(), request.created_at) })
+      history.push({ request, scores, decision: automatedDecision(decision), access, auditWindow: auditWindow(request.status, decision, new Date(), request.created_at, request.admin_reviewed_at) })
     }
 
     const { data: auditLogs } = await supabase
@@ -146,164 +142,32 @@ export async function getAgentVerificationDetail(req, res) {
   }
 }
 
-export async function approveAgent(req, res) {
+async function resolveManualReview(req, res, status) {
+  const { requestID, reason } = req.body
+  if (!requestID) return res.status(400).json({ error: 'requestID is required' })
   try {
-    const { agentID } = req.params
-    const { requestID } = req.body
-
-    if (!requestID) {
-      return res.status(400).json({ error: 'requestID is required' })
-    }
-
-    const { data: decision, error: decisionError } = await supabase
-      .from('kyc_decisions')
-      .update({
-        final_decision: 'verified',
-        verified_probability: 1.0,
-        review_probability: 0.0,
-        rejected_probability: 0.0,
-        decided_at: new Date().toISOString(),
-      })
-      .eq('request_id', requestID)
-      .select()
-      .single()
-
-    if (decisionError || !decision) {
-      return res.status(404).json({ error: decisionError?.message || 'Decision not found' })
-    }
-
-    const access = await enforceAccessDecision(
-      supabase,
-      agentID,
-      decision.decision_id,
-      'verified'
-    )
-
-    const { data: request, error: requestError } = await supabase
-      .from('verification_requests')
-      .update({ status: 'verified' })
-      .eq('request_id', requestID)
-      .select()
-      .single()
-
-    if (requestError) {
-      return res.status(500).json({ error: requestError.message })
-    }
-
-    await logAction({
-      agentID: agentID,
-      requestID: requestID,
-      action: ACTIONS.ADMIN_APPROVED,
-      outcome: OUTCOMES.VERIFIED,
-      performedBy: req.user.id,
-      ipAddress: req.clientIP,
-      details: {
-        accessGranted: true,
-      },
+    const { data, error } = await supabase.rpc('resolve_manual_review', {
+      p_agent_id: req.params.agentID, p_request_id: requestID, p_reviewer: req.user.id,
+      p_status: status, p_reason: status === 'rejected' ? reason || null : null,
+      p_ip: req.clientIP || null,
     })
-
-    await logAction({
-      agentID: agentID,
-      requestID: requestID,
-      action: ACTIONS.ACCESS_GRANTED,
-      outcome: OUTCOMES.SUCCESS,
-      performedBy: req.user.id,
-      ipAddress: req.clientIP,
-      details: {
-        source: 'admin_approval',
-      },
-    })
-
+    if (error) throw error
+    if (data.error) return res.status(data.status).json({ error: data.error })
     return res.json({
-      request,
-      decision,
-      access,
-      message: 'Agent approved successfully',
+      ...data, decision: automatedDecision(data.decision),
+      message: status === 'verified' ? 'Agent approved successfully' : 'Agent rejected successfully',
     })
-  } catch (err) {
-    return res.status(500).json({ error: err.message })
+  } catch (error) {
+    return res.status(500).json({ error: error.message })
   }
 }
 
-export async function rejectAgent(req, res) {
-  try {
-    const { agentID } = req.params
-    const { requestID, reason } = req.body
+export function approveAgent(req, res) {
+  return resolveManualReview(req, res, 'verified')
+}
 
-    if (!requestID) {
-      return res.status(400).json({ error: 'requestID is required' })
-    }
-
-    const { data: decision, error: decisionError } = await supabase
-      .from('kyc_decisions')
-      .update({
-        final_decision: 'rejected',
-        verified_probability: 0.0,
-        review_probability: 0.0,
-        rejected_probability: 1.0,
-        decided_at: new Date().toISOString(),
-      })
-      .eq('request_id', requestID)
-      .select()
-      .single()
-
-    if (decisionError || !decision) {
-      return res.status(404).json({ error: decisionError?.message || 'Decision not found' })
-    }
-
-    const access = await enforceAccessDecision(
-      supabase,
-      agentID,
-      decision.decision_id,
-      'rejected'
-    )
-
-    const { data: request, error: requestError } = await supabase
-      .from('verification_requests')
-      .update({ status: 'rejected' })
-      .eq('request_id', requestID)
-      .select()
-      .single()
-
-    if (requestError) {
-      return res.status(500).json({ error: requestError.message })
-    }
-
-    await logAction({
-      agentID: agentID,
-      requestID: requestID,
-      action: ACTIONS.ADMIN_REJECTED,
-      outcome: OUTCOMES.REJECTED,
-      performedBy: req.user.id,
-      ipAddress: req.clientIP,
-      details: {
-        reason: reason || null,
-        accessGranted: false,
-      },
-    })
-
-    await logAction({
-      agentID: agentID,
-      requestID: requestID,
-      action: ACTIONS.ACCESS_DENIED,
-      outcome: OUTCOMES.REJECTED,
-      performedBy: req.user.id,
-      ipAddress: req.clientIP,
-      details: {
-        source: 'admin_rejection',
-        reason: reason || null,
-      },
-    })
-
-    return res.json({
-      request,
-      decision,
-      access,
-      message: 'Agent rejected successfully',
-    })
-  } catch (err) {
-    return res.status(500).json({ error: err.message })
-  }
+export function rejectAgent(req, res) {
+  return resolveManualReview(req, res, 'rejected')
 }
 
 export async function getAllAgents(req, res) {
@@ -350,7 +214,7 @@ export async function getAllAgents(req, res) {
       }
 
       if (statusFilter && status !== statusFilter) continue
-      const window = auditWindow(status, decision, new Date(), latestRequest?.created_at)
+      const window = auditWindow(status, decision, new Date(), latestRequest?.created_at, latestRequest?.admin_reviewed_at)
       if (req.query.auditWindow === 'open' && !window.open) continue
 
       results.push({
@@ -358,7 +222,7 @@ export async function getAllAgents(req, res) {
         status,
         request: latestRequest,
         scores,
-        decision,
+        decision: automatedDecision(decision),
         auditWindow: window,
       })
     }

@@ -1,0 +1,388 @@
+SLIDE 1
+Final project defence  /  November 2026
+VERITY
+Intelligent Agent
+Identity Verification System
+Isaac Kariuki Irungu  ·  151442
+Supervisor: Dr. Stephen Obonyo
+BSc Informatics and Computer Science  /  Capstone
+Strathmore University
+
+SLIDE 2
+Context
+Introduction and background
+Verity  /  Final project defence
+02
+Remote agents need
+a verifiable identity
+before platform access
+SalesMesh context
+Independent agents register and onboard customers across regions, away from direct supervision.
+Verity’s scope
+Registration, identity evidence, verification, administrator review and access control.
+Document evidence, facial comparison and liveness feed one recorded decision.
+Source: final report, Chapter 1
+
+SLIDE 3
+Problem
+Problem statement
+Verity  /  Final project defence
+03
+Weak identity checks can give an unverified agent access to customer onboarding.
+Impersonation
+A document, registration details and selfie may describe different people.
+Presentation attacks
+A face image alone cannot establish that the applicant is live.
+Inconsistent decisions
+Manual checks and isolated thresholds do not combine conflicting evidence consistently.
+Duplicate or repeated attempts
+Repeated identities and failed submissions can bypass an unstructured registration process.
+Source: final report, §§1.2 and 2.3
+
+SLIDE 4
+Objectives
+General and specific objectives
+Verity  /  Final project defence
+04
+Develop an integrated identity-verification system that strengthens onboarding security and controls agent access.
+01
+Investigate registration practice
+Literature and workflow analysis informed the requirements.
+02
+Identify verification risks
+Impersonation, spoofing, duplicate identities and capture quality shaped the controls.
+03
+Examine KYC technologies
+Reviewed platforms and academic methods informed the pipeline.
+04
+Develop the integrated system
+Implemented registration, evidence processing, SVM decisions and administrator review.
+05
+Test and validate effectiveness
+Completed synthetic evaluation and selected system tests; operational validation remains partial.
+Source: approved objectives in §1.3; achievement assessment in Table 5.17 and Chapter 6
+
+SLIDE 5
+Contribution
+Justification and significance
+Verity  /  Final project defence
+05
+Identity evidence
+linked to access
+A traceable decision is useful only when the platform can enforce it and administrators can inspect it.
+Practical value
+Connect document, face and liveness checks to one access-control workflow.
+Accountability
+Retain scores, decision basis and audit context for administrator review.
+Academic contribution
+Provide a reproducible six-score classifier experiment and report its consequential errors.
+No measured superiority over commercial platforms or real-world fraud-prevention rate is claimed.
+
+SLIDE 6
+Related work
+Literature review and research gaps
+Verity  /  Final project defence
+06
+Evidence reviewed
+What it contributes
+Gap relevant to Verity
+Advance.AI, SEON, Facia,
+Joinble, VerifyID and Jumio
+Managed identity and fraud checks
+Decision policies in reviewed products
+are proprietary.
+ArcFace / InsightFace
+Deng et al. (2019)
+Discriminative face embeddings
+Face similarity does not validate
+a document or establish liveness.
+Liveness research
+Chakraborty & Das; Long et al.
+Dedicated presentation-attack detection
+Generalisation varies with devices,
+capture conditions and attack types.
+Onboarding risk frameworks
+Sirangi (2024)
+Combining evidence for decisions
+Behavioural and transaction signals
+may be unavailable at registration.
+Project response
+An inspectable agent-onboarding pipeline with six-score decisions, manual review and audit records.
+Source: final report, Chapter 2 and Table 2.1
+
+SLIDE 7
+Evidence to outcome
+Conceptual framework
+Verity  /  Final project defence
+07
+Identity evidence
+Profile details
+ID document
+Live selfie
+Six evidence scores
+Face, liveness, OCR
+Blur, brightness, contrast
+SVM v3.1.1
+Scaled inputs
+Learned decision
+Class probabilities
+Recorded outcome
+Verified
+Manual Review
+Rejected
+Access
+Verified or administrator-approved cases receive access. Review cases need a human decision; rejected cases are denied.
+Registration guardrails and audit logging operate across the workflow.
+Source: final report, conceptual framework and §§5.3.3–5.3.4
+
+SLIDE 8
+Development and evaluation
+Methodology
+Verity  /  Final project defence
+08
+Applied AI and software engineering
+Agile/Scrum iterations and OOAD linked requirements, design, implementation and testing.
+Draw
+Cases
+Verified / Review / Rejected
+Role
+Training
+7,000
+3,000 / 2,400 / 1,600
+Fit scaler and classifier
+Development
+1,500
+900 / 300 / 300
+Examine scenarios and select model
+Final evaluation
+3,000
+1,800 / 600 / 600
+Evaluate frozen model and baseline
+Measured score distributions informed synthetic cases; scenario labels and class mixtures remain assumptions.
+Source: final report, Chapter 3 and Table 5.6
+
+SLIDE 9
+Implementation
+Tools and technologies
+Verity  /  Final project defence
+09
+Layer
+Tools
+Implemented responsibility
+Browser
+Vue 3, Vite, Vue Router
+Agent capture and administrator interfaces
+Application
+Node.js, Express, Socket.IO
+Authenticated workflow, decisions and notifications
+AI API
+Python, Flask, Gunicorn
+Image-processing and inference endpoints
+Document evidence
+OpenCV and EasyOCR
+Quality measurements and identity-text agreement
+Facial evidence
+ArcFace via InsightFace; Silent-Face
+Face embeddings and server-side liveness
+Live capture
+MediaPipe Tasks Vision
+Random left/right head-turn check in the browser
+Decision model
+LIBSVM 3.10, RBF C-SVC
+Six-input classifier v3.1.1
+Identity and storage
+Supabase; SimpleWebAuthn
+Auth, PostgreSQL, private images and optional passkeys
+Pretrained image models were integrated; the six-score SVM was trained for this project.
+
+SLIDE 10
+Implemented components and interfaces
+System architecture
+Verity  /  Final project defence
+10
+Browser / Vercel
+Vue interface
+Capture and review
+API / Render
+Express orchestration
+Token and role checks
+AI / Azure
+Flask image services
+SVM inference
+HTTPS
+REST + API key
+Supabase
+Auth + PostgreSQL + private Storage
+Requests, scores, decisions, access and audit records
+Application trust boundary
+Protected operations run through the backend.
+Recorded AI allocation
+4 vCPU
+8 GiB memory
+Source: final report, Figure 4.4 and §§5.2–5.3
+
+SLIDE 11
+Verification and administrator review
+System sequence diagram
+Verity  /  Final project defence
+11
+Agent / browser
+Express API
+Flask AI
+Supabase
+Administrator
+1  Submit identity evidence
+2  Validate token and profile
+3  Quality, OCR, face and liveness
+4  Six scores and SVM result
+5  Store scores, decision and access
+6  Return outcome
+7  Notify review case
+8  Approve or reject
+9  Update decision, access and audit
+Quality failure requests recapture. Dashed messages apply when administrator review is required.
+Source: final report, Figure 4.5 and §§5.3.4–5.3.5
+
+SLIDE 12
+Version 3.1.1
+SVM model development and verification logic
+Verity  /  Final project defence
+12
+Learned classifier
+LIBSVM C-SVC, RBF kernel
+C = 10, gamma = 1
+Training-only MinMax scaling
+Inverse-frequency class weights
+Six inputs
+Face 0–100; liveness and OCR 0–1
+Raw blur; brightness 0–255
+Contrast 0–127.5
+Fallback when valid scores exist
+and SVM inference is unavailable
+Outcome
+Application rule
+Reject
+Face < 50 OR live < 0.50 OR OCR < 0.40
+OR (blur < 80 AND face < 65)
+Verify
+After rejection checks: face > 80
+AND live > 0.75 AND OCR > 0.70
+Review
+All remaining valid-score cases
+The 25–50 face-score band is an evaluation probe, not a hard SVM rule.
+Source: final report, §§5.3.5–5.3.7; accessControlService.js
+
+SLIDE 13
+Held-out synthetic evidence
+Model evaluation and performance comparison
+Verity  /  Final project defence
+13
+86.07%
+Accuracy
+0.8211
+Macro F1
+69.83%
+Manual Review recall
+Same cases within each version comparison
+Additional comparison on the revised 3,000 cases
+Model
+Accuracy
+Macro F1
+Incorrect
+approvals
+Six-input SVM
+86.07%
+0.8211
+157
+Identity-only SVM
+85.87%
+0.8179
+163
+Decision Tree
+85.17%
+0.8159
+124
+Calibrated tree
+86.37%
+0.8240
+152
+157 of 1,200 non-Verified cases were incorrectly verified. Real-applicant accuracy remains unestablished.
+Source: report Tables 5.12–5.15; saved v3.1.1 evaluation and supplementary comparator results
+
+SLIDE 14
+Evidence and its limits
+System testing and results
+Verity  /  Final project defence
+14
+Evidence
+Recorded result
+What it establishes
+Local automated tests
+23 October 2026
+46 / 46 passed
+Selected model contracts, backend,
+retention, passkeys and frontend checks
+Stored live records
+21 September–3 October
+12 requests, 12 score records
+9 decisions: 7 Verified, 2 Rejected
+Persistence and linked outcomes;
+3 requests remained pending
+Hosted workflow
+5 November 2026, v3.1.0
+One completed verification
+13.6 seconds on the second submission
+Recapture, verification, access grant
+and 12 stored audit events
+Edge case observed
+The first card image was too small for OCR. The system requested recapture and stored no decision.
+These records do not establish a full v3.1.1 hosted regression, load test or real-world accuracy study.
+Source: final report, Tables 5.8–5.11 and saved test logs
+
+SLIDE 15
+Implemented controls and remaining gaps
+Security, privacy and data retention
+Verity  /  Final project defence
+15
+Implemented in source
+Bearer-token validation and role checks
+Optional passkeys and challenge validation
+Duplicate-ID and attempt guardrails
+Private image storage and signed URLs
+Verified-image cleanup
+Three Nairobi business days after the latest successful decision. Cleanup runs at startup and every 15 minutes.
+Outstanding requirements
+Pre-collection consent and withdrawal
+30-day non-verified-image expiry
+180-day metadata lifecycle
+Backup restoration and retention proof
+Production origins and accessible CAPTCHA
+The 30-day and 180-day periods are design requirements, not implemented controls or statutory periods.
+Source: final report, §§5.2.2–5.3.3 and §5.6.3. No compliance certification is claimed.
+
+SLIDE 16
+Conclusions
+Conclusion, achievements and future improvements
+Verity  /  Final project defence
+16
+Completed contribution
+A hosted verification workflow
+and a reproducible six-score
+SVM experiment
+The revised model improved agreement with the revised labels, while increasing review on the original scenarios.
+01
+Complete safeguards
+Consent, retention, recovery and origin controls.
+02
+Validate real applicants
+Independent labels, representative devices and attack cases.
+03
+Evaluate human review
+Measure correction rates, workload and errors in proposed approvals.
+04
+Improve under controlled evidence
+Offline retraining, calibration and reliability tests with versioned rollback.
+Current evidence supports controlled evaluation with human oversight, not autonomous operational approval.
+
+SLIDE 17
+Thank You

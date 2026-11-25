@@ -1,0 +1,62 @@
+{
+  "slides": [
+    {
+      "slide": 1,
+      "seconds": 10,
+      "spokenWords": 21
+    },
+    {
+      "slide": 2,
+      "seconds": 35,
+      "spokenWords": 59
+    },
+    {
+      "slide": 3,
+      "seconds": 30,
+      "spokenWords": 60
+    },
+    {
+      "slide": 4,
+      "seconds": 25,
+      "spokenWords": 48
+    },
+    {
+      "slide": 5,
+      "seconds": 35,
+      "spokenWords": 59
+    },
+    {
+      "slide": 6,
+      "seconds": 45,
+      "spokenWords": 68
+    },
+    {
+      "slide": 7,
+      "seconds": 45,
+      "spokenWords": 68
+    },
+    {
+      "slide": 8,
+      "seconds": 15,
+      "spokenWords": 30
+    },
+    {
+      "slide": 9,
+      "seconds": 25,
+      "spokenWords": 51
+    },
+    {
+      "slide": 10,
+      "seconds": 25,
+      "spokenWords": 51
+    },
+    {
+      "slide": 11,
+      "seconds": 5,
+      "spokenWords": 2
+    }
+  ],
+  "slideSeconds": 295,
+  "demoSeconds": 480,
+  "totalSeconds": 775
+}
